@@ -20,6 +20,12 @@ and allows an easy way to interact with SW360.
 
 Have a look at the documentation: https://sw360.github.io/sw360python/
 
+The [`SW360`](https://sw360.github.io/sw360python/index.html#sw360.SW360) class
+provides the main interface.
+
+In [`sw360_objects.py`](./sw360/sw360_objects.py), there's also a preview of a
+high-level API, but note this is read-only and incomplete for now.
+
 ## Usage
 
 ### Installation

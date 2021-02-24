@@ -14,6 +14,8 @@ changes."""
 
 import re
 import os
+import json
+import packageurl
 
 
 class SW360Resource:
@@ -85,6 +87,25 @@ class SW360Resource:
             self.details.setdefault(key, {})
             self.details[key][links_key] = links_value
 
+    def _parse_purls(self, purl_value):
+        """Parse package url strings"""
+        purls = []
+        if type(purl_value) is str:
+            if purl_value.startswith("["):
+                # as of 2022-04, SW360 returns arrays as JSON string...
+                purl_value = json.loads(purl_value)
+            else:
+                purl_value = purl_value.split()
+
+        for purl_string in purl_value:
+            if purl_string.startswith("pkg:"):
+                try:
+                    purl = packageurl.PackageURL.from_string(purl_string)
+                    purls.append(purl)
+                except ValueError:
+                    pass
+        return purls
+
     _camel_case_pattern = re.compile(r'(?<!^)(?=[A-Z])')
 
     def from_json(self, json, copy_attributes=list(), snake_case=True):
@@ -92,11 +113,23 @@ class SW360Resource:
         attributes and JSON members. If `snake_case` is set, more Python-ish
         snake_case names will be used (project_type instead of projectType).
         """
+        # delete purl list as we add purls from different external ids below
+        self.purls = []
         for key, value in json.items():
             if key in copy_attributes:
                 if snake_case:
                     key = self._camel_case_pattern.sub('_', key).lower()
-                self.__setattr__(key, value)
+                if key == "external_ids":
+                    for id_type, id_value in value.items():
+                        # detect purls independent from id_type - it should be
+                        # 'package-url', but some use "purl", "purl.id", etc.
+                        purls = self._parse_purls(id_value)
+                        if len(purls):
+                            self.purls += purls
+                            continue
+                        self.external_ids[id_type] = id_value
+                else:
+                    self.__setattr__(key, value)
             elif key in ("_links", "_embedded"):
                 for links_key, links_value in value.items():
                     self._parse_link(key, links_key, links_value)
@@ -146,6 +179,8 @@ class Release(SW360Resource):
     def __init__(self, json=None, release_id=None, component_id=None,
                  name=None, version=None, downloadurl=None, sw360=None, **kwargs):
         self.attachments = {}
+        self.external_ids = {}
+        self.purls = []
 
         self.name = name
         self.version = version
@@ -158,14 +193,17 @@ class Release(SW360Resource):
         belongs to will be extracted and stored in the `component_id`
         attribute.
 
+        SW360 external ids will be stored in the `external_ids` attribute.
+        If valid package URLs (https://github.com/package-url/purl-spec) are found
+        in the external ids, they will be stored in the `purls` attribute as
+        packageurl.PackageURL instances.
+
         All details not directly supported by this class will be stored as-is
-        in the `details` instance attribute. For now, this also includes
-        external ids which will be stored as-is in `details['externalIds'].
-        Please note that this might change in future if better abstractions
-        will be added in this Python library."""
+        in the `details` instance attribute. Please note that this might
+        change in future if more abstractions will be added here."""
         super().from_json(
             json,
-            copy_attributes=("name", "version", "downloadurl"))
+            copy_attributes=("name", "version", "downloadurl", "externalIds"))
 
     def get(self, sw360=None, id_=None):
         """Retrieve/update release from SW360."""
@@ -232,6 +270,11 @@ class Attachment(SW360Resource):
         """Parse attachment JSON object from SW360 REST API. For now, we don't
         support parsing the resource the attachment belongs to, so this needs
         to be set via constructur.
+
+        SW360 external ids will be stored in the `external_ids` attribute.
+        If valid package URLs (https://github.com/package-url/purl-spec) are found
+        in the external ids, they will be stored in the `purls` attribute as
+        packageurl.PackageURL instances.
 
         All details not directly supported by this class will be stored as-is
         in the `details` instance attribute.
@@ -313,11 +356,14 @@ class Component(SW360Resource):
                  homepage=None, component_type=None, sw360=None, **kwargs):
         self.releases = {}
         self.attachments = {}
+        self.external_ids = {}
+        self.purls = []
 
         self.name = name
         self.description = description
         self.homepage = homepage
         self.component_type = component_type
+
         super().__init__(json, component_id, sw360, **kwargs)
 
     def from_json(self, json):
@@ -326,16 +372,20 @@ class Component(SW360Resource):
         and stored in the `releases` instance attribue. Please note that
         the REST API will only provide basic information for the releases.
 
+        SW360 external ids will be stored in the `external_ids` attribute.
+        If valid package URLs (https://github.com/package-url/purl-spec) are found
+        in the external ids, they will be stored in the `purls` attribute as
+        packageurl.PackageURL instances.
+
         All details not directly supported by this class will be
         stored as-is in the `details` instance attribute. For now, this also
-        includes vendor information and external ids which will be stored
-        as-is in `details['_embedded']['sw360:vendors']` and
-        `details['externalIds'].  Please note that this might change in future
-        if better abstractions will be added in this Python library."""
+        includes vendor information which will be stored as-is in
+        `details['_embedded']['sw360:vendors']`. Please note that this might
+        change in future if more abstractions will be added here."""
         super().from_json(
             json,
             copy_attributes=("name", "description", "homepage",
-                             "componentType"))
+                             "componentType", "externalIds"))
 
     def get(self, sw360=None, id_=None):
         """Retrieve/update component from SW360."""
@@ -388,6 +438,8 @@ class Project(SW360Resource):
                  description=None, visibility=None, project_type=None,
                  sw360=None, **kwargs):
         self.releases = {}
+        self.external_ids = {}
+        self.purls = []
 
         self.name = name
         self.version = version
@@ -402,15 +454,19 @@ class Project(SW360Resource):
         and stored in the `releases` instance attribue. Please note that
         the REST API will only provide basic information for the releases.
 
+        SW360 external ids will be stored in the `external_ids` attribute.
+        If valid package URLs (https://github.com/package-url/purl-spec) are found
+        in the external ids, they will be stored in the `purls` attribute as
+        packageurl.PackageURL instances.
+
         All details not directly supported by this class will be
         stored as-is in the `details` instance attribute. For now, this also
-        includes linked projects and external ids. Please note that this might
-        change in future if better abstractions will be added in this Python
-        library."""
+        includes linked projects. Please note that this might change in future
+        if better abstractions will be added here."""
         super().from_json(
             json,
             copy_attributes=("name", "description", "version", "visibility",
-                             "projectType"))
+                             "projectType", "externalIds"))
 
     def get(self, sw360=None, id_=None):
         """Retrieve/update project from SW360."""

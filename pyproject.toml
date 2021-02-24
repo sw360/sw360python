@@ -24,6 +24,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.9" # 3.9 is needed for urllib 2.5 to fix CVE-2025-50181
 requests = "^2.32.4" # fix CVE-2024-47081
+packageurl-python = ">=0.11, <1.0"
 
 [tool.poetry.group.dev.dependencies]
 colorama = "^0.4.6"

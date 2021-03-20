@@ -4,6 +4,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.6%2C3.7%2C3.8%2C3.9-yellow?logo=python)](https://www.python.org/doc/versions/)
 [![PyPI Version](https://badge.fury.io/py/fossology.svg)](https://pypi.org/project/fossology)
 [![Static checks](https://github.com/sw360/sw360python/actions/workflows/python-package.yml/badge.svg)](https://github.com/sw360/sw360python/actions/workflows/python-package.yml)
+[![Unit tests](https://github.com/sw360/sw360python/actions/workflows/unit-test.yml/badge.svg)](https://github.com/sw360/sw360python/actions/workflows/unit-test.yml)
 
 This Python project implements the REST API of [SW360](https://www.eclipse.org/sw360/)
 and allows an easy way to interact with SW360.

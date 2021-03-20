@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "sw360"
+version = "0.9"
+description = "Python interface to the SW360 software component catalogue"
+authors = ["Thomas Graf <thomas.graf@siemens.com>",
+"Gernot Hillier <gernot.hillier@siemens.com>"]
+license = "MIT License"
+readme="Readme.md"
+include = ["LICENSE.md"]
+repository = "https://github.com/sw360/sw360python"
+homepage = "https://github.com/sw360/sw360python"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+]
+
+[tool.poetry.dependencies]
+python = "^3.5"
+requests = "^2.12.0"
+
+[tool.poetry.dev-dependencies]
+colorama = "^0.3.7"
+sphinx = "^2.4.1"
+vcrpy = "^4.0.2"
+flake8 = ">=3.7.8"
+responses = "^0.12.1"
+pytest = "^6.1.2"
+coverage = "^5.3"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

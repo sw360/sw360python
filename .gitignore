@@ -1,0 +1,33 @@
+.vscode/
+__pycache__
+build/
+dist/
+html/
+
+_TODO.txt
+
+# older releases
+Releases/
+
+# internal test data
+local_test_api.py
+Test-Binary.jar
+Test-sources.jar
+Test.tar.gz
+Test_file.zip
+test_all_components.json
+test_all_releases.json
+
+# test coverage
+htmlcov/
+.coverage
+coverage.bat
+
+# internal stuff
+__internal__/
+
+# egg-info
+sw360.egg-info/
+
+# only for special tests
+tests/sw360/

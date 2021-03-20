@@ -51,7 +51,7 @@ Install fossology and required dependencies:
 The documentation of the project is built using Sphinx:
 
 ```python
-sphinx-build -b html . .\_build\
+poetry run sphinx-build .\docs build\
 ```
 
 #### Building Python package

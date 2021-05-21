@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# (c) 2019-2020 Siemens AG
+# (c) 2019-2021 Siemens AG
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -576,6 +576,33 @@ class Sw360TestProjects(unittest.TestCase):
             lib.update_project_releases(None, None)
 
         self.assertEqual("No project id provided!", context.exception.message)
+
+    @responses.activate
+    def test_update_project_releases_fresh_prj(self):
+        lib = self.get_logged_in_lib()
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects/123/releases?transitive=false",
+            json={},
+        )
+        responses.add(
+            responses.POST,
+            url=self.MYURL + "resource/api/projects/123/releases",
+            status=202,
+        )
+        lib.update_project_releases({}, "123", add=True)
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects/124/releases?transitive=false",
+            json={'_embedded': {'sw360:projects': []}},
+        )
+        responses.add(
+            responses.POST,
+            url=self.MYURL + "resource/api/projects/124/releases",
+            status=202,
+        )
+        lib.update_project_releases({}, "124", add=True)
 
     @responses.activate
     def test_update_project_releases(self):

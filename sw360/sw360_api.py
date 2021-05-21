@@ -7,7 +7,7 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
-"""Python interface to the SW360 platform"""
+"""Python interface to the Siemens SW360 platform"""
 
 import json
 import os
@@ -413,18 +413,13 @@ class SW360:
         :rtype: JSON SW360 result object
         :raises SW360Error: if there is a negative HTTP response
         """
-        hdr = self.api_headers.copy()
-        hdr["Content-Type"] = "application/hal+json"
-        hdr["Accept"] = "application/hal+json"
-
         for param in "name", "visibility", "version", "description":
             project_details[param] = locals()[param]
         project_details["projectType"] = project_type
 
-        project_json = json.dumps(project_details)
         url = self.url + "resource/api/projects"
         response = requests.post(
-            url, project_json, headers=hdr
+            url, json=project_details, headers=self.api_headers
         )
 
         if response.ok:
@@ -446,15 +441,8 @@ class SW360:
         :raises SW360Error: if there is a negative HTTP response
         """
         # 2019-04-03: error 405 - method not allowed
-        hdr = self.api_headers.copy()
-        hdr["Content-Type"] = "application/hal+json"
-        hdr["Accept"] = "application/hal+json"
-
-        project_json = json.dumps(project)
         url = self.url + "resource/api/projects/" + project_id
-        response = requests.patch(
-            url, project_json, headers=hdr
-        )
+        response = requests.patch(url, json=project, headers=self.api_headers)
 
         if response.ok:
             return response.json()
@@ -484,21 +472,15 @@ class SW360:
 
         if add:
             old_releases = self.get_project_releases(project_id)
-            if old_releases is not None:
+            if (old_releases is not None and "_embedded" in old_releases
+                    and "sw360:releases" in old_releases["_embedded"]):
                 old_releases = old_releases["_embedded"]["sw360:releases"]
                 old_releases = [r["_links"]["self"]["href"] for r in old_releases]
                 old_releases = [r.split("/")[-1] for r in old_releases]
                 releases = old_releases + list(releases)
 
-        hdr = self.api_headers.copy()
-        hdr["Content-Type"] = "application/hal+json"
-        hdr["Accept"] = "application/hal+json"
-        project_json = json.dumps(releases)
-
         url = self.url + "resource/api/projects/" + project_id + "/releases"
-        response = requests.post(
-            url, project_json, headers=hdr,
-        )
+        response = requests.post(url, json=releases, headers=self.api_headers)
 
         if response.ok:
             return True
@@ -670,18 +652,13 @@ class SW360:
         :raises SW360Error: if there is a negative HTTP response
         """
 
-        hdr = self.api_headers.copy()
-        hdr["Content-Type"] = "application/hal+json"
-        hdr["Accept"] = "application/hal+json"
-
         for param in "name", "version":
             release_details[param] = locals()[param]
         release_details["componentId"] = component_id
 
-        release_json = json.dumps(release_details)
         url = self.url + "resource/api/releases"
         response = requests.post(
-            url, release_json, headers=hdr
+            url, json=release_details, headers=self.api_headers
         )
         if response.ok:
             return response.json()
@@ -705,15 +682,8 @@ class SW360:
         if not release_id:
             raise SW360Error(message="No release id provided!")
 
-        hdr = self.api_headers.copy()
-        hdr["Content-Type"] = "application/hal+json"
-        hdr["Accept"] = "application/hal+json"
-
-        release_json = json.dumps(release)
         url = self.url + "resource/api/releases/" + release_id
-        response = requests.patch(
-            url, release_json, headers=hdr
-        )
+        response = requests.patch(url, json=release, headers=self.api_headers)
         if response.ok:
             return response.json()
 
@@ -930,20 +900,14 @@ class SW360:
         :raises SW360Error: if there is a negative HTTP response
         """
 
-        hdr = self.api_headers.copy()
-        hdr["Content-Type"] = "application/hal+json"
-        hdr["Accept"] = "application/hal+json"
-
         url = self.url + "resource/api/components"
 
         for param in "name", "description", "homepage":
             component_details[param] = locals()[param]
         component_details["componentType"] = component_type
 
-        component_json = json.dumps(component_details)
-
         response = requests.post(
-            url, component_json, headers=hdr
+            url, json=component_details, headers=self.api_headers
         )
         if response.ok:
             return response.json()
@@ -967,14 +931,9 @@ class SW360:
         if not component_id:
             raise SW360Error(message="No component id provided!")
 
-        hdr = self.api_headers.copy()
-        hdr["Content-Type"] = "application/hal+json"
-        hdr["Accept"] = "application/hal+json"
-
-        component_json = json.dumps(component)
         url = self.url + "resource/api/components/" + component_id
         response = requests.patch(
-            url, component_json, headers=hdr,
+            url, json=component, headers=self.api_headers,
         )
 
         if response.ok:
@@ -1079,14 +1038,9 @@ class SW360:
         :raises SW360Error: if there is a negative HTTP response
         """
 
-        hdr = self.api_headers.copy()
-        hdr["Content-Type"] = "application/hal+json"
-        hdr["Accept"] = "application/hal+json"
-
-        vendor_json = json.dumps(vendor)
         url = self.url + "resource/api/vendors"
         response = requests.post(
-            url, vendor_json, headers=hdr
+            url, json=vendor, headers=self.api_headers
         )
         if response.ok:
             return response.json()
@@ -1108,10 +1062,9 @@ class SW360:
         if not vendor_id:
             raise SW360Error(message="No vendor id provided!")
 
-        vendor_json = json.dumps(vendor)
         url = self.url + "resource/api/vendors/" + vendor_id
         response = requests.patch(
-            url, vendor_json, headers=self.api_headers
+            url, json=vendor, headers=self.api_headers
         )
         if response.ok:
             return response.json()

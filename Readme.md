@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/tngraf/Python-GitHub-Example/blob/main/LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.6%2C3.7%2C3.8%2C3.9-yellow?logo=python)](https://www.python.org/doc/versions/)
-[![PyPI Version](https://badge.fury.io/py/fossology.svg)](https://pypi.org/project/sw360/)
+[![PyPI version](https://badge.fury.io/py/sw360.svg)](https://badge.fury.io/py/sw360)
 [![Static checks](https://github.com/sw360/sw360python/actions/workflows/python-package.yml/badge.svg)](https://github.com/sw360/sw360python/actions/workflows/python-package.yml)
 [![Unit tests](https://github.com/sw360/sw360python/actions/workflows/unit-test.yml/badge.svg)](https://github.com/sw360/sw360python/actions/workflows/unit-test.yml)
 

@@ -1,6 +1,6 @@
 # SW360 Base Library for Python
 
-## NEXT
+## V0.9
 * relicensed to MIT.
 * **Breaking API changes**:
     * create_new_{component,release,project} now have parameters for required attributes
@@ -17,6 +17,7 @@
 * **Improvements**:
    * Debug option to supress session handling.
    * unit tests added.
+* published on GitHub.
 
 ## V0.5 (2020-04-16)
 * rename parameters for methods get_{release,component}_by_external_id

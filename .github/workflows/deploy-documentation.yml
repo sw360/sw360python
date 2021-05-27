@@ -29,7 +29,7 @@ jobs:
           # use sphinx to build the documentation
           # 
           #/home/runner/.local/bin/sphinx-build -b html ./docs/source ./docs/build
-          sphinx-build -b html ./docs/source ./docs/build
+          sphinx-build -b html ./docs ./build
         
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.3

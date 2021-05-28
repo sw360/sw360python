@@ -9,6 +9,11 @@
 This Python project implements the REST API of [SW360](https://www.eclipse.org/sw360/)
 and allows an easy way to interact with SW360.
 
+## Documentation
+
+Have a look at the documentation: https://sw360.github.io/sw360python/
+
+
 ## Usage
 
 ### Installation
@@ -48,7 +53,7 @@ Install fossology and required dependencies:
 The documentation of the project is built using Sphinx:
 
 ```python
-poetry run sphinx-build .\docs build\
+poetry run sphinx-build .\docs-source\ .\docs\
 ```
 
 #### Building Python package

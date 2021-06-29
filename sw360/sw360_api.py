@@ -1354,6 +1354,131 @@ class SW360:
             "projects", project_id, upload_file,
             upload_type=upload_type, upload_comment=upload_comment)
 
+    def _update_resource_attachment(self, resource_type, resource_id, attachment_id,
+                                    upload_type, check_status, upload_comment="", checked_comment=""):
+        """Upload `upload_file` as attachment to SW360 for the resource with the given id
+        using `upload_comment` for it. `upload_type` can be
+        "DOCUMENT"
+        "SOURCE"
+        "CLEARING_REPORT"
+        "COMPONENT_LICENSE_INFO_XML"
+        "SOURCE_SELF"
+        "BINARY"
+        "BINARY_SELF"
+        "LICENSE_AGREEMENT"
+        "README_OSS"
+
+        `check_status` can be
+        "NOTCHECKED"
+        "ACCEPTED"
+        "REJECTED"
+
+        API endpoint: PATCH /attachments
+        """
+        if resource_type not in ("releases", "components", "projects"):
+            raise SW360Error(message="Invalid resource type provided!")
+
+        if check_status not in ("NOTCHECKED", "ACCEPTED", "REJECTED"):
+            raise SW360Error(message="Invalid check status provided!")
+
+        if type(resource_id) is not str:
+            raise SW360Error(message="Invalid resource id provided!")
+
+        url = self.url + "resource/api/" + resource_type + "/" + resource_id + "/attachment/" + attachment_id
+        attachment_data = {"attachmentType": upload_type,
+                           "createdComment": upload_comment,
+                           "checkedComment": checked_comment,
+                           "checkStatus": check_status }
+
+        print(">>> URL = ", url)
+        response = requests.patch(url, headers=self.api_headers, json=attachment_data)
+        if not response.ok:
+            raise SW360Error(response, url)
+
+    def update_project_attachment(self, project_id, attachment_id, upload_type,
+                                  check_status, upload_comment="", checked_comment=""):
+        """Update the attachment meta information of a specific attachment.
+        `upload_type` can be
+        "DOCUMENT"
+        "SOURCE"
+        "CLEARING_REPORT"
+        "COMPONENT_LICENSE_INFO_XML"
+        "SOURCE_SELF"
+        "BINARY"
+        "BINARY_SELF"
+        "LICENSE_AGREEMENT"
+        "README_OSS"
+        `upload_type` can be
+        "DOCUMENT"
+
+        `check_status` can be
+        "NOTCHECKED"
+        "ACCEPTED"
+        "REJECTED"
+
+        API endpoint: PATCH /attachments
+        """
+
+        self._update_resource_attachment(
+            "projects", project_id, attachment_id, upload_type, check_status, 
+            upload_comment, checked_comment)
+
+    def update_release_attachment(self, project_id, attachment_id, upload_type,
+                                  check_status, upload_comment="", checked_comment=""):
+        """Update the attachment meta information of a specific attachment.
+        `upload_type` can be
+        "DOCUMENT"
+        "SOURCE"
+        "CLEARING_REPORT"
+        "COMPONENT_LICENSE_INFO_XML"
+        "SOURCE_SELF"
+        "BINARY"
+        "BINARY_SELF"
+        "LICENSE_AGREEMENT"
+        "README_OSS"
+        `upload_type` can be
+        "DOCUMENT"
+
+        `check_status` can be
+        "NOTCHECKED"
+        "ACCEPTED"
+        "REJECTED"
+
+        API endpoint: PATCH /attachments
+        """
+
+        self._update_resource_attachment(
+            "release", project_id, attachment_id, upload_type, check_status, 
+            upload_comment, checked_comment)
+
+    def update_component_attachment(self, project_id, attachment_id, upload_type,
+                                  check_status, upload_comment="", checked_comment=""):
+        """Update the attachment meta information of a specific attachment.
+        `upload_type` can be
+        "DOCUMENT"
+        "SOURCE"
+        "CLEARING_REPORT"
+        "COMPONENT_LICENSE_INFO_XML"
+        "SOURCE_SELF"
+        "BINARY"
+        "BINARY_SELF"
+        "LICENSE_AGREEMENT"
+        "README_OSS"
+        `upload_type` can be
+        "DOCUMENT"
+
+        `check_status` can be
+        "NOTCHECKED"
+        "ACCEPTED"
+        "REJECTED"
+
+        API endpoint: PATCH /attachments
+        """
+
+        self._update_resource_attachment(
+            "component", project_id, attachment_id, upload_type, check_status, 
+            upload_comment, checked_comment)
+
     # ----- Licenses -------------------------------------------------------
 
     def get_all_licenses(self):

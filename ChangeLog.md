@@ -1,5 +1,12 @@
 # SW360 Base Library for Python
 
+## NEXT
+* fix: make get_attachment_infos...() more stable.
+* new feature to support updates of attachments, see 
+  * `update_component_attachment`
+  * `update_release_attachment`
+  * `update_project_attachment`
+
 ## V0.9
 * relicensed to MIT.
 * **Breaking API changes**:

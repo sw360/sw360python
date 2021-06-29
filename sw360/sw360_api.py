@@ -1096,6 +1096,7 @@ class SW360:
         raise SW360Error(response, url)
 
     # ----- Attachments ------------------------------------------------------
+
     def get_attachment_infos_by_hash(self, hashvalue):
         """Get information about attachments with a given sha1 hash value.
 
@@ -1127,6 +1128,13 @@ class SW360:
             + resource_id
             + "/attachments"
         )
+
+        if "_embedded" not in resp:
+            return None
+
+        if "sw360:attachments" not in resp["_embedded"]:
+            return None
+
         resp = resp["_embedded"]["sw360:attachments"]
         return resp
 

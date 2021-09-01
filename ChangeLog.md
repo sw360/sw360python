@@ -1,5 +1,9 @@
 # SW360 Base Library for Python
 
+## V0.9.1
+* **New Features**:
+    * support to retrieve information about clearing requests (`get_clearing_request`, `get_clearing_request_for_project`).
+
 ## V0.9
 * relicensed to MIT.
 * **Breaking API changes**:

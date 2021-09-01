@@ -54,7 +54,7 @@ class Sw360TestClearingRequests(unittest.TestCase):
             body='{"id": "12345",\
               "requestedClearingDate": "2021-09-04",\
               "projectId": "007",\
-              "clearingState": "NEW"}}}',  # noqa
+              "clearingState": "NEW"}',  # noqa
             status=200,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},

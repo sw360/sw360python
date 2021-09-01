@@ -548,6 +548,48 @@ specific get_attachment_infos_for_{release,component,project} functions.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="sw360_api.SW360.get_clearing_request">
+<span class="sig-name descname"><span class="pre">get_clearing_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360.get_clearing_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get information of about a clearing request</p>
+<p>API endpoint: GET /clearingrequest/{id}</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request_id</strong> (<em>string</em>) – the id of the clearing request to be requested</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a clearing request</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>JSON clearing request object</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#sw360_api.SW360Error" title="sw360_api.SW360Error"><strong>SW360Error</strong></a> – if there is a negative HTTP response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sw360_api.SW360.get_clearing_request_for_project">
+<span class="sig-name descname"><span class="pre">get_clearing_request_for_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360.get_clearing_request_for_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get information of about a clearing request for a specific project</p>
+<p>API endpoint: GET /clearingrequest/project/{id}</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request_id</strong> (<em>string</em>) – the id of the clearing request to be requested</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a clearing request</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>JSON clearing request object</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#sw360_api.SW360Error" title="sw360_api.SW360Error"><strong>SW360Error</strong></a> – if there is a negative HTTP response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="sw360_api.SW360.get_component">
 <span class="sig-name descname"><span class="pre">get_component</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360.get_component" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get information of about a component</p>

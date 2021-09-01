@@ -64,7 +64,7 @@
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -1137,29 +1137,6 @@ due to historic reasons which is ignored.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="sw360_api.SW360.update_component_attachment">
-<span class="sig-name descname"><span class="pre">update_component_attachment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachment_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_status</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_comment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checked_comment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360.update_component_attachment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the attachment meta information of a specific attachment.
-<cite>upload_type</cite> can be
-“DOCUMENT”
-“SOURCE”
-“CLEARING_REPORT”
-“COMPONENT_LICENSE_INFO_XML”
-“SOURCE_SELF”
-“BINARY”
-“BINARY_SELF”
-“LICENSE_AGREEMENT”
-“README_OSS”
-<cite>upload_type</cite> can be
-“DOCUMENT”</p>
-<p><cite>check_status</cite> can be
-“NOTCHECKED”
-“ACCEPTED”
-“REJECTED”</p>
-<p>API endpoint: PATCH /attachments</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="sw360_api.SW360.update_component_external_id">
 <span class="sig-name descname"><span class="pre">update_component_external_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ext_id_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext_id_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'none'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360.update_component_external_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set or update external id of a component. If the id is already set, it
@@ -1211,29 +1188,6 @@ was not set.</p>
 <dd class="field-even"><p><a class="reference internal" href="#sw360_api.SW360Error" title="sw360_api.SW360Error"><strong>SW360Error</strong></a> – if there is a negative HTTP response</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="sw360_api.SW360.update_project_attachment">
-<span class="sig-name descname"><span class="pre">update_project_attachment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachment_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_status</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_comment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checked_comment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360.update_project_attachment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the attachment meta information of a specific attachment.
-<cite>upload_type</cite> can be
-“DOCUMENT”
-“SOURCE”
-“CLEARING_REPORT”
-“COMPONENT_LICENSE_INFO_XML”
-“SOURCE_SELF”
-“BINARY”
-“BINARY_SELF”
-“LICENSE_AGREEMENT”
-“README_OSS”
-<cite>upload_type</cite> can be
-“DOCUMENT”</p>
-<p><cite>check_status</cite> can be
-“NOTCHECKED”
-“ACCEPTED”
-“REJECTED”</p>
-<p>API endpoint: PATCH /attachments</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1315,29 +1269,6 @@ releases will be replaced.</p>
 <dd class="field-even"><p><a class="reference internal" href="#sw360_api.SW360Error" title="sw360_api.SW360Error"><strong>SW360Error</strong></a> – if there is a negative HTTP response</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="sw360_api.SW360.update_release_attachment">
-<span class="sig-name descname"><span class="pre">update_release_attachment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachment_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_status</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_comment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checked_comment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360.update_release_attachment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the attachment meta information of a specific attachment.
-<cite>upload_type</cite> can be
-“DOCUMENT”
-“SOURCE”
-“CLEARING_REPORT”
-“COMPONENT_LICENSE_INFO_XML”
-“SOURCE_SELF”
-“BINARY”
-“BINARY_SELF”
-“LICENSE_AGREEMENT”
-“README_OSS”
-<cite>upload_type</cite> can be
-“DOCUMENT”</p>
-<p><cite>check_status</cite> can be
-“NOTCHECKED”
-“ACCEPTED”
-“REJECTED”</p>
-<p>API endpoint: PATCH /attachments</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1466,7 +1397,7 @@ using <cite>upload_comment</cite> for it. <cite>upload_type</cite> can be
       &copy;2020, Siemens AG.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.1.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

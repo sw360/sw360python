@@ -330,7 +330,7 @@ class SW360:
     def get_projects_by_group(self, group, all_details=False):
         """Get projects by group.
 
-        API endpoint: GET /projects
+        API endpoint: GET /projects?group=
 
         :param group: the group the projects shall belong to
         :type group: string
@@ -342,6 +342,25 @@ class SW360:
         if all_details:
             full_url = self.url + "resource/api/projects?allDetails?group=" + group
 
+        resp = self.api_get(full_url)
+        if not resp:
+            return None
+
+        resp = resp["_embedded"]["sw360:projects"]
+        return resp
+
+    def get_projects_by_tag(self, tag):
+        """Get projects by tag.
+
+        API endpoint: GET /projects?tag=
+
+        :param group: the group the projects shall belong to
+        :type group: string
+        :return: list of projects
+        :rtype: list of JSON project objects
+        :raises SW360Error: if there is a negative HTTP response
+        """
+        full_url = self.url + "resource/api/projects?tag=" + tag
         resp = self.api_get(full_url)
         if not resp:
             return None
@@ -585,6 +604,23 @@ class SW360:
         :raises SW360Error: if there is a negative HTTP response
         """
         resp = self.api_get(release_url)
+        return resp
+
+    def get_releases_by_name(self, name):
+        """Gets a list of releases that match the given name.
+
+        API endpoint: GET /releases?name=
+
+        :param name: the name
+        :type name: string
+        :return: list of releases
+        :rtype: list of JSON release objects
+        :raises SW360Error: if there is a negative HTTP response
+        """
+        full_url = self.url + "resource/api/releases?name=" + name
+        resp = self.api_get(full_url)
+        if resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
+            resp = resp["_embedded"]["sw360:releases"]
         return resp
 
     def get_all_releases(self, fields=None, all_details=False):
@@ -919,9 +955,9 @@ class SW360:
 
         API endpoint: PATCH /components
 
-        :param component: the new vedor data
+        :param component: the new component data
         :param component_id: the id of the component to be updated
-        :type component: JSON vendor object
+        :type component: JSON component object
         :type component_id: string
         :return: SW360 result
         :rtype: JSON SW360 result object
@@ -1013,6 +1049,23 @@ class SW360:
 
     # ----- Vendor ----------------------------------------------------------
 
+    def get_all_vendors(self):
+        """Returns all vendors
+
+        API endpoint: GET /vendors
+
+        :return: a vendor
+        :rtype: JSON vendor object
+        :raises SW360Error: if there is a negative HTTP response
+        """
+
+        resp = self.api_get(self.url + "resource/api/vendors")
+        if not resp:
+            return None
+
+        resp = resp["_embedded"]["sw360:vendors"]
+        return resp
+
     def get_vendor(self, vendor_id):
         """Returns a vendor
 
@@ -1020,8 +1073,8 @@ class SW360:
 
         :param vendor_id: the id of the vendor to be requested
         :type vendor_id: string
-        :return: a vendor
-        :rtype: JSON vendor object
+        :return: list of vendors
+        :rtype: list of JSON vendor objects
         :raises SW360Error: if there is a negative HTTP response
         """
 

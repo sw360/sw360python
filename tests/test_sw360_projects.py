@@ -404,6 +404,40 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertIsNone(projects)
 
     @responses.activate
+    def test_get_projects_by_tag(self):
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects?tag=SI BP",
+            body='{"_embedded": {"sw360:projects": [{"name": "My Testproject", "externalIds": {"com.siemens.code.project.id": "13171"}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        projects = lib.get_projects_by_tag("SI BP")
+        self.assertIsNotNone(projects)
+        self.assertTrue(len(projects) > 0)
+        self.assertEqual("My Testproject", projects[0]["name"])
+
+    @responses.activate
+    def test_get_projects_by_tag_no_result(self):
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects?tag=SI",
+            body='{}',
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        projects = lib.get_projects_by_tag("SI")
+        self.assertIsNone(projects)
+
+    @responses.activate
     def test_download_license_info(self):
         lib = self.get_logged_in_lib()
 

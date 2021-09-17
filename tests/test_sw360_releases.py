@@ -227,6 +227,28 @@ class Sw360TestReleases(unittest.TestCase):
         self.assertEqual("1.3.0", releases[0]["version"])
 
     @responses.activate
+    def test_get_releases_by_name(self):
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/releases?name=john",
+            body='{"_embedded": {"sw360:releases": [{"name": "john", "version": "2.2.2", "_links": {"self": {"href": "https://my.server.com/resource/api/releases/08ddfd57636c4c47f4c879515007081f"}}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        releases = lib.get_releases_by_name("john")
+        self.assertIsNotNone(releases)
+        self.assertTrue(len(releases) > 0)
+        self.assertEqual("john", releases[0]["name"])
+        self.assertEqual("2.2.2", releases[0]["version"])
+
+    @responses.activate
     def test_create_new_release(self):
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True

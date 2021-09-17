@@ -94,7 +94,7 @@ class Sw360TestVendors(unittest.TestCase):
               "shortName": "Triangle, Inc.",\
               "fullName": "Triangle, Inc.",\
               "_links": { "self": {\
-              "href": "https://sw360.siemens.com/resource/api/vendors/12345"}}}',  # noqa
+              "href": "https://my.server.com/resource/api/vendors/12345"}}}',  # noqa
             status=200,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
@@ -103,6 +103,50 @@ class Sw360TestVendors(unittest.TestCase):
         vendor = lib.get_vendor("12345")
         self.assertIsNotNone(vendor)
         self.assertEqual("Triangle, Inc.", vendor["shortName"])
+
+    @responses.activate
+    def test_get_all_vendors(self):
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/vendors",
+            body='{"_embedded" : {\
+                "sw360:vendors" : [{\
+                    "fullName": "Premium Software",\
+                    "_links": { "self": {\
+                             "href": "https://my.server.com/resource/api/vendors/006"}}}]}}',
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        vendors = lib.get_all_vendors()
+        self.assertIsNotNone(vendors)
+        self.assertEqual(1, len(vendors))
+        self.assertEqual("Premium Software", vendors[0]["fullName"])
+
+    @responses.activate
+    def test_get_all_vendors_no_result(self):
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/vendors",
+            body='{}',
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        vendors = lib.get_all_vendors()
+        self.assertIsNone(vendors)
 
     @responses.activate
     def test_create_new_vendor(self):

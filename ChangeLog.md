@@ -5,8 +5,8 @@
   * `get_projects_by_tag` added.
   * `get_releases_by_name` added.
   * `get_all_vendors` added.
-* We have covered nearly all of the possibel REST API calls.
-  The library is successfully being used by multiple projects.
+* We have covered nearly all of the possibel REST API calls.  
+  The library is successfully being used by multiple projects.  
   Time to release version 1.0.0.
 
 ## V0.9.1

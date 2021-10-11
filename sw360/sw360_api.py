@@ -576,6 +576,38 @@ class SW360:
         resp = self.api_get(self.url + "resource/api/projects/usedBy/" + project_id)
         return resp
 
+    def duplicate_project(self, project_id: str, new_version: str):
+        """Create a copy of an exisiting project.
+
+        API endpoint: GET /projects/duplicate/{id}
+
+        :param project_id: the id of the exisiting project
+        :type project_id: string
+        :param new_version: the version of the new project
+        :type new_version: string
+        :return: the newly created project
+        :rtype: JSON object
+        :raises SW360Error: if there is a negative HTTP response
+        """
+
+        if not project_id:
+            raise SW360Error(message="No project id provided!")
+
+        project_details = {}
+        project_details["version"] = new_version
+        # force clearing state to OPEN
+        project_details["clearingState"] = "OPEN"
+
+        url = self.url + "resource/api/projects/duplicate/" + project_id
+        response = requests.post(
+            url, json=project_details, headers=self.api_headers
+        )
+
+        if response.ok:
+            return response.json()
+
+        raise SW360Error(response, url)
+
     # ----- Releases ---------------------------------------------------------
 
     def get_release(self, release_id):

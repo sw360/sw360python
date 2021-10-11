@@ -768,6 +768,60 @@ class Sw360TestProjects(unittest.TestCase):
 
         lib.get_users_of_project("123")
 
+    @responses.activate
+    def test_duplicate_project(self):
+        lib = self.get_logged_in_lib()
+        responses.add(
+            responses.POST,
+            url=self.MYURL + "resource/api/projects/duplicate/007",
+            json={
+                # server returns complete project, here we only mock a part of it
+                'name': 'ExistingProduct',
+                'version': '42',
+                'clearingState': 'OPEN',
+                '_links': {
+                    'self': {
+                        'href': self.MYURL+'resource/api/projects/0206'
+                    }
+                },
+            },
+            match=[
+              responses.json_params_matcher({
+                "version": "42",
+                'clearingState': 'OPEN',
+              })
+            ]
+        )
+        result = lib.duplicate_project("007", "42")
+        self.assertIsNotNone(result)
+        self.assertTrue("clearingState" in result)
+        self.assertEqual("OPEN", result["clearingState"])
+        self.assertTrue("version" in result)
+        self.assertEqual("42", result["version"])
+
+    @responses.activate
+    def test_duplicate_project_no_id(self):
+        lib = self.get_logged_in_lib()
+
+        with self.assertRaises(SW360Error) as context:
+            lib.duplicate_project(None, "42")
+
+        self.assertEqual("No project id provided!", context.exception.message)
+
+    @responses.activate
+    def test_duplicate_project_failed(self):
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.POST,
+            url=self.MYURL + "resource/api/projects/duplicate/123",
+            body="4",
+            status=404,
+        )
+
+        with self.assertRaises(SW360Error) as context:
+            lib.duplicate_project("123", "42")
+
 
 if __name__ == "__main__":
     unittest.main()

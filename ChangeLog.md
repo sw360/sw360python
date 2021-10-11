@@ -1,5 +1,8 @@
 # SW360 Base Library for Python
 
+## 1.1.0
+* New method `dulicate_project` to create a copy of an exisiting project.
+
 ## 1.0.0
 * **New Features**:
   * `get_projects_by_tag` added.

@@ -399,6 +399,30 @@ with the given id</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="sw360_api.SW360.duplicate_project">
+<span class="sig-name descname"><span class="pre">duplicate_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_version</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360.duplicate_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a copy of an exisiting project.</p>
+<p>API endpoint: GET /projects/duplicate/{id}</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_id</strong> (<em>string</em>) – the id of the exisiting project</p></li>
+<li><p><strong>new_version</strong> (<em>string</em>) – the version of the new project</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the newly created project</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>JSON object</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#sw360_api.SW360Error" title="sw360_api.SW360Error"><strong>SW360Error</strong></a> – if there is a negative HTTP response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="sw360_api.SW360.get_all_components">
 <span class="sig-name descname"><span class="pre">get_all_components</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360.get_all_components" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get information of about all components</p>

@@ -360,7 +360,7 @@ class SW360:
         :rtype: list of JSON project objects
         :raises SW360Error: if there is a negative HTTP response
         """
-        full_url = self.url + "resource/api/projects?tag=" + tag
+        full_url = self.url + "resource/api/projects?tag=" + tag + "&luceneSearch=true"
         resp = self.api_get(full_url)
         if not resp:
             return None

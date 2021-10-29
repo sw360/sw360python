@@ -50,7 +50,7 @@ class Sw360TestHealth(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/health/",
+            url=self.MYURL + "resource/actuator/health/",
             body='{"status": "UP"}',
             status=200,
             content_type="application/json",

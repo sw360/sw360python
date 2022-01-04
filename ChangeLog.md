@@ -1,14 +1,18 @@
 # SW360 Base Library for Python
 
+## NEXT
+* new method `update_project_release_relationship`.
+* original get_health_status() endpoint URL has been restored by the SW360 team.
+
 ## 1.1.0
-* New method `dulicate_project` to create a copy of an exisiting project.
+* New method `duplicate_project` to create a copy of an existing project.
 
 ## 1.0.0
 * **New Features**:
   * `get_projects_by_tag` added.
   * `get_releases_by_name` added.
   * `get_all_vendors` added.
-* We have covered nearly all of the possibel REST API calls.  
+* We have covered nearly all of the possible REST API calls.  
   The library is successfully being used by multiple projects.  
   Time to release version 1.0.0.
 

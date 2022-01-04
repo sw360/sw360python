@@ -1545,7 +1545,7 @@ class SW360:
         :rtype: JSON health status object
         :raises SW360Error: if there is a negative HTTP response
         """
-        resp = self.api_get(self.url + "resource/actuator/health/")
+        resp = self.api_get(self.url + "resource/health/")
         return resp
 
     # ----- Clearing Requests ------------------------------------------------

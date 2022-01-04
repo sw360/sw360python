@@ -101,7 +101,7 @@
 <span class="target" id="module-sw360_api"></span><p>Python interface to the Siemens SW360 platform</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="sw360_api.SW360">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">sw360_api.</span></span><span class="sig-name descname"><span class="pre">SW360</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oauth2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sw360_api.</span></span><span class="sig-name descname"><span class="pre">SW360</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oauth2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360" title="Permalink to this definition">¶</a></dt>
 <dd><p>Python interface to the Siemens SW360 platform</p>
 <p>Authentication against a running SW360 instance is performed using an API token.
 The token will be sent as HTTP header using the format
@@ -400,7 +400,7 @@ with the given id</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="sw360_api.SW360.duplicate_project">
-<span class="sig-name descname"><span class="pre">duplicate_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_version</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360.duplicate_project" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">duplicate_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360.duplicate_project" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a copy of an exisiting project.</p>
 <p>API endpoint: GET /projects/duplicate/{id}</p>
 <dl class="field-list simple">
@@ -761,7 +761,7 @@ of INTERNAL, OSS, COTS, FREESOFTWARE, INNER_SOURCE, SERVICE</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="sw360_api.SW360.get_id_from_href">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_id_from_href</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">href</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360.get_id_from_href" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_id_from_href</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">href</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360.get_id_from_href" title="Permalink to this definition">¶</a></dt>
 <dd><p>“Extracts the identifier from the href and returns it</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1347,6 +1347,30 @@ was not set.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="sw360_api.SW360.update_project_release_relationship">
+<span class="sig-name descname"><span class="pre">update_project_release_relationship</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">release_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_relation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360.update_project_release_relationship" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the relationship for a specific release of a project</p>
+<p>API endpoint PATCH /projects/{pid}/release{rid}</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_id</strong> (<em>string</em>) – the id of the exisiting project</p></li>
+<li><p><strong>release_id</strong> (<em>string</em>) – the id of the release to be requested</p></li>
+<li><p><strong>new_state</strong> (<em>string</em>) – the new mainline state of the release, one of 
+(OPEN, MAINLINE, SPECIFIC, PHASEOUT, DENIED)</p></li>
+<li><p><strong>new_relation</strong> (<em>string</em>) – <p>the new relation of the release, one of 
+(CONTAINED, REFERRED, UNKNOWN, DYNAMICALLY_LINKED, STATICALLY_LINKED, SIDE_BY_SIDE, STANDALONE,</p>
+<blockquote>
+<div><p>INTERNAL_USE, OPTIONAL, TO_BE_REPLACED, CODE_SNIPPET)</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>comment</strong> (<em>string</em>) – a comment</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="sw360_api.SW360.update_project_releases">
 <span class="sig-name descname"><span class="pre">update_project_releases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">releases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360.update_project_releases" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the releases of an existing project. If <cite>add</cite> is True,
@@ -1497,7 +1521,7 @@ using <cite>upload_comment</cite> for it. <cite>upload_type</cite> can be
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="sw360_api.SW360Error">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">sw360_api.</span></span><span class="sig-name descname"><span class="pre">SW360Error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360Error" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sw360_api.</span></span><span class="sig-name descname"><span class="pre">SW360Error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360_api.SW360Error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base exception for SW360 operations</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1523,7 +1547,7 @@ using <cite>upload_comment</cite> for it. <cite>upload_type</cite> can be
       &copy;2020, Siemens AG.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.3.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

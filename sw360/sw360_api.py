@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# (c) 2019-2021 Siemens AG
+# (c) 2019-2022 Siemens AG
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
 #
@@ -602,6 +602,45 @@ class SW360:
         response = requests.post(
             url, json=project_details, headers=self.api_headers
         )
+
+        if response.ok:
+            return response.json()
+
+        raise SW360Error(response, url)
+
+    def update_project_release_relationship(self, project_id: str, release_id: str, new_state: str,
+            new_relation: str, comment: str):
+        """Update the relationship for a specific release of a project
+
+        API endpoint PATCH /projects/{pid}/release{rid}
+
+        :param project_id: the id of the exisiting project
+        :type project_id: string
+        :param release_id: the id of the release to be requested
+        :type release_id: string
+        :param new_state: the new mainline state of the release, one of 
+         (OPEN, MAINLINE, SPECIFIC, PHASEOUT, DENIED)
+        :type new_state: string
+        :param new_relation: the new relation of the release, one of 
+         (CONTAINED, REFERRED, UNKNOWN, DYNAMICALLY_LINKED, STATICALLY_LINKED, SIDE_BY_SIDE, STANDALONE,
+          INTERNAL_USE, OPTIONAL, TO_BE_REPLACED, CODE_SNIPPET)
+        :type new_relation: string
+        :param comment: a comment
+        :type comment: string
+        """
+        if not project_id:
+            raise SW360Error(message="No project id provided!")
+
+        if not release_id:
+            raise SW360Error(message="No release id provided!")
+
+        relation = {}
+        relation["releaseRelation"] = new_relation
+        relation["mainlineState"] = new_state
+        relation["comment"] = comment
+
+        url = self.url + "resource/api/projects/" + project_id + "/release/" + release_id
+        response = requests.patch(url, json=relation, headers=self.api_headers)
 
         if response.ok:
             return response.json()

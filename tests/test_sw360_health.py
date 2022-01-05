@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# (c) 2020 Siemens AG
+# (c) 2020-2022 Siemens AG
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -50,7 +50,7 @@ class Sw360TestHealth(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/actuator/health/",
+            url=self.MYURL + "resource/health/",
             body='{"status": "UP"}',
             status=200,
             content_type="application/json",

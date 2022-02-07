@@ -296,7 +296,7 @@ class SW360:
             return resp
 
         projects = projects["_embedded"]["sw360:projects"]
-        
+
         for key in projects:
             resp.append(key["name"] + ", " + key["version"])
 
@@ -492,8 +492,10 @@ class SW360:
 
         :param project: the new project data
         :param project_id: the id of the project to be deleted
+        :param add_subprojects: optional parameter only to add new sub-projects
         :type project: JSON
         :type project_id: string
+        :type add_subprojects: bool
         :return: SW360 result
         :rtype: JSON SW360 result object
         :raises SW360Error: if there is a negative HTTP response
@@ -676,7 +678,7 @@ class SW360:
         :type new_state: string
         :param new_relation: the new relation of the release, one of
          (CONTAINED, REFERRED, UNKNOWN, DYNAMICALLY_LINKED, STATICALLY_LINKED, SIDE_BY_SIDE,
-          STANDALONE, INTERNAL_USE, OPTIONAL, TO_BE_REPLACED, CODE_SNIPPET)
+         STANDALONE, INTERNAL_USE, OPTIONAL, TO_BE_REPLACED, CODE_SNIPPET)
         :type new_relation: string
         :param comment: a comment
         :type comment: string

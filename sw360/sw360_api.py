@@ -267,6 +267,13 @@ class SW360:
         :raises SW360Error: if there is a negative HTTP response
         """
         resp = self.api_get(self.url + "resource/api/projects?type=" + project_type)
+
+        if "_embedded" not in resp:
+            return None
+
+        if "sw360:projects" not in resp["_embedded"]:
+            return None
+
         resp = resp["_embedded"]["sw360:projects"]
         return resp
 
@@ -280,8 +287,16 @@ class SW360:
         :raises SW360Error: if there is a negative HTTP response
         """
         projects = self.get_projects()
-        projects = projects["_embedded"]["sw360:projects"]
         resp = []
+
+        if "_embedded" not in projects:
+            return resp
+
+        if "sw360:projects" not in projects["_embedded"]:
+            return resp
+
+        projects = projects["_embedded"]["sw360:projects"]
+        
         for key in projects:
             resp.append(key["name"] + ", " + key["version"])
 
@@ -300,6 +315,12 @@ class SW360:
         """
         resp = self.api_get(self.url + "resource/api/projects?name=" + name)
         if not resp:
+            return None
+
+        if "_embedded" not in resp:
+            return None
+
+        if "sw360:projects" not in resp["_embedded"]:
             return None
 
         resp = resp["_embedded"]["sw360:projects"]
@@ -324,6 +345,12 @@ class SW360:
         if not resp:
             return None
 
+        if "_embedded" not in resp:
+            return None
+
+        if "sw360:projects" not in resp["_embedded"]:
+            return None
+
         resp = resp["_embedded"]["sw360:projects"]
         return resp
 
@@ -346,6 +373,12 @@ class SW360:
         if not resp:
             return None
 
+        if "_embedded" not in resp:
+            return None
+
+        if "sw360:projects" not in resp["_embedded"]:
+            return None
+
         resp = resp["_embedded"]["sw360:projects"]
         return resp
 
@@ -363,6 +396,12 @@ class SW360:
         full_url = self.url + "resource/api/projects?tag=" + tag + "&luceneSearch=true"
         resp = self.api_get(full_url)
         if not resp:
+            return None
+
+        if "_embedded" not in resp:
+            return None
+
+        if "sw360:projects" not in resp["_embedded"]:
             return None
 
         resp = resp["_embedded"]["sw360:projects"]
@@ -891,6 +930,12 @@ class SW360:
         if not resp:
             return None
 
+        if "_embedded" not in resp:
+            return None
+
+        if "sw360:components" not in resp["_embedded"]:
+            return None
+
         resp = resp["_embedded"]["sw360:components"]
         return resp
 
@@ -909,6 +954,12 @@ class SW360:
 
         resp = self.api_get(self.url + "resource/api/components?type=" + component_type)
         if not resp:
+            return None
+
+        if "_embedded" not in resp:
+            return None
+
+        if "sw360:components" not in resp["_embedded"]:
             return None
 
         resp = resp["_embedded"]["sw360:components"]
@@ -1134,6 +1185,12 @@ class SW360:
         if not resp:
             return None
 
+        if "_embedded" not in resp:
+            return None
+
+        if "sw360:vendors" not in resp["_embedded"]:
+            return None
+
         resp = resp["_embedded"]["sw360:vendors"]
         return resp
 
@@ -1251,6 +1308,13 @@ class SW360:
             + resource_id
             + "/attachments"
         )
+
+        if "_embedded" not in resp:
+            return None
+
+        if "sw360:attachments" not in resp["_embedded"]:
+            return None
+
         resp = resp["_embedded"]["sw360:attachments"]
         return resp
 
@@ -1484,6 +1548,12 @@ class SW360:
 
         resp = self.api_get(self.url + "resource/api/licenses")
         if not resp:
+            return None
+
+        if "_embedded" not in resp:
+            return None
+
+        if "sw360:licenses" not in resp["_embedded"]:
             return None
 
         resp = resp["_embedded"]["sw360:licenses"]

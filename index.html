@@ -1302,6 +1302,7 @@ was not set.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>project</strong> (<em>JSON</em>) – the new project data</p></li>
 <li><p><strong>project_id</strong> (<em>string</em>) – the id of the project to be deleted</p></li>
+<li><p><strong>add_subprojects</strong> (<em>bool</em>) – optional parameter only to add new sub-projects</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1358,12 +1359,9 @@ was not set.</p>
 <li><p><strong>release_id</strong> (<em>string</em>) – the id of the release to be requested</p></li>
 <li><p><strong>new_state</strong> (<em>string</em>) – the new mainline state of the release, one of
 (OPEN, MAINLINE, SPECIFIC, PHASEOUT, DENIED)</p></li>
-<li><p><strong>new_relation</strong> (<em>string</em>) – <p>the new relation of the release, one of
-(CONTAINED, REFERRED, UNKNOWN, DYNAMICALLY_LINKED, STATICALLY_LINKED, SIDE_BY_SIDE,</p>
-<blockquote>
-<div><p>STANDALONE, INTERNAL_USE, OPTIONAL, TO_BE_REPLACED, CODE_SNIPPET)</p>
-</div></blockquote>
-</p></li>
+<li><p><strong>new_relation</strong> (<em>string</em>) – the new relation of the release, one of
+(CONTAINED, REFERRED, UNKNOWN, DYNAMICALLY_LINKED, STATICALLY_LINKED, SIDE_BY_SIDE,
+STANDALONE, INTERNAL_USE, OPTIONAL, TO_BE_REPLACED, CODE_SNIPPET)</p></li>
 <li><p><strong>comment</strong> (<em>string</em>) – a comment</p></li>
 </ul>
 </dd>
@@ -1544,7 +1542,7 @@ using <cite>upload_comment</cite> for it. <cite>upload_type</cite> can be
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, Siemens AG.
+      &copy;2020-2022, Siemens AG.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 4.4.0</a>

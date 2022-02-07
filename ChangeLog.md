@@ -3,6 +3,7 @@
 ## NEXT
 * new method `update_project_release_relationship`.
 * original get_health_status() endpoint URL has been restored by the SW360 team.
+* fix: better check assumptions on returned data, see https://github.com/sw360/sw360python/issues/5.
 * `update_project` has a new parameter `add_subprojects` to only **add** the new
   sub-projects and not to overwrite all existing sub-projects.
 

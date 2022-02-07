@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# (c) 2019-2021 Siemens AG
+# (c) 2019-2022 Siemens AG
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -572,7 +572,127 @@ class Sw360TestProjects(unittest.TestCase):
         project["version"] = "9.99"
         project["projectType"] = "PRODUCT"
 
-        lib.update_project(project, "123")
+        sub_projects = {}
+        sub_proj = {}
+        sub_proj["projectRelationship"] = "CONTAINED"
+
+        sub_projects["12345"] = sub_proj
+        project["linkedProjects"] = sub_projects
+
+        lib.update_project(project, "123", False)
+
+    @responses.activate
+    def test_update_project_sub_projects_no_add(self):
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects/123",
+            body='{"name": "My Testproject", "linkedProjects": []}',
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        responses.add(
+            responses.PATCH,
+            url=self.MYURL + "resource/api/projects/123",
+            body="4",
+            status=202,
+            match=[
+              responses.json_params_matcher({
+                "name": "NewComponent",
+                "version": "9.99",
+                "projectType": "PRODUCT",
+                "linkedProjects": {
+                    "12345": {"projectRelationship": "CONTAINED"}
+                },
+              })
+            ]
+        )
+
+        project = {}
+        project["name"] = "NewComponent"
+        project["version"] = "9.99"
+        project["projectType"] = "PRODUCT"
+
+        sub_projects = {}
+        sub_proj = {}
+        sub_proj["projectRelationship"] = "CONTAINED"
+
+        sub_projects["12345"] = sub_proj
+        project["linkedProjects"] = sub_projects
+
+        lib.update_project(project, "123", True)
+
+    @responses.activate
+    def test_update_project_sub_projects_with_add(self):
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects/123",
+            body='{"name": "My Testproject", ' +
+                 '"linkedProjects": [' +
+                 '{ "project": "998877" }' +
+                 ']}',
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        responses.add(
+            responses.PATCH,
+            url=self.MYURL + "resource/api/projects/123",
+            body="4",
+            status=202,
+            match=[
+              responses.json_params_matcher({
+                "name": "NewComponent",
+                "version": "9.99",
+                "projectType": "PRODUCT",
+                "linkedProjects": {
+                    "12345": {"projectRelationship": "CONTAINED"},
+                    "998877": {"projectRelationship": "CONTAINED"}
+                },
+              })
+            ]
+        )
+
+        project = {}
+        project["name"] = "NewComponent"
+        project["version"] = "9.99"
+        project["projectType"] = "PRODUCT"
+
+        sub_projects = {}
+        sub_proj = {}
+        sub_proj["projectRelationship"] = "CONTAINED"
+
+        sub_projects["12345"] = sub_proj
+        project["linkedProjects"] = sub_projects
+
+        lib.update_project(project, "123", True)
+
+    @responses.activate
+    def test_update_project_no_id(self):
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.PATCH,
+            url=self.MYURL + "resource/api/projects/123",
+            body="4",
+            status=202,
+        )
+
+        project = {}
+        project["name"] = "NewComponent"
+        project["version"] = "9.99"
+        project["projectType"] = "PRODUCT"
+
+        with self.assertRaises(SW360Error) as context:
+            lib.update_project(project, None)
+
+        self.assertEqual("No project id provided!", context.exception.message)
 
     @responses.activate
     def test_update_project_failed(self):
@@ -821,6 +941,92 @@ class Sw360TestProjects(unittest.TestCase):
 
         with self.assertRaises(SW360Error) as context:
             lib.duplicate_project("123", "42")
+
+        print(context.exception)
+        self.assertEqual(404, context.exception.response.status_code)
+
+    @responses.activate
+    def test_update_project_release_relationship_no_project_id(self):
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.PATCH,
+            url=self.MYURL + "resource/api/projects/123",
+            body="4",
+            status=202,
+        )
+
+        project = {}
+        project["name"] = "NewComponent"
+        project["version"] = "9.99"
+        project["projectType"] = "PRODUCT"
+
+        with self.assertRaises(SW360Error) as context:
+            lib.update_project_release_relationship(None, "22", "state", "rel", "cmt")
+
+        self.assertEqual("No project id provided!", context.exception.message)
+
+    @responses.activate
+    def test_update_project_release_relationship_no_release_id(self):
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.PATCH,
+            url=self.MYURL + "resource/api/projects/123",
+            body="4",
+            status=202,
+        )
+
+        project = {}
+        project["name"] = "NewComponent"
+        project["version"] = "9.99"
+        project["projectType"] = "PRODUCT"
+
+        with self.assertRaises(SW360Error) as context:
+            lib.update_project_release_relationship("123", None, "state", "rel", "cmt")
+
+        self.assertEqual("No release id provided!", context.exception.message)
+
+    @responses.activate
+    def test_update_project_release_relationship_failed(self):
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.PATCH,
+            url=self.MYURL + "resource/api/projects/123/release/9988",
+            body="4",
+            status=404,
+        )
+
+        project = {}
+        project["name"] = "NewComponent"
+        project["version"] = "9.99"
+        project["projectType"] = "PRODUCT"
+
+        with self.assertRaises(SW360Error) as context:
+            lib.update_project_release_relationship("123", "9988", "state", "rel", "cmt")
+
+        self.assertEqual(404, context.exception.response.status_code)
+
+    @responses.activate
+    def test_update_project_release_relationship(self):
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.PATCH,
+            url=self.MYURL + "resource/api/projects/123/release/987",
+            body="4",
+            status=202,
+            match=[
+              responses.json_params_matcher({
+                "releaseRelation": "STANDALONE",
+                "mainlineState": "SPECIFIC",
+                "comment": "mycomment"
+              })
+            ]
+        )
+
+        lib.update_project_release_relationship("123", "987", "SPECIFIC", "STANDALONE", "mycomment")
 
 
 if __name__ == "__main__":

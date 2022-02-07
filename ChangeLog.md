@@ -1,16 +1,16 @@
 # SW360 Base Library for Python
 
-## NEXT
+## V1.2.0
 * new method `update_project_release_relationship`.
 * original get_health_status() endpoint URL has been restored by the SW360 team.
 * fix: better check assumptions on returned data, see https://github.com/sw360/sw360python/issues/5.
 * `update_project` has a new parameter `add_subprojects` to only **add** the new
   sub-projects and not to overwrite all existing sub-projects.
 
-## 1.1.0
+## V1.1.0
 * New method `duplicate_project` to create a copy of an existing project.
 
-## 1.0.0
+## V1.0.0
 * **New Features**:
   * `get_projects_by_tag` added.
   * `get_releases_by_name` added.

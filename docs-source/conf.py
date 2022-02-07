@@ -22,7 +22,7 @@ sys.path.insert(0, target2)
 # -- Project information -----------------------------------------------------
 
 project = 'Python interface for SW360'
-copyright = '2020, Siemens AG'
+copyright = '2020-2022, Siemens AG'
 author = 'Thomas Graf'
 
 

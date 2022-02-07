@@ -3,6 +3,8 @@
 ## NEXT
 * new method `update_project_release_relationship`.
 * original get_health_status() endpoint URL has been restored by the SW360 team.
+* `update_project` has a new parameter `add_subprojects` to only **add** the new
+  sub-projects and not to overwrite all existing sub-projects.
 
 ## 1.1.0
 * New method `duplicate_project` to create a copy of an existing project.

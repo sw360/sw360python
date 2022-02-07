@@ -446,7 +446,7 @@ class SW360:
 
         raise SW360Error(response, url)
 
-    def update_project(self, project, project_id):
+    def update_project(self, project: dict, project_id: str, add_subprojects=False):
         """Update an existing project
 
         API endpoint: PATCH /projects
@@ -459,8 +459,21 @@ class SW360:
         :rtype: JSON SW360 result object
         :raises SW360Error: if there is a negative HTTP response
         """
-        # 2019-04-03: error 405 - method not allowed
+        if not project_id:
+            raise SW360Error(message="No project id provided!")
+
         url = self.url + "resource/api/projects/" + project_id
+
+        if add_subprojects:
+            current = self.get_project(project_id)
+            if (current is not None and "linkedProjects" in current):
+                for sp in current["linkedProjects"]:
+                    pid = self.get_id_from_href(sp["project"])
+                    if pid not in project["linkedProjects"]:
+                        nsp = {}
+                        nsp["projectRelationship"] = sp.get("relation", "CONTAINED")
+                        project["linkedProjects"][pid] = nsp
+
         response = requests.patch(url, json=project, headers=self.api_headers)
 
         if response.ok:
@@ -608,7 +621,8 @@ class SW360:
 
         raise SW360Error(response, url)
 
-    def update_project_release_relationship(self, project_id: str, release_id: str, new_state: str,
+    def update_project_release_relationship(
+        self, project_id: str, release_id: str, new_state: str,
             new_relation: str, comment: str):
         """Update the relationship for a specific release of a project
 
@@ -618,12 +632,12 @@ class SW360:
         :type project_id: string
         :param release_id: the id of the release to be requested
         :type release_id: string
-        :param new_state: the new mainline state of the release, one of 
+        :param new_state: the new mainline state of the release, one of
          (OPEN, MAINLINE, SPECIFIC, PHASEOUT, DENIED)
         :type new_state: string
-        :param new_relation: the new relation of the release, one of 
-         (CONTAINED, REFERRED, UNKNOWN, DYNAMICALLY_LINKED, STATICALLY_LINKED, SIDE_BY_SIDE, STANDALONE,
-          INTERNAL_USE, OPTIONAL, TO_BE_REPLACED, CODE_SNIPPET)
+        :param new_relation: the new relation of the release, one of
+         (CONTAINED, REFERRED, UNKNOWN, DYNAMICALLY_LINKED, STATICALLY_LINKED, SIDE_BY_SIDE,
+          STANDALONE, INTERNAL_USE, OPTIONAL, TO_BE_REPLACED, CODE_SNIPPET)
         :type new_relation: string
         :param comment: a comment
         :type comment: string

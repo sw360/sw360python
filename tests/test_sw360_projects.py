@@ -409,7 +409,7 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects?tag=SI BP",
+            url=self.MYURL + "resource/api/projects?tag=SI BP&luceneSearch=true",
             body='{"_embedded": {"sw360:projects": [{"name": "My Testproject", "externalIds": {"com.siemens.code.project.id": "13171"}}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -427,7 +427,7 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects?tag=SI",
+            url=self.MYURL + "resource/api/projects?tag=SI&luceneSearch=true",
             body='{}',
             status=200,
             content_type="application/json",

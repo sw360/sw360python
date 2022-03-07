@@ -9,6 +9,7 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
+
 class VulnerabilitiesMixin:
     def get_all_vulnerabilities(self):
         """Get information of about all vulnerabilities

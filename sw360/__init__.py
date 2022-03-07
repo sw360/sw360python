@@ -9,4 +9,5 @@
 
 __version__ = (1, 2, 0)
 
-from .sw360_api import SW360, SW360Error  # noqa: F401
+from .sw360_api import SW360  # noqa: F401
+from .sw360error import SW360Error  # noqa: F401

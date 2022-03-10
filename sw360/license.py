@@ -9,12 +9,81 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
+from typing import Any
+
 import requests
+
+from .sw360error import SW360Error
 
 
 class LicenseMixin:
-    def download_license_info(self, project_id, filename, generator="XhtmlGenerator",
-                              variant="DISCLOSURE"):
+    def create_new_license(
+        self,
+        shortName: str,
+        fullName: str,
+        text: str,
+        checked: False,
+        license_details={},
+    ) -> Any:
+        """Create a new component
+
+        API endpoint: POST /licenses
+
+        :param shortName: short license name. i.e "MIT"
+        :param fullName: descriptive license name
+        :param text: license text
+        :param checked: if license is checked
+        :type shortname: string
+        :type fullname: string
+        :type text: string
+        :type checked: bool
+        :return: SW360 result
+        :rtype: JSON SW360 result object
+        :raises SW360Error: if there is a negative HTTP response
+        """
+
+        url = self.url + "resource/api/licenses"
+
+        license_details["shortName"] = shortName
+        license_details["fullName"] = fullName
+        license_details["text"] = text
+        license_details["checked"] = checked
+
+        response = requests.post(url, json=license_details, headers=self.api_headers)
+        if response.ok:
+            return response.json()
+
+        raise SW360Error(response, url)
+
+    def delete_license(self, license_shortname):
+        """Delete an existing license
+
+        API endpoint: PATCH /licenses
+
+        :param license_shortname: license shortname as the id
+        :type license_shortname: string
+        :return: SW360 result
+        :rtype: JSON SW360 result object
+        :raises SW360Error: if there is a negative HTTP response
+        """
+
+        if not license_shortname:
+            raise SW360Error(message="No license shortname provided!")
+
+        url = self.url + "resource/api/licenses/" + license_shortname
+        print(url)
+        response = requests.delete(
+            url, headers=self.api_headers,
+        )
+
+        if response.ok:
+            return True
+
+        raise SW360Error(response, url)
+
+    def download_license_info(
+        self, project_id, filename, generator="XhtmlGenerator", variant="DISCLOSURE"
+    ):
         """Gets the license information, aka Readme_OSS for the project
         with the given id
 
@@ -27,8 +96,15 @@ class LicenseMixin:
         """
         hdr = self.api_headers.copy()
         hdr["Accept"] = "application/*"
-        url = self.url + "resource/api/projects/" + project_id + \
-            "/licenseinfo?generatorClassName=" + generator + "&variant=" + variant
+        url = (
+            self.url
+            + "resource/api/projects/"
+            + project_id
+            + "/licenseinfo?generatorClassName="
+            + generator
+            + "&variant="
+            + variant
+        )
         req = requests.get(url, allow_redirects=True, headers=hdr)
         open(filename, "wb").write(req.content)
 

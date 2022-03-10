@@ -13,9 +13,9 @@ import unittest
 
 import responses
 
-sys.path.insert(1, "..")
+from sw360 import SW360, SW360Error
 
-from sw360 import SW360  # noqa: E402
+sys.path.insert(1, "..")
 
 
 class Sw360TestLicenses(unittest.TestCase):
@@ -122,6 +122,93 @@ class Sw360TestLicenses(unittest.TestCase):
         self.assertEqual("True", license["checked"])
         self.assertEqual("Apache-2.0", license["shortName"])
         self.assertEqual("Apache License 2.0", license["fullName"])
+
+    @responses.activate
+    def test_create_new_license(self):
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            responses.POST,
+            url=f"{self.MYURL}resource/api/licenses",
+            status=201,
+            json={
+                # server returns full license, here we only mock a part of it
+                'shortName': 'LGPL-2.0-only',
+                'fullName': 'GNU Library General Public License v2 only',
+                'checked': True,
+                '_links': {
+                    'self': {
+                        'href': f"{self.MYURL}resource/api/licenses/LGPL-2.0-only"
+                    }
+                }
+            },
+            match=[responses.json_params_matcher({
+                "shortName": "LGPL-2.0-only",
+                "fullName": "GNU Library General Public License v2 only",
+                "checked": True,
+                "text": ""})]
+        )
+        lib.create_new_license(
+            shortName="LGPL-2.0-only",
+            fullName="GNU Library General Public License v2 only",
+            text="",
+            checked=True,
+        )
+
+    @responses.activate
+    def test_create_new_license_fail(self):
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            responses.POST,
+            url=f"{self.MYURL}resource/api/licenses",
+            status=403,
+            json={
+                # server returns full license, here we only mock a part of it
+                'shortName': 'LGPL-2.0-only',
+                'fullName': 'GNU Library General Public License v2 only',
+                'checked': True,
+                '_links': {
+                    'self': {
+                        'href': f"{self.MYURL}resource/api/licenses/LGPL-2.0-only"
+                    }
+                }
+            },
+            match=[responses.json_params_matcher({
+                "shortName": "LGPL-2.0-only",
+                "fullName": "GNU Library General Public License v2 only",
+                "checked": True,
+                "text": ""})]
+        )
+
+        with self.assertRaises(SW360Error) as context:
+            lib.create_new_license(
+                shortName="LGPL-2.0-only",
+                fullName="GNU Library General Public License v2 only",
+                text="",
+                checked=True,
+            )
+        self.assertEqual(403, context.exception.response.status_code)
+
+    @responses.activate
+    def test_delete_license(self):
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            responses.DELETE,
+            url=self.MYURL + "resource/api/licenses/LGPL-2.0-only",
+            status=201)
+
+        lib.delete_license("LGPL-2.0-only")
 
 
 if __name__ == "__main__":

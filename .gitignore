@@ -31,3 +31,6 @@ sw360.egg-info/
 
 # only for special tests
 tests/sw360/
+
+# To avoid save pyenv .python-version
+.python-version

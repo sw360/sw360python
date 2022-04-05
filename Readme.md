@@ -19,7 +19,7 @@ Have a look at the documentation: https://sw360.github.io/sw360python/
 ### Installation
 
 This project is available as [Python package on PyPi.org](https://pypi.org/project/sw360/).  
-Install fossology and required dependencies:
+Install sw360 and required dependencies:
 ```shell
   pip install sw360 requests
   ```

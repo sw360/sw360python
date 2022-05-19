@@ -20,7 +20,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.5"
+python = "^3.6"
 requests = "^2.12.0"
 
 [tool.poetry.dev-dependencies]
@@ -29,7 +29,7 @@ sphinx = "^2.4.1"
 vcrpy = "^4.0.2"
 flake8 = ">=3.7.8"
 responses = "^0.12.1"
-pytest = "^6.1.2"
+pytest = "6.2.5"
 coverage = "^5.3"
 types-requests = "^2.27.11"
 

@@ -185,17 +185,6 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 pyparsing = ">=2.0.2"
 
 [[package]]
-name = "pathlib2"
-version = "2.3.6"
-description = "Object-oriented filesystem paths"
-category = "dev"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-six = "*"
-
-[[package]]
 name = "pluggy"
 version = "0.13.1"
 description = "plugin and hook calling mechanisms for python"
@@ -251,26 +240,24 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "pytest"
-version = "6.1.2"
+version = "6.2.5"
 description = "pytest: simple powerful testing with Python"
 category = "dev"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.6"
 
 [package.dependencies]
 atomicwrites = {version = ">=1.0", markers = "sys_platform == \"win32\""}
-attrs = ">=17.4.0"
+attrs = ">=19.2.0"
 colorama = {version = "*", markers = "sys_platform == \"win32\""}
 importlib-metadata = {version = ">=0.12", markers = "python_version < \"3.8\""}
 iniconfig = "*"
 packaging = "*"
-pathlib2 = {version = ">=2.2.0", markers = "python_version < \"3.6\""}
-pluggy = ">=0.12,<1.0"
+pluggy = ">=0.12,<2.0"
 py = ">=1.8.2"
 toml = "*"
 
 [package.extras]
-checkqa_mypy = ["mypy (==0.780)"]
 testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xmlschema"]
 
 [[package]]
@@ -500,10 +487,7 @@ python-versions = ">=3.5"
 PyYAML = "*"
 six = ">=1.5"
 wrapt = "*"
-yarl = [
-    {version = "<1.4", markers = "python_version == \"3.5\""},
-    {version = "*", markers = "python_version >= \"3.6\""},
-]
+yarl = {version = "*", markers = "python_version >= \"3.6\""}
 
 [[package]]
 name = "wrapt"
@@ -512,18 +496,6 @@ description = "Module for decorators, wrappers and monkey patching."
 category = "dev"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
-
-[[package]]
-name = "yarl"
-version = "1.2.0"
-description = "Yet another URL library"
-category = "dev"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-idna = ">=2.0"
-multidict = ">=4.0"
 
 [[package]]
 name = "yarl"
@@ -552,8 +524,8 @@ testing = ["pathlib2", "unittest2", "jaraco.itertools", "func-timeout"]
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.5"
-content-hash = "08fb0cea938b67bf2f7081e906cd2f2d63b8a500267cc63400493ad99b004ea6"
+python-versions = "^3.6"
+content-hash = "5be6eaa5ca872620e5f8e20d45792c6846c6065da061ce68ed51794f40ddafff"
 
 [metadata.files]
 alabaster = [
@@ -802,10 +774,6 @@ packaging = [
     {file = "packaging-20.9-py2.py3-none-any.whl", hash = "sha256:67714da7f7bc052e064859c05c595155bd1ee9f69f76557e21f051443c20947a"},
     {file = "packaging-20.9.tar.gz", hash = "sha256:5b327ac1320dc863dca72f4514ecc086f31186744b84a230374cc1fd776feae5"},
 ]
-pathlib2 = [
-    {file = "pathlib2-2.3.6-py2.py3-none-any.whl", hash = "sha256:3a130b266b3a36134dcc79c17b3c7ac9634f083825ca6ea9d8f557ee6195c9c8"},
-    {file = "pathlib2-2.3.6.tar.gz", hash = "sha256:7d8bcb5555003cdf4a8d2872c538faa3a0f5d20630cb360e518ca3b981795e5f"},
-]
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
     {file = "pluggy-0.13.1.tar.gz", hash = "sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0"},
@@ -831,8 +799,8 @@ pyparsing = [
     {file = "pyparsing-2.4.7.tar.gz", hash = "sha256:c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1"},
 ]
 pytest = [
-    {file = "pytest-6.1.2-py3-none-any.whl", hash = "sha256:4288fed0d9153d9646bfcdf0c0428197dba1ecb27a33bb6e031d002fa88653fe"},
-    {file = "pytest-6.1.2.tar.gz", hash = "sha256:c0a7e94a8cdbc5422a51ccdad8e6f1024795939cc89159a0ae7f0b316ad3823e"},
+    {file = "pytest-6.2.5-py3-none-any.whl", hash = "sha256:7310f8d27bc79ced999e760ca304d69f6ba6c6649c0b60fb0e04a4a77cacc134"},
+    {file = "pytest-6.2.5.tar.gz", hash = "sha256:131b36680866a76e6781d13f101efb86cf674ebb9762eb70d3082b6f29889e89"},
 ]
 pytz = [
     {file = "pytz-2021.3-py2.py3-none-any.whl", hash = "sha256:3672058bc3453457b622aab7a1c3bfd5ab0bdae451512f6cf25f64ed37f5b87c"},
@@ -975,19 +943,6 @@ wrapt = [
     {file = "wrapt-1.13.3.tar.gz", hash = "sha256:1fea9cd438686e6682271d36f3481a9f3636195578bab9ca3382e2f5f01fc185"},
 ]
 yarl = [
-    {file = "yarl-1.2.0-cp34-cp34m-manylinux1_i686.whl", hash = "sha256:ee506bc321b455b4a410724ec9c0ad4940932553523c6e7b69f0155269793734"},
-    {file = "yarl-1.2.0-cp34-cp34m-manylinux1_x86_64.whl", hash = "sha256:4c2d780cb0b669bf027da57a0834d4968ed55c89f1593cfd11be8108bff699e2"},
-    {file = "yarl-1.2.0-cp34-cp34m-win32.whl", hash = "sha256:8765ebd034d0dc812a311b31251dffb434c753fc7124487912a5bca7baeb5c9b"},
-    {file = "yarl-1.2.0-cp34-cp34m-win_amd64.whl", hash = "sha256:ceae77215870ecaba555b2e74dd308de9abe6d44b0eecafae6ecef4a14e289f8"},
-    {file = "yarl-1.2.0-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:843c90c7a2756c033e9bb4464f789e21bc33f561c1e6c0ef7569f452b33a761a"},
-    {file = "yarl-1.2.0-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:3278209d78d534d59ee44f595e54ee4d3a164fa77319ffbd418b1978edf71748"},
-    {file = "yarl-1.2.0-cp35-cp35m-win32.whl", hash = "sha256:32a52453fc20153e34d2cf99f1a2f4c3d144e320896f1f89b5ee89bb41e877be"},
-    {file = "yarl-1.2.0-cp35-cp35m-win_amd64.whl", hash = "sha256:48f3807855b69414a41e70908e502d6dbf563e3eca22f73d1344aad9270a4ff9"},
-    {file = "yarl-1.2.0-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:a2dda88459cfe50f4f6a225d2f51e3fffb0c3c18f4c3a3ac38d9dc054f8c37b0"},
-    {file = "yarl-1.2.0-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:ac574aa2c45185e038489ff8f3bebd9269dd8327e86c72d9a7f83a1d3ad9eec4"},
-    {file = "yarl-1.2.0-cp36-cp36m-win32.whl", hash = "sha256:ce5963f2451661a435721d8907a824daea52aad6e3bee9b4104e75d19269cdae"},
-    {file = "yarl-1.2.0-cp36-cp36m-win_amd64.whl", hash = "sha256:cec06d4272c2ced65308daf63360daeea5061c030fe28f75e499afd735cee860"},
-    {file = "yarl-1.2.0.tar.gz", hash = "sha256:fbbb10276d53629c0300cfd4a2092e3bbfa9a5aa95cd49808e01c59492052077"},
     {file = "yarl-1.7.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:f2a8508f7350512434e41065684076f640ecce176d262a7d54f0da41d99c5a95"},
     {file = "yarl-1.7.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:da6df107b9ccfe52d3a48165e48d72db0eca3e3029b5b8cb4fe6ee3cb870ba8b"},
     {file = "yarl-1.7.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:a1d0894f238763717bdcfea74558c94e3bc34aeacd3351d769460c1a586a8b05"},

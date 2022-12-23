@@ -1,4 +1,4 @@
-﻿# -------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # (c) 2020 Siemens AG
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
@@ -10,6 +10,7 @@
 import os
 import sys
 import tempfile
+from unittest.mock import MagicMock, patch
 import warnings
 import unittest
 
@@ -406,6 +407,41 @@ class Sw360TestAttachments(unittest.TestCase):
         self.assertEqual("500", context.exception.details["status"])
         self.assertEqual("Internal Server Error", context.exception.details["error"])
         self.assertEqual("forbidded", context.exception.details["message"])
+
+    @responses.activate
+    def test_upload_release_attachment_returns_202(self):
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        lib.force_no_session = True
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        url = self.MYURL + "resource/api/releases/1234/attachments"
+        body = '{"timestamp": "2020-12-10T07:22:06.1685Z", "status": "202", "message": "Moderation request is created"}'
+        responses.add(
+            method=responses.POST,
+            url=url,  # noqa
+            body=body,  # noqa
+            status=202,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        _, filename = tempfile.mkstemp()
+        self.assertTrue(os.path.exists(filename))
+
+        mocked_logger = MagicMock()
+        with patch("sw360.attachments.logger", mocked_logger):
+            lib.upload_release_attachment("1234", filename)
+            mocked_logger.warning.assert_called_with(
+                f'Attachment upload was accepted by {url} but might not be visible yet: {body}'
+            )
+
+        try:
+            os.remove(filename)
+        except OSError:
+            # ignore
+            pass
 
     @responses.activate
     def test_upload_component_attachment(self):

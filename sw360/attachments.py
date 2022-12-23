@@ -12,8 +12,13 @@
 import json
 import os
 import requests
+import logging
 
 from .sw360error import SW360Error
+from http import HTTPStatus
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.WARNING)
 
 
 class AttachmentsMixin:
@@ -206,6 +211,10 @@ class AttachmentsMixin:
             ),
         }
         response = requests.post(url, headers=self.api_headers, files=file_data)
+        if response.status_code == HTTPStatus.ACCEPTED:
+            logger.warning(
+                f"Attachment upload was accepted by {url} but might not be visible yet: {response.text}"
+            )
         if not response.ok:
             raise SW360Error(response, url)
 

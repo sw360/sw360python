@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# (c) 2020 Siemens AG
+# (c) 2020-2023 Siemens AG
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -417,7 +417,8 @@ class Sw360TestAttachments(unittest.TestCase):
         self.assertTrue(actual)
 
         url = self.MYURL + "resource/api/releases/1234/attachments"
-        body = '{"timestamp": "2020-12-10T07:22:06.1685Z", "status": "202", "message": "Moderation request is created"}'
+        body = '{"timestamp": "2020-12-10T07:22:06.1685Z",'
+        + '"status": "202", "message": "Moderation request is created"}'
         responses.add(
             method=responses.POST,
             url=url,  # noqa

@@ -3,6 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+   SPDX-FileCopyrightText: (c) 2019-2023 Siemens
+   SPDX-License-Identifier: MIT
+
 Welcome to Python interface for SW360!
 ======================================
 

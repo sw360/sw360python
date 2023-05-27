@@ -10,6 +10,7 @@
 [![PyPI version](https://img.shields.io/badge/pypi%20package-1.2.1-green)](https://pypi.org/project/sw360/)
 [![Static checks](https://github.com/sw360/sw360python/actions/workflows/python-package.yml/badge.svg)](https://github.com/sw360/sw360python/actions/workflows/python-package.yml)
 [![Unit tests](https://github.com/sw360/sw360python/actions/workflows/unit-test.yml/badge.svg)](https://github.com/sw360/sw360python/actions/workflows/unit-test.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/tngraf/6ab639b6f9d1f6161d3db52d348d2997/raw/666fa870981726e1fa3469b6aa668c20fdd9d1b2/sw360python-cobertura-coverage.json&color=green)](https://github.com/sw360/sw360python/actions/workflows/unit-test.yml)
 [![REUSE status](https://api.reuse.software/badge/git.fsfe.org/reuse/api)](https://api.reuse.software/info/git.fsfe.org/reuse/api)
 
 This Python project implements the REST API of [SW360](https://www.eclipse.org/sw360/)

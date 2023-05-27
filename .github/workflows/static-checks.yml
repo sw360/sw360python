@@ -46,10 +46,6 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         poetry run flake8 . --count --exit-zero --max-line-length=127 --statistics
 
-    - name: Run isort
-      run: |
-        poetry run isort .
-
     - name: markdownlint-cli
       uses: nosborn/github-action-markdown-cli@v3.3.0
       with:

@@ -2,49 +2,61 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
 # SPDX-FileCopyrightText: (c) 2022-2023 Siemens
+# Author: thomas.graf@siemens.com
 # SPDX-License-Identifier: MIT
 
-name: Static checks
+name: Static Checks
 
 on:
   push:
+    branches: [ "main" ]
   pull_request:
+    branches: [ "main" ]
 
 jobs:
-  check:
+  build:
 
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        container:
-        - 'python:3.7-slim'
-        - 'python:3.8-slim'
-        - 'python:3.9-slim'
-
-    container: ${{ matrix.container }}
+        python-version: ["3.10"]
 
     steps:
     - uses: actions/checkout@v3
-
-    - name: Install host dependencies
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
       run: |
-        apt-get -qq update
-        apt-get install -qq gcc git
-        rm -rf /var/lib/apt/lists/*
-    - name: Install Python dependencies
-      run: |
+        # update pip
         python -m pip install --upgrade pip
-        pip install poetry
-        poetry install
+
+        # install poetry
+        python -m pip install poetry
+
+        # install all dependencies using poetry
+        poetry install --no-root
+
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        # poetry run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         poetry run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        
-        # exit-zero treats all errors as warnings
-        # poetry run flake8 . --count --exit-zero --statistics
-        poetry run flake8 . --count --exit-zero --statistics
-#    - name: Check format with black
-#      run: |
- #       poetry run black . --check --diff
+
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        poetry run flake8 . --count --exit-zero --max-line-length=127 --statistics
+
+    - name: Run isort
+      run: |
+        poetry run isort .
+
+    - name: markdownlint-cli
+      uses: nosborn/github-action-markdown-cli@v3.3.0
+      with:
+        files: .
+        config_file: .markdownlint.yaml
+        dot: true
+        # ignore_files: examples/ignore/*
+        # ignore_path: examples/.markdownlintignore
+        # rules: examples/rules/custom.js

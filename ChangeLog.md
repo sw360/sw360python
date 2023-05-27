@@ -1,10 +1,14 @@
 # SW360 Base Library for Python
 
+## NEXT
+
+* dependency updates to fix requests CVE-2023-32681.
+
 ## V1.2.1
 
 * dependency updates to mitigate potential security vulnerabilities.
 * markdown style checks introduced.
-* logging introduced, espcially to show a warning when adding an attachment  
+* logging introduced, especially to show a warning when adding an attachment  
   returns is not 201 (created) but 202 (accepted).
 
 ## V1.2.0

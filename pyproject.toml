@@ -24,7 +24,8 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.7" # because 3.7 is the minimum requirement for yarl
-requests = "^2.31.0" # fix CVE-2023-32681 
+requests = "^2.31.0" # fix CVE-2023-32681
+urllib3 = "1.26.15"
 
 [tool.poetry.dev-dependencies]
 colorama = "0.3.7"
@@ -32,7 +33,7 @@ sphinx = "^2.4.1"
 vcrpy = "4.0.2"
 yarl = "1.8.2" # force this version because 1.7.2 will not install
 flake8 = ">=3.7.8"
-responses = "^0.12.1"
+responses = "^0.17"
 pytest = "^7.2.2"
 coverage = "5.3"
 types-requests = "2.27.11"

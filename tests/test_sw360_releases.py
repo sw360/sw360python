@@ -268,7 +268,7 @@ class Sw360TestReleases(unittest.TestCase):
               }
             },
             match=[
-              responses.json_params_matcher({
+              responses.matchers.json_params_matcher({
                 "name": "NewComponent", "version": "1.0.0",
                 "componentId": "9876"
               })
@@ -293,7 +293,7 @@ class Sw360TestReleases(unittest.TestCase):
             },
             status=409,
             match=[
-              responses.json_params_matcher({
+              responses.matchers.json_params_matcher({
                 "name": "NewComponent", "version": "1.0.0",
                 "componentId": "9876"
               })
@@ -396,7 +396,7 @@ class Sw360TestReleases(unittest.TestCase):
             url=self.MYURL + "resource/api/releases/123",
             body="4",
             match=[
-              responses.json_params_matcher({"externalIds": {"already-existing": "must-be-kept", "package-url": "pkg:deb/debian/debootstrap?type=source"}})  # noqa
+              responses.matchers.json_params_matcher({"externalIds": {"already-existing": "must-be-kept", "package-url": "pkg:deb/debian/debootstrap?type=source"}})  # noqa
             ]
         )
 

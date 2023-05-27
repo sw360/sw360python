@@ -162,7 +162,7 @@ class Sw360TestVendors(unittest.TestCase):
             body='{"status": "success"}',
             status=201,
             match=[
-              responses.json_params_matcher({
+              responses.matchers.json_params_matcher({
                   "url": "https://github.com/tngraf",
                   "shortName": "tngraf",
                   "fullName": "Thomas Graf"
@@ -192,7 +192,7 @@ class Sw360TestVendors(unittest.TestCase):
             body='{"status": "success"}',
             status=403,
             match=[
-              responses.json_params_matcher({
+              responses.matchers.json_params_matcher({
                   "url": "https://github.com/tngraf",
                   "shortName": "tngraf",
                   "fullName": "Thomas Graf"
@@ -241,7 +241,7 @@ class Sw360TestVendors(unittest.TestCase):
             body="4",
             status=201,
             match=[
-              responses.json_params_matcher({
+              responses.matchers.json_params_matcher({
                   "shortName": "xxx",
                   })
             ],

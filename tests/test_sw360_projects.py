@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2019-2022 Siemens
+# Copyright (c) 2019-2023 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -515,7 +515,7 @@ class Sw360TestProjects(unittest.TestCase):
                 }
             },
             match=[
-              responses.json_params_matcher({
+              responses.matchers.json_params_matcher({
                 "name": "NewProduct", "version": "42",
                 "description": "Example Product",
                 "projectType": "PRODUCT", "visibility": "EVERYONE",
@@ -541,7 +541,7 @@ class Sw360TestProjects(unittest.TestCase):
             },
             status=409,
             match=[
-              responses.json_params_matcher({
+              responses.matchers.json_params_matcher({
                 "name": "NewProduct", "version": "42",
                 "description": "Example Product",
                 "projectType": "PRODUCT", "visibility": "EVERYONE",
@@ -600,7 +600,7 @@ class Sw360TestProjects(unittest.TestCase):
             body="4",
             status=202,
             match=[
-              responses.json_params_matcher({
+              responses.matchers.json_params_matcher({
                 "name": "NewComponent",
                 "version": "9.99",
                 "projectType": "PRODUCT",
@@ -647,7 +647,7 @@ class Sw360TestProjects(unittest.TestCase):
             body="4",
             status=202,
             match=[
-              responses.json_params_matcher({
+              responses.matchers.json_params_matcher({
                 "name": "NewComponent",
                 "version": "9.99",
                 "projectType": "PRODUCT",
@@ -826,7 +826,7 @@ class Sw360TestProjects(unittest.TestCase):
             url=self.MYURL + "resource/api/projects/123",
             body="4",
             match=[
-              responses.json_params_matcher({"externalIds": {"already-existing": "must-be-kept", "package-url": "pkg:deb/debian/debootstrap?type=source"}})  # noqa
+              responses.matchers.json_params_matcher({"externalIds": {"already-existing": "must-be-kept", "package-url": "pkg:deb/debian/debootstrap?type=source"}})  # noqa
             ]
         )
 
@@ -906,7 +906,7 @@ class Sw360TestProjects(unittest.TestCase):
                 },
             },
             match=[
-              responses.json_params_matcher({
+              responses.matchers.json_params_matcher({
                 "version": "42",
                 'clearingState': 'OPEN',
               })
@@ -1018,7 +1018,7 @@ class Sw360TestProjects(unittest.TestCase):
             body="4",
             status=202,
             match=[
-              responses.json_params_matcher({
+              responses.matchers.json_params_matcher({
                 "releaseRelation": "STANDALONE",
                 "mainlineState": "SPECIFIC",
                 "comment": "mycomment"

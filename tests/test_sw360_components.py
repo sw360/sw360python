@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2020 Siemens
+# Copyright (c) 2020-2023 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -310,7 +310,7 @@ class Sw360TestComponents(unittest.TestCase):
             url=self.MYURL + "resource/api/components/bc75c910ca9866886cb4d7b3a301061f",
             body="4",
             match=[
-              responses.json_params_matcher({"externalIds": {"already-existing": "must-be-kept", "package-url": "pkg:deb/debian/debootstrap?type=source"}})  # noqa
+              responses.matchers.json_params_matcher({"externalIds": {"already-existing": "must-be-kept", "package-url": "pkg:deb/debian/debootstrap?type=source"}})  # noqa
             ]
         )
 
@@ -365,7 +365,7 @@ class Sw360TestComponents(unittest.TestCase):
             url=self.MYURL + "resource/api/components/bc75c910ca9866886cb4d7b3a301061f",
             body="4",
             match=[
-              responses.json_params_matcher({"externalIds": {"package-url": "new-one"}})
+              responses.matchers.json_params_matcher({"externalIds": {"package-url": "new-one"}})
             ]
         )
 
@@ -398,7 +398,7 @@ class Sw360TestComponents(unittest.TestCase):
             url=self.MYURL + "resource/api/components/bc75c910ca9866886cb4d7b3a301061f",
             body="4",
             match=[
-              responses.json_params_matcher({"externalIds": {}})
+              responses.matchers.json_params_matcher({"externalIds": {}})
             ]
         )
 
@@ -431,7 +431,7 @@ class Sw360TestComponents(unittest.TestCase):
             url=self.MYURL + "resource/api/components/bc75c910ca9866886cb4d7b3a301061f",
             body="4",
             match=[
-                responses.json_params_matcher(
+                responses.matchers.json_params_matcher(
                     {
                         "externalIds": {"xxx": "pkg:deb/debian/debootstrap?type=source"}
                     }
@@ -468,7 +468,7 @@ class Sw360TestComponents(unittest.TestCase):
             url=self.MYURL + "resource/api/components/bc75c910ca9866886cb4d7b3a301061f",
             body="4",
             match=[
-              responses.json_params_matcher({"externalIds": {"package-url": "pkg:deb/debian/debootstrap?type=source"}})  # noqa
+              responses.matchers.json_params_matcher({"externalIds": {"package-url": "pkg:deb/debian/debootstrap?type=source"}})  # noqa
             ]
         )
 
@@ -498,7 +498,7 @@ class Sw360TestComponents(unittest.TestCase):
                 }
             },
             match=[
-              responses.json_params_matcher({
+              responses.matchers.json_params_matcher({
                 "name": "NewComponent",
                 "componentType": "OSS",
                 "description": "Illustrative example component",
@@ -531,7 +531,7 @@ class Sw360TestComponents(unittest.TestCase):
             },
             status=409,
             match=[
-              responses.json_params_matcher({
+              responses.matchers.json_params_matcher({
                 "name": "NewComponent",
                 "componentType": "OSS",
                 "description": "Illustrative example component",

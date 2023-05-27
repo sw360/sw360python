@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2020 Siemens
+# Copyright (c) 2020-2023 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -145,7 +145,7 @@ class Sw360TestLicenses(unittest.TestCase):
                     }
                 }
             },
-            match=[responses.json_params_matcher({
+            match=[responses.matchers.json_params_matcher({
                 "shortName": "LGPL-2.0-only",
                 "fullName": "GNU Library General Public License v2 only",
                 "checked": True,
@@ -180,7 +180,7 @@ class Sw360TestLicenses(unittest.TestCase):
                     }
                 }
             },
-            match=[responses.json_params_matcher({
+            match=[responses.matchers.json_params_matcher({
                 "shortName": "LGPL-2.0-only",
                 "fullName": "GNU Library General Public License v2 only",
                 "checked": True,

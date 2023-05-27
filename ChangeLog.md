@@ -8,7 +8,8 @@
 ## NEXT
 
 * dependency updates to fix requests CVE-2023-32681.
-* be REUSE compliant
+* be REUSE compliant.
+* get rid of json_params_matcher deprecation warning.
 
 ## V1.2.1
 

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2018-2023 Siemens
+# SPDX-License-Identifier: MIT
+
 [flake8]
 exclude = .git,__pycache__
 max-complexity = 10

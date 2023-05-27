@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# (c) 2022 BMW CarIT GmbH
+# Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: helio.chissini-de-castro@bmw.de
 #

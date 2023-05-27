@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2022-2023 Siemens
+# SPDX-License-Identifier: MIT
+
 name: Build documentation and deploy
 on: [push]
 jobs:

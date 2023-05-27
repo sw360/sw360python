@@ -1,5 +1,8 @@
 # This workflow will install all necessary Python dependencies and run the unit tests
 
+# SPDX-FileCopyrightText: (c) 2022-2023 Siemens
+# SPDX-License-Identifier: MIT
+
 name: Unit tests
 
 on:

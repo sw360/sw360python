@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2018-2023 Siemens
+# SPDX-License-Identifier: MIT
+
 [tool.poetry]
 name = "sw360"
 version = "1.2.1"

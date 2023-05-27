@@ -1,5 +1,8 @@
 # EditorConfig is awesome: https://EditorConfig.org
 
+# SPDX-FileCopyrightText: (c) 2018-2023 Siemens
+# SPDX-License-Identifier: MIT
+
 # top-most EditorConfig file
 root = true
 

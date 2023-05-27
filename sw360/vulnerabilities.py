@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------------------
-# (c) 2019-2022 Siemens AG
-# (c) 2022 BMW CarIT GmbH
+# Copyright (c) 2019-2022 Siemens
+# Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
 # Authors: helio.chissini-de-castro@bmw.de

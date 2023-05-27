@@ -1,3 +1,8 @@
+<!--
+# SPDX-FileCopyrightText: (c) 2019-2023 Siemens
+# SPDX-License-Identifier: MIT
+-->
+
 # SW360 Base Library for Python
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/sw360/sw360python/blob/master/License.md)
@@ -5,6 +10,7 @@
 [![PyPI version](https://img.shields.io/badge/pypi%20package-1.2.1-green)](https://pypi.org/project/sw360/)
 [![Static checks](https://github.com/sw360/sw360python/actions/workflows/python-package.yml/badge.svg)](https://github.com/sw360/sw360python/actions/workflows/python-package.yml)
 [![Unit tests](https://github.com/sw360/sw360python/actions/workflows/unit-test.yml/badge.svg)](https://github.com/sw360/sw360python/actions/workflows/unit-test.yml)
+[![REUSE status](https://api.reuse.software/badge/git.fsfe.org/reuse/api)](https://api.reuse.software/info/git.fsfe.org/reuse/api)
 
 This Python project implements the REST API of [SW360](https://www.eclipse.org/sw360/)
 and allows an easy way to interact with SW360.

@@ -1,8 +1,14 @@
+<!--
+# SPDX-FileCopyrightText: (c) 2019-2023 Siemens
+# SPDX-License-Identifier: MIT
+-->
+
 # SW360 Base Library for Python
 
 ## NEXT
 
 * dependency updates to fix requests CVE-2023-32681.
+* be REUSE compliant
 
 ## V1.2.1
 

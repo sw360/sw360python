@@ -26,13 +26,19 @@ jobs:
 
     - name: Install dependencies
       run: |
+        # update pip
         python -m pip install --upgrade pip
-        pip install pytest coverage codecov requests responses 
+
+        # install poetry
+        python -m pip install poetry
+
+        # install all dependencies using poetry
+        poetry install --no-root
 
     - name: Test with pytest
       run: |
         # run tests with coverage and pytest
-        coverage run -m pytest
-        coverage report -m --omit "*/site-packages/*.py"
-        coverage html --omit "*/site-packages/*.py"
-#        codecov -t ${{ secrets.CODECOV_TOKEN }}
+        poetry run coverage run -m pytest
+        poetry run coverage report -m --omit "*/site-packages/*.py",*/tests/*
+        poetry run coverage html --omit "*/site-packages/*.py",*/tests/*
+        poetry run coverage xml

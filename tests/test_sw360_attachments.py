@@ -217,6 +217,37 @@ class Sw360TestAttachments(unittest.TestCase):
         os.removedirs(tmpdir)
 
     @responses.activate
+    def test_download_release_attachment_404(self):
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        lib.force_no_session = True
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        url = self.MYURL + "resource/api/releases/1234/attachments/5678"
+        responses.add(
+            method=responses.GET,
+            url=url,
+            body='xxxx',
+            status=404,
+            content_type="application/text",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        tmpdir = tempfile.mkdtemp()
+        filename = os.path.join(tmpdir, "test_attachment.txt")
+        if os.path.exists(filename):
+            os.remove(filename)
+
+        self.assertFalse(os.path.exists(filename))
+        with self.assertRaises(SW360Error) as context:
+            lib.download_release_attachment(filename, "1234", "5678")
+        self.assertFalse(os.path.exists(filename))
+        self.assertEqual(context.exception.url, url)
+        self.assertEqual(context.exception.response.status_code, 404)
+        os.removedirs(tmpdir)
+
+    @responses.activate
     def test_download_project_attachment(self):
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True

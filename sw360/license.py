@@ -22,7 +22,7 @@ class LicenseMixin:
         shortName: str,
         fullName: str,
         text: str,
-        checked: False,
+        checked: bool = False,
         license_details={},
     ) -> Any:
         """Create a new component

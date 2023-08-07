@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2022 Siemens
+# Copyright (c) 2019-2023 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -63,7 +63,7 @@ class ProjectMixin:
         resp = self.api_get(url)
         return resp
 
-    def get_projects(self, all_details=False, page=-1, page_size=-1):
+    def get_projects(self, all_details: bool = False, page: int = -1, page_size: int = -1):
         """Get all projects
 
         API endpoint: GET /projects
@@ -133,7 +133,7 @@ class ProjectMixin:
 
         return resp
 
-    def get_projects_by_name(self, name):
+    def get_projects_by_name(self, name: str):
         """Get a project by its name
 
         API endpoint: GET /projects
@@ -157,7 +157,7 @@ class ProjectMixin:
         resp = resp["_embedded"]["sw360:projects"]
         return resp
 
-    def get_projects_by_external_id(self, ext_id_name, ext_id_value=""):
+    def get_projects_by_external_id(self, ext_id_name: str, ext_id_value: str = ""):
         """Get projects by external id. `ext_id_value` can be left blank to
         search for all projects with `ext_id_name`.
 
@@ -185,7 +185,7 @@ class ProjectMixin:
         resp = resp["_embedded"]["sw360:projects"]
         return resp
 
-    def get_projects_by_group(self, group, all_details=False):
+    def get_projects_by_group(self, group: str, all_details: bool = False):
         """Get projects by group.
 
         API endpoint: GET /projects?group=
@@ -213,7 +213,7 @@ class ProjectMixin:
         resp = resp["_embedded"]["sw360:projects"]
         return resp
 
-    def get_projects_by_tag(self, tag):
+    def get_projects_by_tag(self, tag: str):
         """Get projects by tag.
 
         API endpoint: GET /projects?tag=
@@ -238,7 +238,7 @@ class ProjectMixin:
         resp = resp["_embedded"]["sw360:projects"]
         return resp
 
-    def get_project_vulnerabilities(self, project_id):
+    def get_project_vulnerabilities(self, project_id: str):
         """Get the security vulnerabilities for the specified project.
 
         API endpoint: GET /projects/id/vulnerabilities

@@ -61,7 +61,7 @@ class SW360OAuth2:
         self._client_id = data["client_id"]
         self._client_secret = data["client_secret"]
 
-    def create_client(self, description: str, writeable: False) -> None:
+    def create_client(self, description: str, writeable: bool = False) -> None:
         """Create an OAuth2 client
 
         Args:

@@ -169,7 +169,10 @@ class AttachmentsMixin:
         hdr = self.api_headers.copy()
         hdr["Accept"] = "application/*"
         req = requests.get(download_url, allow_redirects=True, headers=hdr)
-        open(filename, "wb").write(req.content)
+        if req.ok:
+            open(filename, "wb").write(req.content)
+        else:
+            raise SW360Error(req, download_url)
 
     def _upload_resource_attachment(self, resource_type, resource_id, upload_file,
                                     upload_type="SOURCE", upload_comment=""):

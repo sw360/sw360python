@@ -7,6 +7,8 @@
 
 ## NEXT
 
+* fix: download_xxx_attachment now raises an SW360Error for failed downloads
+  instead of silently creating a file containing the JSON answer
 * dependency updates to fix requests CVE-2023-32681.
 * be REUSE compliant.
 * get rid of json_params_matcher deprecation warning.

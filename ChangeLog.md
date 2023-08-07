@@ -5,7 +5,7 @@
 
 # SW360 Base Library for Python
 
-## NEXT
+## V1.2.2
 
 * fix: download_xxx_attachment now raises an SW360Error for failed downloads
   instead of silently creating a file containing the JSON answer

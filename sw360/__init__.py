@@ -12,3 +12,7 @@ __version__ = (1, 2, 2)
 from .sw360_api import SW360  # noqa: F401
 from .sw360error import SW360Error  # noqa: F401
 from .sw360oauth2 import SW360OAuth2  # noqa: F401
+from .sw360_objects import Component, Release, Attachment, Project
+
+__all__ = ["SW360", "SW360Error", "SW360OAuth2",
+           "Component", "Release", "Attachment", "Project"]

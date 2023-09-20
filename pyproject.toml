@@ -26,6 +26,7 @@ classifiers = [
 python = "^3.7" # because 3.7 is the minimum requirement for yarl
 requests = "^2.31.0" # fix CVE-2023-32681
 urllib3 = "1.26.15"
+packageurl-python = ">=0.8, <1.0"
 
 [tool.poetry.dev-dependencies]
 colorama = "0.3.7"

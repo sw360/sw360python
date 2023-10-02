@@ -5,6 +5,11 @@
 
 # SW360 Base Library for Python
 
+## V1.2.3
+
+* `get_projects` fixed - paging work now as expected.
+* `get_projects` now also supports a sort order.
+
 ## V1.2.2
 
 * fix: download_xxx_attachment now raises an SW360Error for failed downloads

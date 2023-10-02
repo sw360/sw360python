@@ -63,13 +63,19 @@ class ProjectMixin:
         resp = self.api_get(url)
         return resp
 
-    def get_projects(self, all_details: bool = False, page: int = -1, page_size: int = -1):
+    def get_projects(self, all_details: bool = False, page: int = -1, page_size: int = -1, sort: str = ""):
         """Get all projects
 
         API endpoint: GET /projects
 
         :param all_details: retrieve all project details (optional))
         :type all_details: bool
+        :param page: page to retrieve
+        :type page: int
+        :param page_size: page size to use
+        :type page_size: int
+        :param sort: sort order for the projects ("name,desc"; "name,asc")
+        :type sort: str
         :return: list of projects
         :rtype: list of JSON project objects
         :raises SW360Error: if there is a negative HTTP response
@@ -80,8 +86,13 @@ class ProjectMixin:
             full_url = full_url + "?allDetails=true"
 
         if page > -1:
-            full_url = full_url + "?page=" + str(page) + "&page_entries="
-            full_url = full_url + str(page_size) + "&sort=name%2Cdesc"
+            full_url = full_url + "&page=" + str(page)
+            full_url = full_url + "&page_entries=" + str(page_size)
+
+        if sort:
+            # ensure HTML encoding
+            sort = sort.replace(",", "%2C")
+            full_url = full_url + "&sort=" + sort
 
         resp = self.api_get(full_url)
         return resp

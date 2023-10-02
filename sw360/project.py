@@ -83,16 +83,16 @@ class ProjectMixin:
 
         full_url = self.url + "resource/api/projects"
         if all_details:
-            full_url = full_url + "?allDetails=true"
+            full_url = self._add_param(full_url, "allDetails=true")
 
         if page > -1:
-            full_url = full_url + "&page=" + str(page)
-            full_url = full_url + "&page_entries=" + str(page_size)
+            full_url = self._add_param(full_url, "page=" + str(page))
+            full_url = self._add_param(full_url, "page_entries=" + str(page_size))
 
         if sort:
             # ensure HTML encoding
             sort = sort.replace(",", "%2C")
-            full_url = full_url + "&sort=" + sort
+            full_url = self._add_param(full_url, "sort=" + sort)
 
         resp = self.api_get(full_url)
         return resp

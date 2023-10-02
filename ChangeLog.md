@@ -5,10 +5,18 @@
 
 # SW360 Base Library for Python
 
-## V1.2.3
+## V1.3.0
 
 * `get_projects` fixed - paging work now as expected.
 * `get_projects` now also supports a sort order.
+* `get_all_releases` now also support paging.
+  **IMPORTANT:** Due to compatibility reasons `get_all_releases` without `page` parameter returns
+  a list of releases. But when the `page` parameter is used, a dict will be returned that also contains
+  information about paging.
+* `get_all_components` now supports `allDetails` and `sort`.
+  **IMPORTANT:** Due to compatibility reasons `get_all_components` without `page` parameter returns
+  a list of components. But when the `page` parameter is used, a dict will be returned that also contains
+  information about paging.  
 
 ## V1.2.2
 

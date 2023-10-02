@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2022 Siemens
+# Copyright (c) 2019-2023 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -60,27 +60,42 @@ class ReleasesMixin:
             resp = resp["_embedded"]["sw360:releases"]
         return resp
 
-    def get_all_releases(self, fields=None, all_details=False):
+    def get_all_releases(self, fields=None, all_details=False, page: int = -1, page_size: int = -1, sort: str = ""):
         """Get information of about all releases
 
         API endpoint: GET /releases
 
         :param all_details: retrieve all project details (optional))
         :type all_details: bool
+        :param page: page to retrieve
+        :type page: int
+        :param page_size: page size to use
+        :type page_size: int
+        :param sort: sort order for the releases ("name,desc"; "name,asc")
+        :type sort: str
         :return: list of releases
         :rtype: list of JSON release objects
         :raises SW360Error: if there is a negative HTTP response
         """
         full_url = self.url + "resource/api/releases"
         if all_details:
-            full_url = full_url + "?allDetails=true"
+            full_url = self._add_param(full_url, "allDetails=true")
 
         if fields:
-            full_url = full_url + "?fields=" + fields
+            full_url = self._add_param(full_url, "fields=" + fields)
+
+        if page > -1:
+            full_url = self._add_param(full_url, "page=" + str(page))
+            full_url = self._add_param(full_url, "page_entries=" + str(page_size))
+
+        if sort:
+            # ensure HTML encoding
+            sort = sort.replace(",", "%2C")
+            full_url = self._add_param(full_url, "sort=" + sort)
 
         resp = self.api_get(full_url)
 
-        if resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
+        if page == -1 and resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
             resp = resp["_embedded"]["sw360:releases"]
         return resp
 

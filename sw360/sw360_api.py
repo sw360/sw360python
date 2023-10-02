@@ -173,6 +173,15 @@ class SW360(
 
         return (old_value, ext_id_data, update)
 
+    def _add_param(self, url: str, param: str) -> str:
+        """Add the given parameter to the given url"""
+        if "?" in url:
+            url = url + "&"
+        else:
+            url = url + "?"
+
+        return url + param
+
     # ----- Health -------------------------------------------------------
 
     def get_health_status(self):

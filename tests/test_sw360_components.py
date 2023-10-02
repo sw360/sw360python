@@ -127,14 +127,15 @@ class Sw360TestComponents(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/components?fields=ownerCountry?page=1&page_entries=2&sort=name%2Cdesc",  # noqa
+            url=self.MYURL + "resource/api/components?fields=ownerCountry&page=1&page_entries=2",  # noqa
             body='{"_embedded": {"sw360:components": [{"name": "Tethys.Logging", "ownerCountry": "DE", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
             status=200,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        components = lib.get_all_components("ownerCountry", 1, 2)
+        dict = lib.get_all_components("ownerCountry", 1, 2)
+        components = dict["_embedded"]["sw360:components"]
         self.assertIsNotNone(components)
         self.assertTrue(len(components) > 0)
         self.assertEqual("Tethys.Logging", components[0]["name"])

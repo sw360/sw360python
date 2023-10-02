@@ -212,7 +212,7 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects?page=1&page_entries=2&sort=name%2Cdesc",
+            url=self.MYURL + "resource/api/projects?page=1&page_entries=2",
             body='{"_embedded": {"sw360:projects": [{"name": "My Testproject"}]}}',
             status=200,
             content_type="application/json",
@@ -231,14 +231,14 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects?allDetails=true?page=3&page_entries=4&sort=name%2Cdesc",  # noqa
+            url=self.MYURL + "resource/api/projects?allDetails=true&page=3&page_entries=4&sort=name%2Cdesc",  # noqa
             body='{"_embedded": {"sw360:projects": [{"name": "My Testproject"}]}}',
             status=200,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        projects = lib.get_projects(all_details=True, page=3, page_size=4)
+        projects = lib.get_projects(all_details=True, page=3, page_size=4, sort="name,desc")
         self.assertIsNotNone(projects)
         self.assertTrue("_embedded" in projects)
         self.assertTrue("sw360:projects" in projects["_embedded"])

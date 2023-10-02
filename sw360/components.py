@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2022 Siemens
+# Copyright (c) 2019-2023 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -15,24 +15,40 @@ from .sw360error import SW360Error
 
 
 class ComponentsMixin:
-    def get_all_components(self, fields=None, page=-1, page_size=-1):
+    def get_all_components(self, fields=None, page=-1, page_size=-1, all_details: bool = False, sort: str = ""):
         """Get information of about all components
 
         API endpoint: GET /components
 
+        :param page: page to retrieve
+        :type page: int
+        :param page_size: page size to use
+        :type page_size: int
+        :param all_details: retrieve all component details (optional))
+        :type all_details: bool
+        :param sort: sort order for the components ("name,desc"; "name,asc")
+        :type sort: str
         :return: list of components
         :rtype: list of JSON component objects
         :raises SW360Error: if there is a negative HTTP response
         """
 
+        url = self.url + "resource/api/components"
+
+        if all_details:
+            url = self._add_param(url, "allDetails=true")
+
         if fields:
-            url = self.url + "resource/api/components?fields=" + fields
-        else:
-            url = self.url + "resource/api/components"
+            url = self._add_param(url, "fields=" + fields)
 
         if page > -1:
-            url = url + "?page=" + str(page) + "&page_entries="
-            url = url + str(page_size) + "&sort=name%2Cdesc"
+            url = self._add_param(url, "page=" + str(page))
+            url = self._add_param(url, "page_entries=" + str(page_size))
+
+        if sort:
+            # ensure HTML encoding
+            sort = sort.replace(",", "%2C")
+            url = self._add_param(url, "sort=" + sort)
 
         resp = self.api_get(url)
         if not resp:
@@ -44,7 +60,8 @@ class ComponentsMixin:
         if "sw360:components" not in resp["_embedded"]:
             return None
 
-        resp = resp["_embedded"]["sw360:components"]
+        if page == -1:
+            resp = resp["_embedded"]["sw360:components"]
         return resp
 
     def get_components_by_type(self, component_type):

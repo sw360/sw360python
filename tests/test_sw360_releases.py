@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2020 Siemens
+# Copyright (c) 2023 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -191,7 +191,7 @@ class Sw360TestReleases(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/releases?allDetails=true?fields=releaseDate",
+            url=self.MYURL + "resource/api/releases?allDetails=true&fields=releaseDate",
             body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0", "releaseDate": "2018-03-04"}]}}',  # noqa
             status=200,
             content_type="application/json",

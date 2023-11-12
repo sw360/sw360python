@@ -58,6 +58,8 @@ class ReleasesMixin:
         resp = self.api_get(full_url)
         if resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
             resp = resp["_embedded"]["sw360:releases"]
+        if not resp:
+            resp = []
         return resp
 
     def get_all_releases(self, fields=None, all_details=False, page: int = -1, page_size: int = -1, sort: str = ""):
@@ -97,6 +99,8 @@ class ReleasesMixin:
 
         if page == -1 and resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
             resp = resp["_embedded"]["sw360:releases"]
+        if not resp:
+            resp = []
         return resp
 
     def get_releases_by_external_id(self, ext_id_name, ext_id_value=""):
@@ -120,6 +124,8 @@ class ReleasesMixin:
         )
         if resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
             resp = resp["_embedded"]["sw360:releases"]
+        if not resp:
+            resp = []
         return resp
 
     def create_new_release(self, name, version, component_id, release_details={}):

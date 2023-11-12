@@ -27,7 +27,7 @@ python = "^3.7" # because 3.7 is the minimum requirement for yarl
 requests = "^2.31.0" # fix CVE-2023-32681
 urllib3 = "^1.26.15"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 colorama = "0.3.7"
 sphinx = "^2.4.1"
 vcrpy = "4.0.2"

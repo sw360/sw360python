@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2020 Siemens
+# Copyright (c) 2019-2023 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -37,6 +37,8 @@ python check_project.py -n tr-card -v 1.0 -t <token> -url https://stage.sw360.si
 import argparse
 import os
 import sys
+from typing import Any, Dict, List, Optional
+
 from colorama import init, Fore, Style
 import requests
 import sw360
@@ -51,15 +53,18 @@ init()
 
 class CheckProject():
     """Check a project on SW360, display component clearing status"""
-    def __init__(self):
+    def __init__(self) -> None:
         self.client = None
         self.project_id = ""
         self.project = None
         self.sw360_url = "https://sw360.siemens.com"
 
     @classmethod
-    def get_clearing_state(cls, proj, href):
+    def get_clearing_state(cls, proj: Dict[Any, Any], href: str) -> str | None:
         """Returns the clearing state of the given component/release"""
+        if "linkedReleases" not in proj:
+            return None
+
         rel = proj["linkedReleases"]
         for key in rel:
             if key["release"] == href:
@@ -67,7 +72,7 @@ class CheckProject():
 
         return None
 
-    def has_source_code(self, href):
+    def has_source_code(self, href: str) -> bool:
         """Returns true if a source code attachment is available"""
         rel = self.client.get_release_by_url(href)
         if "_embedded" not in rel:
@@ -83,8 +88,11 @@ class CheckProject():
 
         return False
 
-    def show_linked_projects(self, project):
+    def show_linked_projects(self, project: Dict[Any, Any]) -> None:
         """Show linked projects of the given project"""
+        if "_embedded" not in project:
+            return
+
         if "sw360:projects" in project["_embedded"]:
             linked_projects = project["_embedded"]["sw360:projects"]
             if linked_projects:
@@ -94,8 +102,11 @@ class CheckProject():
         else:
             print("\n    No linked projects")
 
-    def show_linked_releases(self, project):
+    def show_linked_releases(self, project: Dict[Any, Any]) -> None:
         """Show linked releases of the given project"""
+        if "_embedded" not in project:
+            return
+
         if "sw360:releases" in project["_embedded"]:
             print("\n  Components: ")
             releases = project["_embedded"]["sw360:releases"]
@@ -117,7 +128,7 @@ class CheckProject():
         else:
             print("    No linked releases")
 
-    def show_project_status(self, project_id):
+    def show_project_status(self, project_id: str) -> None:
         """Retrieve and display project status"""
         try:
             project = self.client.get_project(project_id)
@@ -134,7 +145,7 @@ class CheckProject():
         self.show_linked_projects(project)
         self.show_linked_releases(project)
 
-    def login(self, token=None, url=None):
+    def login(self, token: Optional[str] = None, url: Optional[str] = None) -> bool | sw360.SW360Error:
         """Login to SW360"""
         if token:
             sw360_api_token = token
@@ -167,7 +178,7 @@ class CheckProject():
                     "  Error authorizing user!" +
                     Style.RESET_ALL)
 
-    def find_project(self, name, version):
+    def find_project(self, name: str, version: str) -> Optional[List[Dict[Any, Any]]]:
         """Find the project with the matching name and version on SW360"""
         projects = self.client.get_projects_by_name(name)
         if not projects:
@@ -199,7 +210,7 @@ class CheckProject():
         return None
 
     @classmethod
-    def parse_commandline(cls):
+    def parse_commandline(cls) -> Any:
         """Parse command line arguments"""
         parser = argparse.ArgumentParser(
             description="Check a project on SW360, display component clearing status"
@@ -231,7 +242,7 @@ class CheckProject():
 
         return args
 
-    def main(self):
+    def main(self) -> None:
         """Main method"""
         print("\nCheck a project on SW360")
 

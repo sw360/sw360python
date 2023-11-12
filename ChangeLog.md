@@ -5,6 +5,10 @@
 
 # SW360 Base Library for Python
 
+## V1.3.1
+
+* dependency updates to fix security vulnerabilities.
+
 ## V1.3.0
 
 * `get_projects` fixed - paging work now as expected.

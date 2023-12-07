@@ -10,15 +10,15 @@
 import os
 import sys
 import tempfile
-from unittest.mock import MagicMock, patch
-import warnings
 import unittest
+import warnings
+from unittest.mock import MagicMock, patch
 
 import responses
 
 sys.path.insert(1, "..")
 
-from sw360 import SW360, SW360Error   # noqa: E402
+from sw360 import SW360, SW360Error  # noqa: E402
 
 
 class Sw360TestAttachments(unittest.TestCase):

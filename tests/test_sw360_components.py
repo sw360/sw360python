@@ -9,14 +9,14 @@
 
 import os
 import sys
-import warnings
 import unittest
+import warnings
 
 import responses
 
 sys.path.insert(1, "..")
 
-from sw360 import SW360, SW360Error   # noqa: E402
+from sw360 import SW360, SW360Error  # noqa: E402
 
 
 class Sw360TestComponents(unittest.TestCase):

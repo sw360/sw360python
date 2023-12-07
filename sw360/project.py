@@ -9,13 +9,16 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
+from typing import Any, Dict, List, Optional
+
 import requests
 
+from .base import BaseMixin
 from .sw360error import SW360Error
 
 
-class ProjectMixin:
-    def get_project(self, project_id):
+class ProjectMixin(BaseMixin):
+    def get_project(self, project_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about a project
 
         API endpoint: GET /projects
@@ -29,7 +32,7 @@ class ProjectMixin:
         resp = self.api_get(self.url + "resource/api/projects/" + project_id)
         return resp
 
-    def get_project_releases(self, project_id, transitive=False):
+    def get_project_releases(self, project_id: str, transitive: bool = False) -> Any:
         """Get the releases of a project
 
         API endpoint: GET /projects/{id}/releases
@@ -49,7 +52,7 @@ class ProjectMixin:
                             + project_id + "/releases?transitive=" + trans)
         return resp
 
-    def get_project_by_url(self, url):
+    def get_project_by_url(self, url: str) -> Optional[Dict[str, Any]]:
         """Get information of about a project
 
         API endpoint: GET /projects
@@ -63,7 +66,8 @@ class ProjectMixin:
         resp = self.api_get(url)
         return resp
 
-    def get_projects(self, all_details: bool = False, page: int = -1, page_size: int = -1, sort: str = ""):
+    def get_projects(self, all_details: bool = False, page: int = -1,
+                     page_size: int = -1, sort: str = "") -> Optional[Dict[str, Any]]:
         """Get all projects
 
         API endpoint: GET /projects
@@ -97,7 +101,7 @@ class ProjectMixin:
         resp = self.api_get(full_url)
         return resp
 
-    def get_projects_by_type(self, project_type):
+    def get_projects_by_type(self, project_type: str) -> List[Dict[str, Any]]:
         """Get information of about all projects of a certain type
 
         API endpoint: GET /projects
@@ -109,17 +113,18 @@ class ProjectMixin:
         :raises SW360Error: if there is a negative HTTP response
         """
         resp = self.api_get(self.url + "resource/api/projects?type=" + project_type)
+        if not resp:
+            return []
 
         if "_embedded" not in resp:
-            return None
+            return []
 
         if "sw360:projects" not in resp["_embedded"]:
-            return None
+            return []
 
-        resp = resp["_embedded"]["sw360:projects"]
-        return resp
+        return resp["_embedded"]["sw360:projects"]
 
-    def get_project_names(self):
+    def get_project_names(self) -> List[str]:
         """Get all project names
 
         API endpoint: GET /projects
@@ -128,23 +133,27 @@ class ProjectMixin:
         :rtype: JSON
         :raises SW360Error: if there is a negative HTTP response
         """
-        projects = self.get_projects()
-        resp = []
-
-        if "_embedded" not in projects:
+        all_projects = self.get_projects()
+        resp: List[str] = []
+        if not all_projects:
             return resp
 
-        if "sw360:projects" not in projects["_embedded"]:
+        if "_embedded" not in all_projects:
             return resp
 
-        projects = projects["_embedded"]["sw360:projects"]
+        if "sw360:projects" not in all_projects["_embedded"]:
+            return resp
+
+        projects: List[Dict[str, Any]] = all_projects["_embedded"]["sw360:projects"]
+        if not projects:
+            return resp
 
         for key in projects:
             resp.append(key["name"] + ", " + key["version"])
 
         return resp
 
-    def get_projects_by_name(self, name: str):
+    def get_projects_by_name(self, name: str) -> List[Dict[str, Any]]:
         """Get a project by its name
 
         API endpoint: GET /projects
@@ -157,18 +166,17 @@ class ProjectMixin:
         """
         resp = self.api_get(self.url + "resource/api/projects?name=" + name)
         if not resp:
-            return None
+            return []
 
         if "_embedded" not in resp:
-            return None
+            return []
 
         if "sw360:projects" not in resp["_embedded"]:
-            return None
+            return []
 
-        resp = resp["_embedded"]["sw360:projects"]
-        return resp
+        return resp["_embedded"]["sw360:projects"]
 
-    def get_projects_by_external_id(self, ext_id_name: str, ext_id_value: str = ""):
+    def get_projects_by_external_id(self, ext_id_name: str, ext_id_value: str = "") -> List[Dict[str, Any]]:
         """Get projects by external id. `ext_id_value` can be left blank to
         search for all projects with `ext_id_name`.
 
@@ -185,18 +193,17 @@ class ProjectMixin:
         resp = self.api_get(self.url + "resource/api/projects/searchByExternalIds?"
                             + ext_id_name + "=" + ext_id_value)
         if not resp:
-            return None
+            return []
 
         if "_embedded" not in resp:
-            return None
+            return []
 
         if "sw360:projects" not in resp["_embedded"]:
-            return None
+            return []
 
-        resp = resp["_embedded"]["sw360:projects"]
-        return resp
+        return resp["_embedded"]["sw360:projects"]
 
-    def get_projects_by_group(self, group: str, all_details: bool = False):
+    def get_projects_by_group(self, group: str, all_details: bool = False) -> List[Dict[str, Any]]:
         """Get projects by group.
 
         API endpoint: GET /projects?group=
@@ -213,18 +220,17 @@ class ProjectMixin:
 
         resp = self.api_get(full_url)
         if not resp:
-            return None
+            return []
 
         if "_embedded" not in resp:
-            return None
+            return []
 
         if "sw360:projects" not in resp["_embedded"]:
-            return None
+            return []
 
-        resp = resp["_embedded"]["sw360:projects"]
-        return resp
+        return resp["_embedded"]["sw360:projects"]
 
-    def get_projects_by_tag(self, tag: str):
+    def get_projects_by_tag(self, tag: str) -> List[Dict[str, Any]]:
         """Get projects by tag.
 
         API endpoint: GET /projects?tag=
@@ -238,18 +244,17 @@ class ProjectMixin:
         full_url = self.url + "resource/api/projects?tag=" + tag + "&luceneSearch=true"
         resp = self.api_get(full_url)
         if not resp:
-            return None
+            return []
 
         if "_embedded" not in resp:
-            return None
+            return []
 
         if "sw360:projects" not in resp["_embedded"]:
-            return None
+            return []
 
-        resp = resp["_embedded"]["sw360:projects"]
-        return resp
+        return resp["_embedded"]["sw360:projects"]
 
-    def get_project_vulnerabilities(self, project_id: str):
+    def get_project_vulnerabilities(self, project_id: str) -> Optional[Dict[str, Any]]:
         """Get the security vulnerabilities for the specified project.
 
         API endpoint: GET /projects/id/vulnerabilities
@@ -267,8 +272,9 @@ class ProjectMixin:
 
         return resp
 
-    def create_new_project(self, name, project_type, visibility,
-                           description="", version="", project_details={}):
+    def create_new_project(self, name: str, project_type: str, visibility,
+                           description: str = "", version: str = "",
+                           project_details: Dict[str, Any] = {}) -> Optional[Dict[str, Any]]:
         """Create a new project.
 
         The parameters list only the most common project attributes, check the
@@ -308,7 +314,8 @@ class ProjectMixin:
 
         raise SW360Error(response, url)
 
-    def update_project(self, project: dict, project_id: str, add_subprojects=False):
+    def update_project(self, project: Dict[str, Any], project_id: str,
+                       add_subprojects: bool = False) -> Optional[Dict[str, Any]]:
         """Update an existing project
 
         API endpoint: PATCH /projects
@@ -345,7 +352,7 @@ class ProjectMixin:
 
         raise SW360Error(response, url)
 
-    def update_project_releases(self, releases, project_id, add=False):
+    def update_project_releases(self, releases, project_id: str, add: bool = False) -> bool:
         """Update the releases of an existing project. If `add` is True,
         given `releases` are added to the project, otherwise, the existing
         releases will be replaced.
@@ -383,8 +390,8 @@ class ProjectMixin:
 
         raise SW360Error(response, url)
 
-    def update_project_external_id(self, ext_id_name, ext_id_value,
-                                   project_id, update_mode="none"):
+    def update_project_external_id(self, ext_id_name: str, ext_id_value: str,
+                                   project_id: str, update_mode: str = "none") -> Any:
         """Set or update external id of a project. If the id is already set, it
         will only be changed if `update_mode=="overwrite"`. The id can be
         deleted using `update_mode=="delete"`.
@@ -407,6 +414,9 @@ class ProjectMixin:
         :raises SW360Error: if there is a negative HTTP response
         """
         complete_data = self.get_project(project_id)
+        if not complete_data:
+            return
+
         ret = self._update_external_ids(complete_data, ext_id_name,
                                         ext_id_value, update_mode)
         (old_value, data, update) = ret
@@ -414,7 +424,7 @@ class ProjectMixin:
             self.update_project(data, project_id)
         return old_value
 
-    def delete_project(self, project_id):
+    def delete_project(self, project_id: str) -> Optional[Dict[str, Any]]:
         """Delete an existing project
 
         API endpoint: DELETE /projects
@@ -439,7 +449,7 @@ class ProjectMixin:
 
         raise SW360Error(response, url)
 
-    def get_users_of_project(self, project_id):
+    def get_users_of_project(self, project_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about users of a project
 
         API endpoint: GET /projects/usedBy/{id}
@@ -453,7 +463,7 @@ class ProjectMixin:
         resp = self.api_get(self.url + "resource/api/projects/usedBy/" + project_id)
         return resp
 
-    def duplicate_project(self, project_id: str, new_version: str):
+    def duplicate_project(self, project_id: str, new_version: str) -> Optional[Dict[str, Any]]:
         """Create a copy of an exisiting project.
 
         API endpoint: GET /projects/duplicate/{id}
@@ -487,7 +497,7 @@ class ProjectMixin:
 
     def update_project_release_relationship(
         self, project_id: str, release_id: str, new_state: str,
-            new_relation: str, comment: str):
+            new_relation: str, comment: str) -> Optional[Dict[str, Any]]:
         """Update the relationship for a specific release of a project
 
         API endpoint PATCH /projects/{pid}/release{rid}

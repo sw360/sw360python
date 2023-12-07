@@ -9,14 +9,15 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, Dict, List, Optional
 
 import requests
 
+from .base import BaseMixin
 from .sw360error import SW360Error
 
 
-class LicenseMixin:
+class LicenseMixin(BaseMixin):
     def create_new_license(
         self,
         shortName: str,
@@ -25,7 +26,7 @@ class LicenseMixin:
         checked: bool = False,
         license_details={},
     ) -> Any:
-        """Create a new component
+        """Create a new license
 
         API endpoint: POST /licenses
 
@@ -55,7 +56,7 @@ class LicenseMixin:
 
         raise SW360Error(response, url)
 
-    def delete_license(self, license_shortname):
+    def delete_license(self, license_shortname: str) -> bool:
         """Delete an existing license
 
         API endpoint: PATCH /licenses
@@ -82,7 +83,7 @@ class LicenseMixin:
         raise SW360Error(response, url)
 
     def download_license_info(
-        self, project_id, filename, generator="XhtmlGenerator", variant="DISCLOSURE"
+        self, project_id: str, filename: str, generator: str = "XhtmlGenerator", variant: str = "DISCLOSURE"
     ):
         """Gets the license information, aka Readme_OSS for the project
         with the given id
@@ -108,7 +109,7 @@ class LicenseMixin:
         req = requests.get(url, allow_redirects=True, headers=hdr)
         open(filename, "wb").write(req.content)
 
-    def get_all_licenses(self):
+    def get_all_licenses(self) -> List[Dict[str, Any]]:
         """Get information of about all licenses
 
         API endpoint: GET /licenses
@@ -120,18 +121,17 @@ class LicenseMixin:
 
         resp = self.api_get(self.url + "resource/api/licenses")
         if not resp:
-            return None
+            return []
 
         if "_embedded" not in resp:
-            return None
+            return []
 
         if "sw360:licenses" not in resp["_embedded"]:
-            return None
+            return []
 
-        resp = resp["_embedded"]["sw360:licenses"]
-        return resp
+        return resp["_embedded"]["sw360:licenses"]
 
-    def get_license(self, license_id):
+    def get_license(self, license_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about a license
 
         API endpoint: GET /licenses/{id}

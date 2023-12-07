@@ -9,13 +9,17 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
+from typing import Any, Dict, List, Optional
+
 import requests
 
+from .base import BaseMixin
 from .sw360error import SW360Error
 
 
-class ComponentsMixin:
-    def get_all_components(self, fields=None, page=-1, page_size=-1, all_details: bool = False, sort: str = ""):
+class ComponentsMixin(BaseMixin):
+    def get_all_components(self, fields=None, page=-1, page_size=-1,
+                           all_details: bool = False, sort: str = "") -> List[Dict[str, Any]]:
         """Get information of about all components
 
         API endpoint: GET /components
@@ -52,19 +56,20 @@ class ComponentsMixin:
 
         resp = self.api_get(url)
         if not resp:
-            return None
+            return []
 
         if "_embedded" not in resp:
-            return None
+            return []
 
         if "sw360:components" not in resp["_embedded"]:
-            return None
+            return []
 
         if page == -1:
-            resp = resp["_embedded"]["sw360:components"]
-        return resp
+            return resp["_embedded"]["sw360:components"]
 
-    def get_components_by_type(self, component_type):
+        return []
+
+    def get_components_by_type(self, component_type: str) -> List[Dict[str, Any]]:
         """Get information of about all components for certain type
 
         API endpoint: GET /components
@@ -79,18 +84,17 @@ class ComponentsMixin:
 
         resp = self.api_get(self.url + "resource/api/components?type=" + component_type)
         if not resp:
-            return None
+            return []
 
         if "_embedded" not in resp:
-            return None
+            return []
 
         if "sw360:components" not in resp["_embedded"]:
-            return None
+            return []
 
-        resp = resp["_embedded"]["sw360:components"]
-        return resp
+        return resp["_embedded"]["sw360:components"]
 
-    def get_component(self, component_id):
+    def get_component(self, component_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about a component
 
         API endpoint: GET /components/{id}
@@ -105,7 +109,7 @@ class ComponentsMixin:
         resp = self.api_get(self.url + "resource/api/components/" + component_id)
         return resp
 
-    def get_component_by_url(self, component_url):
+    def get_component_by_url(self, component_url: str) -> Optional[Dict[str, Any]]:
         """Get information of about a component
 
         API endpoint: GET /components
@@ -120,7 +124,7 @@ class ComponentsMixin:
         resp = self.api_get(component_url)
         return resp
 
-    def get_component_by_name(self, component_name):
+    def get_component_by_name(self, component_name: str) -> Optional[Dict[str, Any]]:
         """Get information of about a component
 
         API endpoint: GET /components
@@ -135,7 +139,7 @@ class ComponentsMixin:
         resp = self.api_get(self.url + "resource/api/components?name=" + component_name)
         return resp
 
-    def get_components_by_external_id(self, ext_id_name, ext_id_value=""):
+    def get_components_by_external_id(self, ext_id_name: str, ext_id_value: str = "") -> List[Dict[str, Any]]:
         """Get components by external id. `ext_id_value` can be left blank to
         search for all components with `ext_id_name`.
 
@@ -158,11 +162,12 @@ class ComponentsMixin:
             + ext_id_value
         )
         if resp and ("_embedded" in resp) and ("sw360:components" in resp["_embedded"]):
-            resp = resp["_embedded"]["sw360:components"]
-        return resp
+            return resp["_embedded"]["sw360:components"]
 
-    def create_new_component(self, name, description, component_type, homepage,
-                             component_details={}):
+        return []
+
+    def create_new_component(self, name: str, description: str, component_type: str, homepage: str,
+                             component_details: Dict[str, Any] = {}) -> Optional[Dict[str, Any]]:
         """Create a new component
 
         API endpoint: POST /components
@@ -197,7 +202,7 @@ class ComponentsMixin:
 
         raise SW360Error(response, url)
 
-    def update_component(self, component, component_id):
+    def update_component(self, component: Dict[str, Any], component_id: str) -> Optional[Dict[str, Any]]:
         """Update an existing component
 
         API endpoint: PATCH /components
@@ -224,8 +229,8 @@ class ComponentsMixin:
 
         raise SW360Error(response, url)
 
-    def update_component_external_id(self, ext_id_name, ext_id_value,
-                                     component_id, update_mode="none"):
+    def update_component_external_id(self, ext_id_name: str, ext_id_value: str,
+                                     component_id: str, update_mode: str = "none") -> Optional[Dict[str, Any]]:
         """Set or update external id of a component. If the id is already set, it
         will only be changed if `update_mode=="overwrite"`. The id can be
         deleted using `update_mode=="delete"`.
@@ -248,6 +253,9 @@ class ComponentsMixin:
         :raises SW360Error: if there is a negative HTTP response
         """
         complete_data = self.get_component(component_id)
+        if not complete_data:
+            return None
+
         ret = self._update_external_ids(complete_data, ext_id_name,
                                         ext_id_value, update_mode)
         (old_value, data, update) = ret
@@ -255,7 +263,7 @@ class ComponentsMixin:
             self.update_component(data, component_id)
         return old_value
 
-    def delete_component(self, component_id):
+    def delete_component(self, component_id: str) -> Optional[Dict[str, Any]]:
         """Delete an existing component
 
         API endpoint: DELETE /components
@@ -279,7 +287,7 @@ class ComponentsMixin:
 
         raise SW360Error(response, url)
 
-    def get_users_of_component(self, component_id):
+    def get_users_of_component(self, component_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about the users of a component
 
         API endpoint: GET /components/usedBy/{id}

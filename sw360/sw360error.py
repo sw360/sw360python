@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2022 Siemens
+# Copyright (c) 2019-2023 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -10,6 +10,9 @@
 # -------------------------------------------------------------------------------
 
 import json
+from typing import Any, Dict, Optional
+
+from requests import Response
 
 
 class SW360Error(IOError):
@@ -23,10 +26,12 @@ class SW360Error(IOError):
     :type url: string
     """
 
-    def __init__(self, response=None, url=None, message=None):
-        self.message = message
-        self.response = response
-        self.url = url
+    def __init__(self, response: Optional[Response] = None, url: str = "", message: str = ""):
+        self.message: str = message
+        self.response: Optional[Response] = response
+        self.url: str = url
+        self.details: Optional[Dict[str, Any]] = None
+
         try:
             if response is not None:
                 self.details = json.loads(response.text)

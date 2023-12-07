@@ -10,12 +10,13 @@
 # -------------------------------------------------------------------------------
 
 import json
-import os
-import requests
 import logging
+import os
+from http import HTTPStatus
+
+import requests
 
 from .sw360error import SW360Error
-from http import HTTPStatus
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARNING)

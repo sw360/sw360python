@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2022 BMW CarIT GmbH
+# Copyright (c) 2022-2023 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: helio.chissini-de-castro@bmw.de
 #
@@ -35,6 +35,7 @@ class SW360OAuth2:
     _password: str
     _token: str
     _refresh_token: str
+    _url: str
 
     def __init__(self, url: str, user: str, password: str):
         self._url, self._user, self._password = url, user, password
@@ -90,10 +91,10 @@ class SW360OAuth2:
         except Exception as ex:
             raise SW360Error(None, url, message="Cant create oauth client: " + repr(ex))
 
-    def generate_token(self) -> str:
+    def generate_token(self) -> str:  # type: ignore
         """Generate a new bearer token
         """
-        self.__oauth_token(True)
+        self.__oauth_token(True)  # type: ignore
 
     def __token(self, create: bool = False) -> None:
         """Create or return Liferay Token

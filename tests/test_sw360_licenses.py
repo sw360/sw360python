@@ -8,8 +8,8 @@
 # -------------------------------------------------------------------------------
 
 import sys
-import warnings
 import unittest
+import warnings
 
 import responses
 

@@ -8,14 +8,14 @@
 # -------------------------------------------------------------------------------
 
 import sys
-import warnings
 import unittest
+import warnings
 
 import responses
 
 sys.path.insert(1, "..")
 
-from sw360 import SW360   # noqa: E402
+from sw360 import SW360  # noqa: E402
 
 
 class Sw360TestClearingRequests(unittest.TestCase):

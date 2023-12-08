@@ -5,6 +5,11 @@
 
 # SW360 Base Library for Python
 
+## V1.3.2
+
+* have type hints.
+* drop support for Python 3.7
+
 ## V1.3.1
 
 * dependency updates to fix security vulnerabilities.

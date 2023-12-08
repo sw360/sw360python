@@ -64,8 +64,10 @@ class ReleasesMixin(BaseMixin):
 
         return []
 
+    # return type List[Dict[str, Any]] | Optional[Dict[str, Any]] for Python 3.11 is good,
+    # Union[List[Dict[str, Any]], Optional[Dict[str, Any]]] for lower Python versions is not good
     def get_all_releases(self, fields: str = "", all_details: bool = False, page: int = -1,
-                         page_size: int = -1, sort: str = "") -> List[Dict[str, Any]] | Optional[Dict[str, Any]]:
+                         page_size: int = -1, sort: str = "") -> Any:
         """Get information of about all releases
 
         API endpoint: GET /releases

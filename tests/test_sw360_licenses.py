@@ -93,7 +93,7 @@ class Sw360TestLicenses(unittest.TestCase):
         )
 
         licenses = lib.get_all_licenses()
-        self.assertIsNone(licenses)
+        self.assertEqual([], licenses)
 
     @responses.activate
     def test_get_license(self):

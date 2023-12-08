@@ -65,7 +65,7 @@ class ReleasesMixin(BaseMixin):
         return []
 
     def get_all_releases(self, fields: str = "", all_details: bool = False, page: int = -1,
-                         page_size: int = -1, sort: str = "") -> List[Dict[str, Any]]:
+                         page_size: int = -1, sort: str = "") -> List[Dict[str, Any]] | Optional[Dict[str, Any]]:
         """Get information of about all releases
 
         API endpoint: GET /releases
@@ -103,7 +103,7 @@ class ReleasesMixin(BaseMixin):
         if page == -1 and resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
             return resp["_embedded"]["sw360:releases"]
 
-        return []
+        return resp
 
     def get_releases_by_external_id(self, ext_id_name: str, ext_id_value: str = "") -> List[Dict[str, Any]]:
         """Get releases by external id. `ext_id_value` can be left blank to

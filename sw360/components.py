@@ -19,7 +19,8 @@ from .sw360error import SW360Error
 
 class ComponentsMixin(BaseMixin):
     def get_all_components(self, fields=None, page=-1, page_size=-1,
-                           all_details: bool = False, sort: str = "") -> List[Dict[str, Any]]:
+                           all_details: bool = False,
+                           sort: str = "") -> List[Dict[str, Any]] | Optional[Dict[str, Any]]:
         """Get information of about all components
 
         API endpoint: GET /components
@@ -67,7 +68,7 @@ class ComponentsMixin(BaseMixin):
         if page == -1:
             return resp["_embedded"]["sw360:components"]
 
-        return []
+        return resp
 
     def get_components_by_type(self, component_type: str) -> List[Dict[str, Any]]:
         """Get information of about all components for certain type

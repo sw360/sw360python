@@ -20,6 +20,7 @@ Test.tar.gz
 Test_file.zip
 test_all_components.json
 test_all_releases.json
+real_instance_tests.py
 
 # test coverage
 htmlcov/

@@ -37,10 +37,11 @@ python check_project.py -n tr-card -v 1.0 -t <token> -url https://stage.sw360.si
 import argparse
 import os
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
-from colorama import init, Fore, Style
 import requests
+from colorama import Fore, Style, init
+
 import sw360
 
 # Do you use an oauth flow? This is usually False if you get your SW360 token
@@ -54,10 +55,9 @@ init()
 class CheckProject():
     """Check a project on SW360, display component clearing status"""
     def __init__(self) -> None:
-        self.client = None
-        self.project_id = ""
-        self.project = None
-        self.sw360_url = "https://sw360.siemens.com"
+        self.client: sw360.SW360
+        self.project_id: str = ""
+        self.sw360_url: str = "https://sw360.siemens.com"
 
     @classmethod
     def get_clearing_state(cls, proj: Dict[Any, Any], href: str) -> str | None:
@@ -75,6 +75,9 @@ class CheckProject():
     def has_source_code(self, href: str) -> bool:
         """Returns true if a source code attachment is available"""
         rel = self.client.get_release_by_url(href)
+        if not rel:
+            return False
+
         if "_embedded" not in rel:
             return False
 
@@ -136,6 +139,10 @@ class CheckProject():
             print(Fore.LIGHTRED_EX + "  ERROR: unable to access project!")
             sys.exit("  " + str(swex) + Style.RESET_ALL)
 
+        if not project:
+            print("  Project not found!")
+            return
+
         print("  Project name: " + project["name"] + ", " + project["version"])
         if "projectResponsible" in project:
             print("  Project responsible: " + project["projectResponsible"])
@@ -178,7 +185,7 @@ class CheckProject():
                     "  Error authorizing user!" +
                     Style.RESET_ALL)
 
-    def find_project(self, name: str, version: str) -> Optional[List[Dict[Any, Any]]]:
+    def find_project(self, name: str, version: str) -> str:
         """Find the project with the matching name and version on SW360"""
         projects = self.client.get_projects_by_name(name)
         if not projects:
@@ -207,7 +214,7 @@ class CheckProject():
                 if project["version"].lower() == version:
                     return pid
 
-        return None
+        return ""
 
     @classmethod
     def parse_commandline(cls) -> Any:

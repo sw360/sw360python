@@ -17,7 +17,7 @@ import responses
 
 sys.path.insert(1, "..")
 
-from sw360 import SW360, SW360Error   # noqa: E402
+from sw360 import SW360, SW360Error  # noqa: E402
 
 
 class Sw360TestProjects(unittest.TestCase):
@@ -295,7 +295,7 @@ class Sw360TestProjects(unittest.TestCase):
         )
 
         projects = lib.get_projects_by_name("My")
-        self.assertIsNone(projects)
+        self.assertEqual([], projects)
 
     @responses.activate
     def test_get_projects_by_name_no_result(self):
@@ -349,7 +349,7 @@ class Sw360TestProjects(unittest.TestCase):
         )
 
         projects = lib.get_projects_by_external_id("myid", "9999")
-        self.assertIsNone(projects)
+        self.assertEqual([], projects)
 
     @responses.activate
     def test_get_projects_by_group(self):
@@ -401,7 +401,7 @@ class Sw360TestProjects(unittest.TestCase):
         )
 
         projects = lib.get_projects_by_group("SI")
-        self.assertIsNone(projects)
+        self.assertEqual([], projects)
 
     @responses.activate
     def test_get_projects_by_tag(self):
@@ -435,7 +435,7 @@ class Sw360TestProjects(unittest.TestCase):
         )
 
         projects = lib.get_projects_by_tag("SI")
-        self.assertIsNone(projects)
+        self.assertEqual([], projects)
 
     @responses.activate
     def test_download_license_info(self):

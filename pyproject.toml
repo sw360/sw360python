@@ -41,3 +41,9 @@ types-urllib3 = "^1.26.25.14"
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
+[tool.mypy]
+mypy_path = "stubs"
+exclude = [
+    '/tests',
+]

@@ -9,14 +9,14 @@
 
 import os
 import sys
-import warnings
 import unittest
+import warnings
 
 import responses
 
 sys.path.insert(1, "..")
 
-from sw360 import SW360, SW360Error   # noqa: E402
+from sw360 import SW360, SW360Error  # noqa: E402
 
 
 class Sw360TestComponents(unittest.TestCase):
@@ -92,7 +92,7 @@ class Sw360TestComponents(unittest.TestCase):
         )
 
         components = lib.get_all_components()
-        self.assertIsNone(components)
+        self.assertEqual([], components)
 
     @responses.activate
     def test_get_all_components_with_fields(self):
@@ -124,7 +124,6 @@ class Sw360TestComponents(unittest.TestCase):
         self._add_login_response()
         actual = lib.login_api()
         self.assertTrue(actual)
-
         responses.add(
             method=responses.GET,
             url=self.MYURL + "resource/api/components?fields=ownerCountry&page=1&page_entries=2",  # noqa
@@ -134,8 +133,8 @@ class Sw360TestComponents(unittest.TestCase):
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        dict = lib.get_all_components("ownerCountry", 1, 2)
-        components = dict["_embedded"]["sw360:components"]
+        data = lib.get_all_components("ownerCountry", 1, 2)
+        components = data["_embedded"]["sw360:components"]
         self.assertIsNotNone(components)
         self.assertTrue(len(components) > 0)
         self.assertEqual("Tethys.Logging", components[0]["name"])
@@ -182,7 +181,7 @@ class Sw360TestComponents(unittest.TestCase):
         )
 
         components = lib.get_components_by_type("OSS")
-        self.assertIsNone(components)
+        self.assertEqual([], components)
 
     @responses.activate
     def test_get_component(self):
@@ -255,7 +254,7 @@ class Sw360TestComponents(unittest.TestCase):
         responses.add(
             method=responses.GET,
             url=self.MYURL + "resource/api/components/searchByExternalIds?package-url=pkg:nuget/Tethys.Logging",  # noqa
-            body='[{"name": "Tethys.Logging", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]',  # noqa
+            body='{"_embedded":{"sw360:components" :[{"name": "Tethys.Logging", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
             status=200,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
@@ -671,4 +670,6 @@ class Sw360TestComponents(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # unittest.main()
+    x = Sw360TestComponents()
+    x.test_get_all_components_with_fields_and_paging()

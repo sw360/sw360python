@@ -9,13 +9,16 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
+from typing import Any, Dict, List, Optional
+
 import requests
 
+from .base import BaseMixin
 from .sw360error import SW360Error
 
 
-class ReleasesMixin:
-    def get_release(self, release_id):
+class ReleasesMixin(BaseMixin):
+    def get_release(self, release_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about a release
 
         API endpoint: GET /releases/{id}
@@ -29,7 +32,7 @@ class ReleasesMixin:
         resp = self.api_get(self.url + "resource/api/releases/" + release_id)
         return resp
 
-    def get_release_by_url(self, release_url):
+    def get_release_by_url(self, release_url: str) -> Optional[Dict[str, Any]]:
         """Get information of about a release
 
         API endpoint: GET /releases
@@ -43,7 +46,7 @@ class ReleasesMixin:
         resp = self.api_get(release_url)
         return resp
 
-    def get_releases_by_name(self, name):
+    def get_releases_by_name(self, name: str) -> List[Any]:
         """Gets a list of releases that match the given name.
 
         API endpoint: GET /releases?name=
@@ -57,12 +60,14 @@ class ReleasesMixin:
         full_url = self.url + "resource/api/releases?name=" + name
         resp = self.api_get(full_url)
         if resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
-            resp = resp["_embedded"]["sw360:releases"]
-        if not resp:
-            resp = []
-        return resp
+            return resp["_embedded"]["sw360:releases"]
 
-    def get_all_releases(self, fields=None, all_details=False, page: int = -1, page_size: int = -1, sort: str = ""):
+        return []
+
+    # return type List[Dict[str, Any]] | Optional[Dict[str, Any]] for Python 3.11 is good,
+    # Union[List[Dict[str, Any]], Optional[Dict[str, Any]]] for lower Python versions is not good
+    def get_all_releases(self, fields: str = "", all_details: bool = False, page: int = -1,
+                         page_size: int = -1, sort: str = "") -> Any:
         """Get information of about all releases
 
         API endpoint: GET /releases
@@ -98,12 +103,11 @@ class ReleasesMixin:
         resp = self.api_get(full_url)
 
         if page == -1 and resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
-            resp = resp["_embedded"]["sw360:releases"]
-        if not resp:
-            resp = []
+            return resp["_embedded"]["sw360:releases"]
+
         return resp
 
-    def get_releases_by_external_id(self, ext_id_name, ext_id_value=""):
+    def get_releases_by_external_id(self, ext_id_name: str, ext_id_value: str = "") -> List[Dict[str, Any]]:
         """Get releases by external id. `ext_id_value` can be left blank to
         search for all releases with `ext_id_name`.
 
@@ -123,12 +127,12 @@ class ReleasesMixin:
             + ext_id_name + "=" + ext_id_value
         )
         if resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
-            resp = resp["_embedded"]["sw360:releases"]
-        if not resp:
-            resp = []
-        return resp
+            return resp["_embedded"]["sw360:releases"]
 
-    def create_new_release(self, name, version, component_id, release_details={}):
+        return []
+
+    def create_new_release(self, name: str, version: str, component_id: str,
+                           release_details: Dict[str, Any] = {}) -> Optional[Dict[str, Any]]:
         """Create a new release
 
         API endpoint: POST /releases
@@ -159,7 +163,7 @@ class ReleasesMixin:
 
         raise SW360Error(response, url)
 
-    def update_release(self, release, release_id):
+    def update_release(self, release: Dict[str, Any], release_id: str) -> Optional[Dict[str, Any]]:
         """Update an existing release
 
         API endpoint: PATCH /releases
@@ -183,8 +187,8 @@ class ReleasesMixin:
 
         raise SW360Error(response, url)
 
-    def update_release_external_id(self, ext_id_name, ext_id_value,
-                                   release_id, update_mode="none"):
+    def update_release_external_id(self, ext_id_name: str, ext_id_value: str,
+                                   release_id: str, update_mode: str = "none") -> Optional[Dict[str, Any]]:
         """Set or update external id of a release. If the id is already set, it
         will only be changed if `update_mode=="overwrite"`. The id can be
         deleted using `update_mode=="delete"`.
@@ -207,14 +211,17 @@ class ReleasesMixin:
         :raises SW360Error: if there is a negative HTTP response
         """
         complete_data = self.get_release(release_id)
-        ret = self._update_external_ids(complete_data, ext_id_name,
-                                        ext_id_value, update_mode)
-        (old_value, data, update) = ret
-        if update:
-            self.update_release(data, release_id)
-        return old_value
+        if complete_data:
+            ret = self._update_external_ids(complete_data, ext_id_name,
+                                            ext_id_value, update_mode)
+            (old_value, data, update) = ret
+            if update:
+                self.update_release(data, release_id)
+            return old_value
 
-    def delete_release(self, release_id):
+        return {}
+
+    def delete_release(self, release_id: str) -> Optional[Dict[str, Any]]:
         """Delete an existing release
 
         API endpoint: DELETE /releases
@@ -238,7 +245,7 @@ class ReleasesMixin:
 
         raise SW360Error(response, url)
 
-    def get_users_of_release(self, release_id):
+    def get_users_of_release(self, release_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about the users of a release
 
         API endpoint: GET /releases/usedBy/{id}

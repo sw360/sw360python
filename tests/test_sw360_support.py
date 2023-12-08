@@ -10,7 +10,6 @@
 import sys
 import unittest
 
-
 sys.path.insert(1, "..")
 
 from sw360 import SW360  # noqa: E402

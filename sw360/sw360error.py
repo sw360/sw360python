@@ -26,7 +26,7 @@ class SW360Error(IOError):
     :type url: string
     """
 
-    def __init__(self, response: Optional[Response] = None, url: str = "", message: str = ""):
+    def __init__(self, response: Optional[Response] = None, url: str = "", message: str = "") -> None:
         self.message: str = message
         self.response: Optional[Response] = response
         self.url: str = url

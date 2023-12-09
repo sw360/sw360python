@@ -146,7 +146,7 @@ class Sw360TestVendors(unittest.TestCase):
         )
 
         vendors = lib.get_all_vendors()
-        self.assertIsNone(vendors)
+        self.assertEqual([], vendors)
 
     @responses.activate
     def test_create_new_vendor(self):

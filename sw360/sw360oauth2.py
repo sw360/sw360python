@@ -37,7 +37,7 @@ class SW360OAuth2:
     _refresh_token: str
     _url: str
 
-    def __init__(self, url: str, user: str, password: str):
+    def __init__(self, url: str, user: str, password: str) -> None:
         self._url, self._user, self._password = url, user, password
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 

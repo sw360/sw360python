@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2022 Siemens
+# Copyright (c) 2019-2023 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -9,13 +9,16 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
+from typing import Any, Dict, List, Optional
+
 import requests
 
+from .base import BaseMixin
 from .sw360error import SW360Error
 
 
-class VendorMixin:
-    def get_all_vendors(self):
+class VendorMixin(BaseMixin):
+    def get_all_vendors(self) -> List[Dict[str, Any]]:
         """Returns all vendors
 
         API endpoint: GET /vendors
@@ -27,18 +30,17 @@ class VendorMixin:
 
         resp = self.api_get(self.url + "resource/api/vendors")
         if not resp:
-            return None
+            return []
 
         if "_embedded" not in resp:
-            return None
+            return []
 
         if "sw360:vendors" not in resp["_embedded"]:
-            return None
+            return []
 
-        resp = resp["_embedded"]["sw360:vendors"]
-        return resp
+        return resp["_embedded"]["sw360:vendors"]
 
-    def get_vendor(self, vendor_id):
+    def get_vendor(self, vendor_id: str) -> Optional[Dict[str, Any]]:
         """Returns a vendor
 
         API endpoint: GET /vendors/{id}
@@ -53,7 +55,7 @@ class VendorMixin:
         resp = self.api_get(self.url + "resource/api/vendors/" + vendor_id)
         return resp
 
-    def create_new_vendor(self, vendor):
+    def create_new_vendor(self, vendor: Dict[str, Any]) -> Dict[str, Any]:
         """Create a new vendor
 
         API endpoint: POST /vendors
@@ -72,7 +74,7 @@ class VendorMixin:
 
         raise SW360Error(response, url)
 
-    def update_vendor(self, vendor, vendor_id):
+    def update_vendor(self, vendor: Dict[str, Any], vendor_id: str) -> Dict[str, Any]:
         """Update an existing vendor
 
         API endpoint: PATCH /vendors
@@ -96,7 +98,7 @@ class VendorMixin:
 
         raise SW360Error(response, url)
 
-    def delete_vendor(self, vendor_id):
+    def delete_vendor(self, vendor_id: str) -> Dict[str, Any]:
         """Delete an existing vendor
 
         API endpoint: DELETE /vendors

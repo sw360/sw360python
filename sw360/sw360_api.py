@@ -52,7 +52,7 @@ class SW360(
     :type oauth2: boolean
     """
 
-    def __init__(self, url: str, token: str, oauth2: bool = False):
+    def __init__(self, url: str, token: str, oauth2: bool = False) -> None:
         """Constructor"""
         if url[-1] != "/":
             url += "/"
@@ -66,7 +66,7 @@ class SW360(
 
         self.force_no_session = False
 
-    def login_api(self, token: str = ""):
+    def login_api(self, token: str = "") -> bool:
         """Login to SW360 REST API. This used to have a `token` parameter
         due to historic reasons which is ignored.
 
@@ -94,7 +94,7 @@ class SW360(
         else:
             raise SW360Error(resp, url, message="Unable to login")
 
-    def close_api(self):
+    def close_api(self) -> None:
         """A keep-alive HTTP session is used to access the SW360 REST API.
         This method allows to explicitely close the connection at a defined
         time. Normally, you don't need to call it - session is cleaned up

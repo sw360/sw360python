@@ -8,6 +8,7 @@
 # -------------------------------------------------------------------------------
 
 import sys
+from typing import Any
 import unittest
 import warnings
 
@@ -23,12 +24,12 @@ class Sw360TestReleases(unittest.TestCase):
     MYURL = "https://my.server.com/"
     ERROR_MSG_NO_LOGIN = "Unable to login"
 
-    def setUp(self):
+    def setUp(self) -> None:
         warnings.filterwarnings(
             "ignore", category=ResourceWarning,
             message="unclosed.*<ssl.SSLSocket.*>")
 
-    def _add_login_response(self):
+    def _add_login_response(self) -> None:
         """
         Add the response for a successfull login.
         """
@@ -41,18 +42,18 @@ class Sw360TestReleases(unittest.TestCase):
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-    def _my_matcher(self):
+    def _my_matcher(self) -> Any:
         """
         Helper method to display the JSON parameters of a REST call.
         """
-        def display_json_params(request_body):
+        def display_json_params(request_body: Any) -> bool:
             print("MyMatcher:'" + request_body + "'")
             return True
 
         return display_json_params
 
     @responses.activate
-    def test_get_get_release(self):
+    def test_get_get_release(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -69,11 +70,12 @@ class Sw360TestReleases(unittest.TestCase):
 
         release = lib.get_release("123")
         self.assertIsNotNone(release)
-        self.assertEqual("Tethys.Logging", release["name"])
-        self.assertEqual("1.4.0", release["version"])
+        if release:  # only for mypy
+            self.assertEqual("Tethys.Logging", release["name"])
+            self.assertEqual("1.4.0", release["version"])
 
     @responses.activate
-    def test_get_get_release_internal_server_error(self):
+    def test_get_get_release_internal_server_error(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -91,12 +93,19 @@ class Sw360TestReleases(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.get_release("123")
 
-        self.assertEqual(500, context.exception.response.status_code)
-        self.assertEqual("500", context.exception.details["status"])
-        self.assertEqual("Internal Server Error", context.exception.details["error"])
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(500, context.exception.response.status_code)
+            if context.exception.details:
+                self.assertEqual("500", context.exception.details["status"])
+                self.assertEqual("Internal Server Error", context.exception.details["error"])
 
     @responses.activate
-    def test_get_release_by_url(self):
+    def test_get_release_by_url(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -113,11 +122,12 @@ class Sw360TestReleases(unittest.TestCase):
 
         release = lib.get_release_by_url(self.MYURL + "resource/api/releases/124")
         self.assertIsNotNone(release)
-        self.assertEqual("Tethys.Logging", release["name"])
-        self.assertEqual("1.3.0", release["version"])
+        if release:  # only for mypy
+            self.assertEqual("Tethys.Logging", release["name"])
+            self.assertEqual("1.3.0", release["version"])
 
     @responses.activate
-    def test_get_all_releases(self):
+    def test_get_all_releases(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -134,12 +144,13 @@ class Sw360TestReleases(unittest.TestCase):
 
         releases = lib.get_all_releases()
         self.assertIsNotNone(releases)
-        self.assertTrue(len(releases) > 0)
-        self.assertEqual("Tethys.Logging", releases[0]["name"])
-        self.assertEqual("1.3.0", releases[0]["version"])
+        if releases:  # only for mypy
+            self.assertTrue(len(releases) > 0)
+            self.assertEqual("Tethys.Logging", releases[0]["name"])
+            self.assertEqual("1.3.0", releases[0]["version"])
 
     @responses.activate
-    def test_get_all_releases_all_details(self):
+    def test_get_all_releases_all_details(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -154,14 +165,14 @@ class Sw360TestReleases(unittest.TestCase):
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        releases = lib.get_all_releases(None, True)
+        releases = lib.get_all_releases("", True)
         self.assertIsNotNone(releases)
         self.assertTrue(len(releases) > 0)
         self.assertEqual("Tethys.Logging", releases[0]["name"])
         self.assertEqual("1.3.0", releases[0]["version"])
 
     @responses.activate
-    def test_get_all_releases_with_fields(self):
+    def test_get_all_releases_with_fields(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -183,7 +194,7 @@ class Sw360TestReleases(unittest.TestCase):
         self.assertEqual("1.3.0", releases[0]["version"])
 
     @responses.activate
-    def test_get_all_releases_with_fields_and_all_details(self):
+    def test_get_all_releases_with_fields_and_all_details(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -205,7 +216,7 @@ class Sw360TestReleases(unittest.TestCase):
         self.assertEqual("1.3.0", releases[0]["version"])
 
     @responses.activate
-    def test_get_releases_by_external_id(self):
+    def test_get_releases_by_external_id(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -227,7 +238,7 @@ class Sw360TestReleases(unittest.TestCase):
         self.assertEqual("1.3.0", releases[0]["version"])
 
     @responses.activate
-    def test_get_releases_by_name(self):
+    def test_get_releases_by_name(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -249,7 +260,7 @@ class Sw360TestReleases(unittest.TestCase):
         self.assertEqual("2.2.2", releases[0]["version"])
 
     @responses.activate
-    def test_create_new_release(self):
+    def test_create_new_release(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -277,7 +288,7 @@ class Sw360TestReleases(unittest.TestCase):
         lib.create_new_release("NewComponent", "1.0.0", "9876")
 
     @responses.activate
-    def test_create_new_release_already_exists(self):
+    def test_create_new_release_already_exists(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -303,12 +314,19 @@ class Sw360TestReleases(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.create_new_release("NewComponent", "1.0.0", "9876")
 
-        self.assertEqual(409, context.exception.response.status_code)
-        self.assertEqual(409, context.exception.details["status"])
-        self.assertEqual("Conflict", context.exception.details["error"])
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(409, context.exception.response.status_code)
+            if context.exception.details:
+                self.assertEqual(409, context.exception.details["status"])
+                self.assertEqual("Conflict", context.exception.details["error"])
 
     @responses.activate
-    def test_update_release(self):
+    def test_update_release(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -329,7 +347,7 @@ class Sw360TestReleases(unittest.TestCase):
         lib.update_release(release, "123")
 
     @responses.activate
-    def test_update_release_no_id(self):
+    def test_update_release_no_id(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -347,12 +365,12 @@ class Sw360TestReleases(unittest.TestCase):
         release["name"] = "NewComponent"
 
         with self.assertRaises(SW360Error) as context:
-            lib.update_release(release, None)
+            lib.update_release(release, "")
 
         self.assertEqual("No release id provided!", context.exception.message)
 
     @responses.activate
-    def test_update_release_failed(self):
+    def test_update_release_failed(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -372,10 +390,16 @@ class Sw360TestReleases(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.update_release(release, "123")
 
-        self.assertEqual(404, context.exception.response.status_code)
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(404, context.exception.response.status_code)
 
     @responses.activate
-    def test_update_release_external_id_add_fresh_id(self):
+    def test_update_release_external_id_add_fresh_id(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -406,7 +430,7 @@ class Sw360TestReleases(unittest.TestCase):
             "123")
 
     @responses.activate
-    def test_delete_release(self):
+    def test_delete_release(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -423,19 +447,19 @@ class Sw360TestReleases(unittest.TestCase):
         lib.delete_release("123")
 
     @responses.activate
-    def test_delete_release_no_id(self):
+    def test_delete_release_no_id(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
         with self.assertRaises(SW360Error) as context:
-            lib.delete_release(None)
+            lib.delete_release("")
 
         self.assertEqual("No release id provided!", context.exception.message)
 
     @responses.activate
-    def test_delete_release_failed(self):
+    def test_delete_release_failed(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -451,10 +475,16 @@ class Sw360TestReleases(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.delete_release("123")
 
-        self.assertEqual(404, context.exception.response.status_code)
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(404, context.exception.response.status_code)
 
     @responses.activate
-    def test_get_users_of_release(self):
+    def test_get_users_of_release(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()

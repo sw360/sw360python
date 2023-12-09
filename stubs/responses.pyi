@@ -6,7 +6,7 @@ from io import BufferedReader, BytesIO
 from re import Pattern
 from typing import (TYPE_CHECKING, Any, Callable, Dict, Iterable, Iterator,
                     List, Mapping, NamedTuple, Optional, Sequence, Sized,
-                    Tuple, Type, Union)
+                    Tuple, Type, TypeVar, Union)
 
 from requests.adapters import HTTPAdapter
 # from urllib3.response import HTTPHeaderDict
@@ -57,6 +57,13 @@ class Call(NamedTuple):
 
 _real_send = HTTPAdapter.send
 _UNSET = object()
+
+
+F = TypeVar('F', bound=Callable[..., Any])
+
+
+def activate(func: F) -> F:
+    ...
 
 
 class FalseBool:

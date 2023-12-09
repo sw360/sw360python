@@ -25,7 +25,7 @@ logger.setLevel(logging.WARNING)
 
 
 class AttachmentsMixin(BaseMixin):
-    def get_attachment_infos_by_hash(self, hashvalue) -> Optional[Dict[str, Any]]:
+    def get_attachment_infos_by_hash(self, hashvalue: str) -> Optional[Dict[str, Any]]:
         """Get information about attachments with a given sha1 hash value.
 
         This usually returns zero or one result, but if the same binary file
@@ -202,7 +202,7 @@ class AttachmentsMixin(BaseMixin):
         if resource_type not in ("releases", "components", "projects"):
             raise SW360Error(message="Invalid resource type provided!")
 
-        if type(resource_id) is not str:
+        if (type(resource_id) is not str) or (resource_id == ""):
             raise SW360Error(message="Invalid resource id provided!")
 
         filename = os.path.basename(upload_file)

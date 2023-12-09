@@ -272,7 +272,7 @@ class ProjectMixin(BaseMixin):
 
         return resp
 
-    def create_new_project(self, name: str, project_type: str, visibility,
+    def create_new_project(self, name: str, project_type: str, visibility: Any,
                            description: str = "", version: str = "",
                            project_details: Dict[str, Any] = {}) -> Optional[Dict[str, Any]]:
         """Create a new project.
@@ -352,7 +352,7 @@ class ProjectMixin(BaseMixin):
 
         raise SW360Error(response, url)
 
-    def update_project_releases(self, releases, project_id: str, add: bool = False) -> bool:
+    def update_project_releases(self, releases: List[Dict[str, Any]], project_id: str, add: bool = False) -> bool:
         """Update the releases of an existing project. If `add` is True,
         given `releases` are added to the project, otherwise, the existing
         releases will be replaced.

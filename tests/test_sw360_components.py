@@ -9,6 +9,7 @@
 
 import os
 import sys
+from typing import Any
 import unittest
 import warnings
 
@@ -24,12 +25,12 @@ class Sw360TestComponents(unittest.TestCase):
     MYURL = "https://my.server.com/"
     ERROR_MSG_NO_LOGIN = "Unable to login"
 
-    def setUp(self):
+    def setUp(self) -> None:
         warnings.filterwarnings(
             "ignore", category=ResourceWarning,
             message="unclosed.*<ssl.SSLSocket.*>")
 
-    def _add_login_response(self):
+    def _add_login_response(self) -> None:
         """
         Add the response for a successfull login.
         """
@@ -42,18 +43,18 @@ class Sw360TestComponents(unittest.TestCase):
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-    def _my_matcher(self):
+    def _my_matcher(self) -> Any:
         """
         Helper method to display the JSON parameters of a REST call.
         """
-        def display_json_params(request_body):
+        def display_json_params(request_body: Any) -> bool:
             print("MyMatcher:'" + request_body + "'")
             return True
 
         return display_json_params
 
     @responses.activate
-    def test_get_all_components(self):
+    def test_get_all_components(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -75,7 +76,7 @@ class Sw360TestComponents(unittest.TestCase):
         self.assertEqual("Tethys.Logging", components[0]["name"])
 
     @responses.activate
-    def test_get_all_components_no_result(self):
+    def test_get_all_components_no_result(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -95,7 +96,7 @@ class Sw360TestComponents(unittest.TestCase):
         self.assertEqual([], components)
 
     @responses.activate
-    def test_get_all_components_with_fields(self):
+    def test_get_all_components_with_fields(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -118,7 +119,7 @@ class Sw360TestComponents(unittest.TestCase):
         self.assertEqual("DE", components[0]["ownerCountry"])
 
     @responses.activate
-    def test_get_all_components_with_fields_and_paging(self):
+    def test_get_all_components_with_fields_and_paging(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -141,7 +142,7 @@ class Sw360TestComponents(unittest.TestCase):
         self.assertEqual("DE", components[0]["ownerCountry"])
 
     @responses.activate
-    def test_get_all_components_by_type(self):
+    def test_get_all_components_by_type(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -164,7 +165,7 @@ class Sw360TestComponents(unittest.TestCase):
         self.assertEqual("OSS", components[0]["componentType"])
 
     @responses.activate
-    def test_get_all_components_by_type_no_result(self):
+    def test_get_all_components_by_type_no_result(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -184,7 +185,7 @@ class Sw360TestComponents(unittest.TestCase):
         self.assertEqual([], components)
 
     @responses.activate
-    def test_get_component(self):
+    def test_get_component(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -201,10 +202,11 @@ class Sw360TestComponents(unittest.TestCase):
         )
 
         comp = lib.get_component("123")
-        self.assertEqual("Tethys.Logging", comp["name"])
+        if comp:  # only for mypy
+            self.assertEqual("Tethys.Logging", comp["name"])
 
     @responses.activate
-    def test_get_component_by_url(self):
+    def test_get_component_by_url(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -221,10 +223,11 @@ class Sw360TestComponents(unittest.TestCase):
         )
 
         comp = lib.get_component_by_url(self.MYURL + "resource/api/components/123")
-        self.assertEqual("Tethys.Logging1", comp["name"])
+        if comp:  # only for mypy
+            self.assertEqual("Tethys.Logging1", comp["name"])
 
     @responses.activate
-    def test_get_component_by_name(self):
+    def test_get_component_by_name(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -241,10 +244,11 @@ class Sw360TestComponents(unittest.TestCase):
         )
 
         comp = lib.get_component_by_name("MyComponent")
-        self.assertEqual("MyComponent", comp["name"])
+        if comp:  # only for mypy
+            self.assertEqual("MyComponent", comp["name"])
 
     @responses.activate
-    def test_get_components_by_external_id(self):
+    def test_get_components_by_external_id(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -266,7 +270,7 @@ class Sw360TestComponents(unittest.TestCase):
         self.assertEqual("Tethys.Logging", components[0]["name"])
 
     @responses.activate
-    def test_get_components_by_external_id_full_answer(self):
+    def test_get_components_by_external_id_full_answer(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -288,7 +292,7 @@ class Sw360TestComponents(unittest.TestCase):
         self.assertEqual("Tethys.Logging", components[0]["name"])
 
     @responses.activate
-    def test_update_component_external_id_add_fresh_id(self):
+    def test_update_component_external_id_add_fresh_id(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -320,7 +324,7 @@ class Sw360TestComponents(unittest.TestCase):
             "bc75c910ca9866886cb4d7b3a301061f")
 
     @responses.activate
-    def test_update_component_external_id_no_overwrite(self):
+    def test_update_component_external_id_no_overwrite(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -343,7 +347,7 @@ class Sw360TestComponents(unittest.TestCase):
             "bc75c910ca9866886cb4d7b3a301061f")
 
     @responses.activate
-    def test_update_component_external_id_overwrite(self):
+    def test_update_component_external_id_overwrite(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -376,7 +380,7 @@ class Sw360TestComponents(unittest.TestCase):
             update_mode="overwrite")
 
     @responses.activate
-    def test_update_component_external_id_delete(self):
+    def test_update_component_external_id_delete(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -409,7 +413,7 @@ class Sw360TestComponents(unittest.TestCase):
             update_mode="delete")
 
     @responses.activate
-    def test_update_component_external_id_no_exist(self):
+    def test_update_component_external_id_no_exist(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -446,7 +450,7 @@ class Sw360TestComponents(unittest.TestCase):
             update_mode="delete")
 
     @responses.activate
-    def test_update_component_external_id_no_extids_yet(self):
+    def test_update_component_external_id_no_extids_yet(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -478,7 +482,7 @@ class Sw360TestComponents(unittest.TestCase):
             "bc75c910ca9866886cb4d7b3a301061f")
 
     @responses.activate
-    def test_create_new_component(self):
+    def test_create_new_component(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -514,7 +518,7 @@ class Sw360TestComponents(unittest.TestCase):
         )
 
     @responses.activate
-    def test_create_new_component_fail(self):
+    def test_create_new_component_fail(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -547,10 +551,17 @@ class Sw360TestComponents(unittest.TestCase):
                 description="Illustrative example component",
                 homepage="https://www.github.com/NewComponent"
             )
-        self.assertEqual(409, context.exception.response.status_code)
+
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(409, context.exception.response.status_code)
 
     @responses.activate
-    def test_update_component_no_id(self):
+    def test_update_component_no_id(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -561,12 +572,12 @@ class Sw360TestComponents(unittest.TestCase):
         comp["name"] = "NewComponent"
 
         with self.assertRaises(SW360Error) as context:
-            lib.update_component(comp, None)
+            lib.update_component(comp, "")
 
         self.assertEqual("No component id provided!", context.exception.message)
 
     @responses.activate
-    def test_update_component_failed(self):
+    def test_update_component_failed(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -586,10 +597,16 @@ class Sw360TestComponents(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.update_component(comp, "123")
 
-        self.assertEqual(403, context.exception.response.status_code)
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(403, context.exception.response.status_code)
 
     @responses.activate
-    def test_delete_component(self):
+    def test_delete_component(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -606,7 +623,7 @@ class Sw360TestComponents(unittest.TestCase):
         lib.delete_component("123")
 
     @responses.activate
-    def test_delete_component_no_id(self):
+    def test_delete_component_no_id(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -614,12 +631,12 @@ class Sw360TestComponents(unittest.TestCase):
         self.assertTrue(actual)
 
         with self.assertRaises(SW360Error) as context:
-            lib.delete_component(None)
+            lib.delete_component("")
 
         self.assertEqual("No component id provided!", context.exception.message)
 
     @responses.activate
-    def test_delete_component_failed(self):
+    def test_delete_component_failed(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -636,10 +653,16 @@ class Sw360TestComponents(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.delete_component("123")
 
-        self.assertEqual(404, context.exception.response.status_code)
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(404, context.exception.response.status_code)
 
     @responses.activate
-    def test_get_users_of_component(self):
+    def test_get_users_of_component(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -657,7 +680,7 @@ class Sw360TestComponents(unittest.TestCase):
 
         lib.get_users_of_component("123")
 
-    def xtest_get_component_real(self):
+    def xtest_get_component_real(self) -> None:
         """
         Only for debugging...
         """

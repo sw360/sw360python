@@ -24,7 +24,7 @@ class LicenseMixin(BaseMixin):
         fullName: str,
         text: str,
         checked: bool = False,
-        license_details={},
+        license_details: Dict[str, Any] = {},
     ) -> Any:
         """Create a new license
 

@@ -20,7 +20,7 @@ class Sw360TestSupportMethods(unittest.TestCase):
     MYURL = "https://my.server.com/"
     ERROR_MSG_NO_LOGIN = "Unable to login"
 
-    def test_get_id_from_href(self):
+    def test_get_id_from_href(self) -> None:
         URL = "https://sw360.siemens.com/resource/api/releases/00dc0db789f9372ed6bcfd55f100e3ce"
 
         lib = SW360(self.MYURL, self.MYTOKEN, False)

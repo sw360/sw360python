@@ -9,8 +9,7 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
-import sys
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 import requests
 
@@ -21,7 +20,7 @@ from .sw360error import SW360Error
 class ComponentsMixin(BaseMixin):
     # return type List[Dict[str, Any]] | Optional[Dict[str, Any]] for Python 3.11 is good,
     # Union[List[Dict[str, Any]], Optional[Dict[str, Any]]] for lower Python versions is not good
-    def get_all_components(self, fields=None, page=-1, page_size=-1,
+    def get_all_components(self, fields: str = "", page: int = -1, page_size: int = -1,
                            all_details: bool = False,
                            sort: str = "") -> Any:
         """Get information of about all components

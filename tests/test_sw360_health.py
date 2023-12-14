@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2020-2022 Siemens
+# Copyright (c) 2020-2023 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -23,12 +23,12 @@ class Sw360TestHealth(unittest.TestCase):
     MYURL = "https://my.server.com/"
     ERROR_MSG_NO_LOGIN = "Unable to login"
 
-    def setUp(self):
+    def setUp(self) -> None:
         warnings.filterwarnings(
             "ignore", category=ResourceWarning,
             message="unclosed.*<ssl.SSLSocket.*>")
 
-    def _add_login_response(self):
+    def _add_login_response(self) -> None:
         """
         Add the response for a successfull login.
         """
@@ -42,7 +42,7 @@ class Sw360TestHealth(unittest.TestCase):
         )
 
     @responses.activate
-    def test_get_health_status(self):
+    def test_get_health_status(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -59,7 +59,8 @@ class Sw360TestHealth(unittest.TestCase):
 
         status = lib.get_health_status()
         self.assertIsNotNone(status)
-        self.assertTrue("status" in status)
+        if status:  # only for mypy
+            self.assertTrue("status" in status)
 
 
 if __name__ == "__main__":

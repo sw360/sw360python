@@ -24,7 +24,7 @@ class LicenseMixin(BaseMixin):
         fullName: str,
         text: str,
         checked: bool = False,
-        license_details={},
+        license_details: Dict[str, Any] = {},
     ) -> Any:
         """Create a new license
 
@@ -84,7 +84,7 @@ class LicenseMixin(BaseMixin):
 
     def download_license_info(
         self, project_id: str, filename: str, generator: str = "XhtmlGenerator", variant: str = "DISCLOSURE"
-    ):
+    ) -> None:
         """Gets the license information, aka Readme_OSS for the project
         with the given id
 

@@ -12,6 +12,7 @@ import sys
 import tempfile
 import unittest
 import warnings
+from typing import Any, Dict, List
 
 import responses
 
@@ -25,10 +26,10 @@ class Sw360TestProjects(unittest.TestCase):
     MYURL = "https://my.server.com/"
     ERROR_MSG_NO_LOGIN = "Unable to login"
 
-    def setUp(self):
+    def setUp(self) -> None:
         warnings.simplefilter("ignore", ResourceWarning)
 
-    def get_logged_in_lib(self):
+    def get_logged_in_lib(self) -> SW360:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
 
         responses.add(
@@ -45,7 +46,7 @@ class Sw360TestProjects(unittest.TestCase):
         return lib
 
     @responses.activate
-    def test_get_project(self):
+    def test_get_project(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
 
         responses.add(
@@ -69,14 +70,15 @@ class Sw360TestProjects(unittest.TestCase):
         )
 
         p = lib.get_project("123")
-        self.assertEqual("My Testproject", p["name"])
+        if p:  # only for mypy
+            self.assertEqual("My Testproject", p["name"])
 
         self.assertIsNotNone(lib.session)
         lib.close_api()
         self.assertIsNone(lib.session)
 
     @responses.activate
-    def test_get_project_not_logged_in(self):
+    def test_get_project_not_logged_in(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
 
         responses.add(
@@ -94,7 +96,7 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertTrue(context.exception.message.startswith("login_api needs to be called first"))
 
     @responses.activate
-    def test_get_project_not_found(self):
+    def test_get_project_not_found(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         # lib.force_no_session = True
 
@@ -121,12 +123,19 @@ class Sw360TestProjects(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.get_project("123456")
 
-        self.assertEqual(404, context.exception.response.status_code)
-        self.assertEqual("Not Found", context.exception.details["error"])
-        self.assertEqual("Requested Project Not Found", context.exception.details["message"])
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(404, context.exception.response.status_code)
+            if context.exception.details:
+                self.assertEqual("Not Found", context.exception.details["error"])
+                self.assertEqual("Requested Project Not Found", context.exception.details["message"])
 
     @responses.activate
-    def test_get_project_releases(self):
+    def test_get_project_releases(self) -> None:
         lib = self.get_logged_in_lib()
         responses.add(
             responses.GET,
@@ -153,7 +162,7 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertIsNotNone(releases)
 
     @responses.activate
-    def test_get_project_by_url(self):
+    def test_get_project_by_url(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -166,10 +175,11 @@ class Sw360TestProjects(unittest.TestCase):
         )
 
         p = lib.get_project_by_url(self.MYURL + "resource/api/projects/123")
-        self.assertEqual("My Testproject", p["name"])
+        if p:  # only for mypy
+            self.assertEqual("My Testproject", p["name"])
 
     @responses.activate
-    def test_get_projects(self):
+    def test_get_projects(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -183,12 +193,13 @@ class Sw360TestProjects(unittest.TestCase):
 
         projects = lib.get_projects()
         self.assertIsNotNone(projects)
-        self.assertTrue("_embedded" in projects)
-        self.assertTrue("sw360:projects" in projects["_embedded"])
-        self.assertEqual("My Testproject", projects["_embedded"]["sw360:projects"][0]["name"])
+        if projects:  # only for mypy
+            self.assertTrue("_embedded" in projects)
+            self.assertTrue("sw360:projects" in projects["_embedded"])
+            self.assertEqual("My Testproject", projects["_embedded"]["sw360:projects"][0]["name"])
 
     @responses.activate
-    def test_get_projects_with_details(self):
+    def test_get_projects_with_details(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -202,12 +213,13 @@ class Sw360TestProjects(unittest.TestCase):
 
         projects = lib.get_projects(all_details=True)
         self.assertIsNotNone(projects)
-        self.assertTrue("_embedded" in projects)
-        self.assertTrue("sw360:projects" in projects["_embedded"])
-        self.assertEqual("My Testproject", projects["_embedded"]["sw360:projects"][0]["name"])
+        if projects:  # only for mypy
+            self.assertTrue("_embedded" in projects)
+            self.assertTrue("sw360:projects" in projects["_embedded"])
+            self.assertEqual("My Testproject", projects["_embedded"]["sw360:projects"][0]["name"])
 
     @responses.activate
-    def test_get_projects_with_paging(self):
+    def test_get_projects_with_paging(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -221,12 +233,13 @@ class Sw360TestProjects(unittest.TestCase):
 
         projects = lib.get_projects(page=1, page_size=2)
         self.assertIsNotNone(projects)
-        self.assertTrue("_embedded" in projects)
-        self.assertTrue("sw360:projects" in projects["_embedded"])
-        self.assertEqual("My Testproject", projects["_embedded"]["sw360:projects"][0]["name"])
+        if projects:  # only for mypy
+            self.assertTrue("_embedded" in projects)
+            self.assertTrue("sw360:projects" in projects["_embedded"])
+            self.assertEqual("My Testproject", projects["_embedded"]["sw360:projects"][0]["name"])
 
     @responses.activate
-    def test_get_projects_with_paging_and_details(self):
+    def test_get_projects_with_paging_and_details(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -240,12 +253,13 @@ class Sw360TestProjects(unittest.TestCase):
 
         projects = lib.get_projects(all_details=True, page=3, page_size=4, sort="name,desc")
         self.assertIsNotNone(projects)
-        self.assertTrue("_embedded" in projects)
-        self.assertTrue("sw360:projects" in projects["_embedded"])
-        self.assertEqual("My Testproject", projects["_embedded"]["sw360:projects"][0]["name"])
+        if projects:  # only for mypy
+            self.assertTrue("_embedded" in projects)
+            self.assertTrue("sw360:projects" in projects["_embedded"])
+            self.assertEqual("My Testproject", projects["_embedded"]["sw360:projects"][0]["name"])
 
     @responses.activate
-    def test_get_projects_by_type(self):
+    def test_get_projects_by_type(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -264,7 +278,7 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertEqual("SERVICE", projects[0]["projectType"])
 
     @responses.activate
-    def test_get_project_names(self):
+    def test_get_project_names(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -282,7 +296,7 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertEqual("My Testproject, 1.0.0", project_names[0])
 
     @responses.activate
-    def test_get_projects_by_name(self):
+    def test_get_projects_by_name(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -298,7 +312,7 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertEqual([], projects)
 
     @responses.activate
-    def test_get_projects_by_name_no_result(self):
+    def test_get_projects_by_name_no_result(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -316,7 +330,7 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertEqual("My Testproject", projects[0]["name"])
 
     @responses.activate
-    def test_get_projects_by_external_id(self):
+    def test_get_projects_by_external_id(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -336,7 +350,7 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertEqual("9999", projects[0]["externalIds"]["myid"])
 
     @responses.activate
-    def test_get_projects_by_external_id_no_result(self):
+    def test_get_projects_by_external_id_no_result(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -352,7 +366,7 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertEqual([], projects)
 
     @responses.activate
-    def test_get_projects_by_group(self):
+    def test_get_projects_by_group(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -370,7 +384,7 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertEqual("My Testproject", projects[0]["name"])
 
     @responses.activate
-    def test_get_projects_by_group_with_details(self):
+    def test_get_projects_by_group_with_details(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -388,7 +402,7 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertEqual("My Testproject", projects[0]["name"])
 
     @responses.activate
-    def test_get_projects_by_group_no_result(self):
+    def test_get_projects_by_group_no_result(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -404,7 +418,7 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertEqual([], projects)
 
     @responses.activate
-    def test_get_projects_by_tag(self):
+    def test_get_projects_by_tag(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -422,7 +436,7 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertEqual("My Testproject", projects[0]["name"])
 
     @responses.activate
-    def test_get_projects_by_tag_no_result(self):
+    def test_get_projects_by_tag_no_result(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -438,7 +452,7 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertEqual([], projects)
 
     @responses.activate
-    def test_download_license_info(self):
+    def test_download_license_info(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -462,7 +476,7 @@ class Sw360TestProjects(unittest.TestCase):
         os.removedirs(tmpdir)
 
     @responses.activate
-    def test_get_project_vulnerabilities(self):
+    def test_get_project_vulnerabilities(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -476,15 +490,16 @@ class Sw360TestProjects(unittest.TestCase):
 
         data = lib.get_project_vulnerabilities("123")
         self.assertIsNotNone(data)
-        self.assertTrue("_embedded" in data)
-        self.assertTrue("sw360:vulnerabilityDToes" in data["_embedded"])
-        vulnerabilities = data["_embedded"]["sw360:vulnerabilityDToes"]
-        self.assertIsNotNone(vulnerabilities)
-        self.assertTrue(len(vulnerabilities) > 0)
-        self.assertEqual("2 - major", vulnerabilities[0]["priority"])
+        if data:  # only for mypy
+            self.assertTrue("_embedded" in data)
+            self.assertTrue("sw360:vulnerabilityDToes" in data["_embedded"])
+            vulnerabilities = data["_embedded"]["sw360:vulnerabilityDToes"]
+            self.assertIsNotNone(vulnerabilities)
+            self.assertTrue(len(vulnerabilities) > 0)
+            self.assertEqual("2 - major", vulnerabilities[0]["priority"])
 
     @responses.activate
-    def test_get_project_vulnerabilities_no_result(self):
+    def test_get_project_vulnerabilities_no_result(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -500,7 +515,7 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertIsNone(data)
 
     @responses.activate
-    def test_create_new_project(self):
+    def test_create_new_project(self) -> None:
         lib = self.get_logged_in_lib()
         responses.add(
             responses.POST,
@@ -529,7 +544,7 @@ class Sw360TestProjects(unittest.TestCase):
         )
 
     @responses.activate
-    def test_create_new_project_already_exists(self):
+    def test_create_new_project_already_exists(self) -> None:
         lib = self.get_logged_in_lib()
         responses.add(
             responses.POST,
@@ -554,10 +569,17 @@ class Sw360TestProjects(unittest.TestCase):
                 description="Example Product",
                 project_type="PRODUCT", visibility="EVERYONE",
             )
-        self.assertEqual(409, context.exception.response.status_code)
+
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(409, context.exception.response.status_code)
 
     @responses.activate
-    def test_update_project(self):
+    def test_update_project(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -577,12 +599,12 @@ class Sw360TestProjects(unittest.TestCase):
         sub_proj["projectRelationship"] = "CONTAINED"
 
         sub_projects["12345"] = sub_proj
-        project["linkedProjects"] = sub_projects
+        project["linkedProjects"] = sub_projects  # type: ignore
 
         lib.update_project(project, "123", False)
 
     @responses.activate
-    def test_update_project_sub_projects_no_add(self):
+    def test_update_project_sub_projects_no_add(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -621,12 +643,12 @@ class Sw360TestProjects(unittest.TestCase):
         sub_proj["projectRelationship"] = "CONTAINED"
 
         sub_projects["12345"] = sub_proj
-        project["linkedProjects"] = sub_projects
+        project["linkedProjects"] = sub_projects  # type: ignore
 
         lib.update_project(project, "123", True)
 
     @responses.activate
-    def test_update_project_sub_projects_with_add(self):
+    def test_update_project_sub_projects_with_add(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -669,12 +691,12 @@ class Sw360TestProjects(unittest.TestCase):
         sub_proj["projectRelationship"] = "CONTAINED"
 
         sub_projects["12345"] = sub_proj
-        project["linkedProjects"] = sub_projects
+        project["linkedProjects"] = sub_projects  # type: ignore
 
         lib.update_project(project, "123", True)
 
     @responses.activate
-    def test_update_project_no_id(self):
+    def test_update_project_no_id(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -690,12 +712,12 @@ class Sw360TestProjects(unittest.TestCase):
         project["projectType"] = "PRODUCT"
 
         with self.assertRaises(SW360Error) as context:
-            lib.update_project(project, None)
+            lib.update_project(project, "")
 
         self.assertEqual("No project id provided!", context.exception.message)
 
     @responses.activate
-    def test_update_project_failed(self):
+    def test_update_project_failed(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -713,10 +735,16 @@ class Sw360TestProjects(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.update_project(project, "123")
 
-        self.assertEqual(404, context.exception.response.status_code)
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(404, context.exception.response.status_code)
 
     @responses.activate
-    def test_update_project_releases_no_id(self):
+    def test_update_project_releases_no_id(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -727,12 +755,12 @@ class Sw360TestProjects(unittest.TestCase):
         )
 
         with self.assertRaises(SW360Error) as context:
-            lib.update_project_releases(None, None)
+            lib.update_project_releases([], "")
 
         self.assertEqual("No project id provided!", context.exception.message)
 
     @responses.activate
-    def test_update_project_releases_fresh_prj(self):
+    def test_update_project_releases_fresh_prj(self) -> None:
         lib = self.get_logged_in_lib()
         responses.add(
             responses.GET,
@@ -744,7 +772,7 @@ class Sw360TestProjects(unittest.TestCase):
             url=self.MYURL + "resource/api/projects/123/releases",
             status=202,
         )
-        lib.update_project_releases({}, "123", add=True)
+        lib.update_project_releases([], "123", add=True)
 
         responses.add(
             responses.GET,
@@ -756,10 +784,10 @@ class Sw360TestProjects(unittest.TestCase):
             url=self.MYURL + "resource/api/projects/124/releases",
             status=202,
         )
-        lib.update_project_releases({}, "124", add=True)
+        lib.update_project_releases([], "124", add=True)
 
     @responses.activate
-    def test_update_project_releases(self):
+    def test_update_project_releases(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -778,11 +806,11 @@ class Sw360TestProjects(unittest.TestCase):
             status=202,
         )
 
-        releases = {}
+        releases: List[Dict[str, Any]] = []
         lib.update_project_releases(releases, "123", add=True)
 
     @responses.activate
-    def test_update_project_releases_failed(self):
+    def test_update_project_releases_failed(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -801,14 +829,20 @@ class Sw360TestProjects(unittest.TestCase):
             status=404,
         )
 
-        releases = {}
+        releases: List[Dict[str, Any]] = []
         with self.assertRaises(SW360Error) as context:
             lib.update_project_releases(releases, "123", add=True)
 
-        self.assertEqual(404, context.exception.response.status_code)
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(404, context.exception.response.status_code)
 
     @responses.activate
-    def test_update_project_external_id_add_fresh_id(self):
+    def test_update_project_external_id_add_fresh_id(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -836,7 +870,7 @@ class Sw360TestProjects(unittest.TestCase):
             "123")
 
     @responses.activate
-    def test_delete_project(self):
+    def test_delete_project(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -849,16 +883,16 @@ class Sw360TestProjects(unittest.TestCase):
         lib.delete_project("123")
 
     @responses.activate
-    def test_delete_project_no_id(self):
+    def test_delete_project_no_id(self) -> None:
         lib = self.get_logged_in_lib()
 
         with self.assertRaises(SW360Error) as context:
-            lib.delete_project(None)
+            lib.delete_project("")
 
         self.assertEqual("No project id provided!", context.exception.message)
 
     @responses.activate
-    def test_delete_project_failed(self):
+    def test_delete_project_failed(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -871,10 +905,16 @@ class Sw360TestProjects(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.delete_project("123")
 
-        self.assertEqual(404, context.exception.response.status_code)
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(404, context.exception.response.status_code)
 
     @responses.activate
-    def test_get_users_of_project(self):
+    def test_get_users_of_project(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -889,7 +929,7 @@ class Sw360TestProjects(unittest.TestCase):
         lib.get_users_of_project("123")
 
     @responses.activate
-    def test_duplicate_project(self):
+    def test_duplicate_project(self) -> None:
         lib = self.get_logged_in_lib()
         responses.add(
             responses.POST,
@@ -914,22 +954,26 @@ class Sw360TestProjects(unittest.TestCase):
         )
         result = lib.duplicate_project("007", "42")
         self.assertIsNotNone(result)
-        self.assertTrue("clearingState" in result)
-        self.assertEqual("OPEN", result["clearingState"])
-        self.assertTrue("version" in result)
-        self.assertEqual("42", result["version"])
+        if result:  # only for mypy
+            self.assertTrue("clearingState" in result)
+            self.assertEqual("OPEN", result["clearingState"])
+            self.assertTrue("version" in result)
+            self.assertEqual("42", result["version"])
 
     @responses.activate
-    def test_duplicate_project_no_id(self):
+    def test_duplicate_project_no_id(self) -> None:
         lib = self.get_logged_in_lib()
 
         with self.assertRaises(SW360Error) as context:
-            lib.duplicate_project(None, "42")
+            lib.duplicate_project("", "42")
 
-        self.assertEqual("No project id provided!", context.exception.message)
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+        else:
+            self.assertEqual("No project id provided!", context.exception.message)
 
     @responses.activate
-    def test_duplicate_project_failed(self):
+    def test_duplicate_project_failed(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -943,10 +987,17 @@ class Sw360TestProjects(unittest.TestCase):
             lib.duplicate_project("123", "42")
 
         print(context.exception)
-        self.assertEqual(404, context.exception.response.status_code)
+
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(404, context.exception.response.status_code)
 
     @responses.activate
-    def test_update_project_release_relationship_no_project_id(self):
+    def test_update_project_release_relationship_no_project_id(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -962,12 +1013,15 @@ class Sw360TestProjects(unittest.TestCase):
         project["projectType"] = "PRODUCT"
 
         with self.assertRaises(SW360Error) as context:
-            lib.update_project_release_relationship(None, "22", "state", "rel", "cmt")
+            lib.update_project_release_relationship("", "22", "state", "rel", "cmt")
 
-        self.assertEqual("No project id provided!", context.exception.message)
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+        else:
+            self.assertEqual("No project id provided!", context.exception.message)
 
     @responses.activate
-    def test_update_project_release_relationship_no_release_id(self):
+    def test_update_project_release_relationship_no_release_id(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -983,12 +1037,12 @@ class Sw360TestProjects(unittest.TestCase):
         project["projectType"] = "PRODUCT"
 
         with self.assertRaises(SW360Error) as context:
-            lib.update_project_release_relationship("123", None, "state", "rel", "cmt")
+            lib.update_project_release_relationship("123", "", "state", "rel", "cmt")
 
         self.assertEqual("No release id provided!", context.exception.message)
 
     @responses.activate
-    def test_update_project_release_relationship_failed(self):
+    def test_update_project_release_relationship_failed(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -1006,10 +1060,16 @@ class Sw360TestProjects(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.update_project_release_relationship("123", "9988", "state", "rel", "cmt")
 
-        self.assertEqual(404, context.exception.response.status_code)
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(404, context.exception.response.status_code)
 
     @responses.activate
-    def test_update_project_release_relationship(self):
+    def test_update_project_release_relationship(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(

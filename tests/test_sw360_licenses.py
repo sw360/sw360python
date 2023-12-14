@@ -23,12 +23,12 @@ class Sw360TestLicenses(unittest.TestCase):
     MYURL = "https://my.server.com/"
     ERROR_MSG_NO_LOGIN = "Unable to login"
 
-    def setUp(self):
+    def setUp(self) -> None:
         warnings.filterwarnings(
             "ignore", category=ResourceWarning,
             message="unclosed.*<ssl.SSLSocket.*>")
 
-    def _add_login_response(self):
+    def _add_login_response(self) -> None:
         """
         Add the response for a successfull login.
         """
@@ -42,7 +42,7 @@ class Sw360TestLicenses(unittest.TestCase):
         )
 
     @responses.activate
-    def test_get_all_licenses(self):
+    def test_get_all_licenses(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -77,7 +77,7 @@ class Sw360TestLicenses(unittest.TestCase):
         self.assertEqual("BSD Zero Clause License", licenses[0]["fullName"])
 
     @responses.activate
-    def test_get_all_licenses_none(self):
+    def test_get_all_licenses_none(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -96,7 +96,7 @@ class Sw360TestLicenses(unittest.TestCase):
         self.assertEqual([], licenses)
 
     @responses.activate
-    def test_get_license(self):
+    def test_get_license(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -119,12 +119,13 @@ class Sw360TestLicenses(unittest.TestCase):
 
         license = lib.get_license("Apache-2.0")
         self.assertIsNotNone(license)
-        self.assertEqual("True", license["checked"])
-        self.assertEqual("Apache-2.0", license["shortName"])
-        self.assertEqual("Apache License 2.0", license["fullName"])
+        if license:  # only for mypy
+            self.assertEqual("True", license["checked"])
+            self.assertEqual("Apache-2.0", license["shortName"])
+            self.assertEqual("Apache License 2.0", license["fullName"])
 
     @responses.activate
-    def test_create_new_license(self):
+    def test_create_new_license(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -159,7 +160,7 @@ class Sw360TestLicenses(unittest.TestCase):
         )
 
     @responses.activate
-    def test_create_new_license_fail(self):
+    def test_create_new_license_fail(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -194,10 +195,17 @@ class Sw360TestLicenses(unittest.TestCase):
                 text="",
                 checked=True,
             )
-        self.assertEqual(403, context.exception.response.status_code)
+
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(403, context.exception.response.status_code)
 
     @responses.activate
-    def test_delete_license(self):
+    def test_delete_license(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()

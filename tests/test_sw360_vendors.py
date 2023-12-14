@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2020 Siemens
+# Copyright (c) 2020-2023 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -23,12 +23,12 @@ class Sw360TestVendors(unittest.TestCase):
     MYURL = "https://my.server.com/"
     ERROR_MSG_NO_LOGIN = "Unable to login"
 
-    def setUp(self):
+    def setUp(self) -> None:
         warnings.filterwarnings(
             "ignore", category=ResourceWarning,
             message="unclosed.*<ssl.SSLSocket.*>")
 
-    def _add_login_response(self):
+    def _add_login_response(self) -> None:
         """
         Add the response for a successfull login.
         """
@@ -42,7 +42,7 @@ class Sw360TestVendors(unittest.TestCase):
         )
 
     @responses.activate
-    def test_get_all_vendors_not_yet_implemented(self):
+    def test_get_all_vendors_not_yet_implemented(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -73,15 +73,16 @@ class Sw360TestVendors(unittest.TestCase):
 
         data = lib.api_get(self.MYURL + "resource/api/vendors")
         self.assertIsNotNone(data)
-        self.assertTrue("_embedded" in data)
-        self.assertTrue("sw360:vendors" in data["_embedded"])
-        vlist = data["_embedded"]["sw360:vendors"]
-        self.assertEqual(2, len(vlist))
-        self.assertEqual("Triangle, Inc.", vlist[0]["shortName"])
-        self.assertEqual("Me", vlist[1]["shortName"])
+        if data:  # only for mypy
+            self.assertTrue("_embedded" in data)
+            self.assertTrue("sw360:vendors" in data["_embedded"])
+            vlist = data["_embedded"]["sw360:vendors"]
+            self.assertEqual(2, len(vlist))
+            self.assertEqual("Triangle, Inc.", vlist[0]["shortName"])
+            self.assertEqual("Me", vlist[1]["shortName"])
 
     @responses.activate
-    def test_get_vendor(self):
+    def test_get_vendor(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -102,10 +103,11 @@ class Sw360TestVendors(unittest.TestCase):
 
         vendor = lib.get_vendor("12345")
         self.assertIsNotNone(vendor)
-        self.assertEqual("Triangle, Inc.", vendor["shortName"])
+        if vendor:  # only for mypy
+            self.assertEqual("Triangle, Inc.", vendor["shortName"])
 
     @responses.activate
-    def test_get_all_vendors(self):
+    def test_get_all_vendors(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -130,7 +132,7 @@ class Sw360TestVendors(unittest.TestCase):
         self.assertEqual("Premium Software", vendors[0]["fullName"])
 
     @responses.activate
-    def test_get_all_vendors_no_result(self):
+    def test_get_all_vendors_no_result(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -146,10 +148,10 @@ class Sw360TestVendors(unittest.TestCase):
         )
 
         vendors = lib.get_all_vendors()
-        self.assertIsNone(vendors)
+        self.assertEqual([], vendors)
 
     @responses.activate
-    def test_create_new_vendor(self):
+    def test_create_new_vendor(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -179,7 +181,7 @@ class Sw360TestVendors(unittest.TestCase):
         lib.create_new_vendor(vendor)
 
     @responses.activate
-    def test_create_new_vendor_fail(self):
+    def test_create_new_vendor_fail(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -209,10 +211,16 @@ class Sw360TestVendors(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.create_new_vendor(vendor)
 
-        self.assertEqual(403, context.exception.response.status_code)
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(403, context.exception.response.status_code)
 
     @responses.activate
-    def test_update_vendor_no_id(self):
+    def test_update_vendor_no_id(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -223,12 +231,12 @@ class Sw360TestVendors(unittest.TestCase):
         vendor["shortName"] = "xxx"
 
         with self.assertRaises(SW360Error) as context:
-            lib.update_vendor(vendor, None)
+            lib.update_vendor(vendor, "")
 
         self.assertEqual("No vendor id provided!", context.exception.message)
 
     @responses.activate
-    def test_update_vendor(self):
+    def test_update_vendor(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -252,7 +260,7 @@ class Sw360TestVendors(unittest.TestCase):
         lib.update_vendor(vendor, "112233")
 
     @responses.activate
-    def test_update_vendor_fail(self):
+    def test_update_vendor_fail(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -272,10 +280,16 @@ class Sw360TestVendors(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.update_vendor(vendor, "112233")
 
-        self.assertEqual(403, context.exception.response.status_code)
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(403, context.exception.response.status_code)
 
     @responses.activate
-    def test_delete_vendor_no_id(self):
+    def test_delete_vendor_no_id(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -283,12 +297,12 @@ class Sw360TestVendors(unittest.TestCase):
         self.assertTrue(actual)
 
         with self.assertRaises(SW360Error) as context:
-            lib.delete_vendor(None)
+            lib.delete_vendor("")
 
         self.assertEqual("No vendor id provided!", context.exception.message)
 
     @responses.activate
-    def test_delete_vendor(self):
+    def test_delete_vendor(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -305,7 +319,7 @@ class Sw360TestVendors(unittest.TestCase):
         lib.delete_vendor("123")
 
     @responses.activate
-    def test_delete_vendor_fail(self):
+    def test_delete_vendor_fail(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
@@ -322,8 +336,15 @@ class Sw360TestVendors(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.delete_vendor("123")
 
-        self.assertEqual(405, context.exception.response.status_code)
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(405, context.exception.response.status_code)
 
 
 if __name__ == "__main__":
-    unittest.main()
+    sut = Sw360TestVendors()
+    sut.test_delete_vendor_fail()

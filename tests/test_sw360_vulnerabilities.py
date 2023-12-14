@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2020 Siemens
+# Copyright (c) 2020-2023 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -23,12 +23,12 @@ class Sw360TestVulnerabilities(unittest.TestCase):
     MYURL = "https://my.server.com/"
     ERROR_MSG_NO_LOGIN = "Unable to login"
 
-    def setUp(self):
+    def setUp(self) -> None:
         warnings.filterwarnings(
             "ignore", category=ResourceWarning,
             message="unclosed.*<ssl.SSLSocket.*>")
 
-    def _add_login_response(self):
+    def _add_login_response(self) -> None:
         """
         Add the response for a successfull login.
         """
@@ -42,7 +42,7 @@ class Sw360TestVulnerabilities(unittest.TestCase):
         )
 
     @responses.activate
-    def test_get_all_vulnerabilities(self):
+    def test_get_all_vulnerabilities(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -66,14 +66,15 @@ class Sw360TestVulnerabilities(unittest.TestCase):
 
         data = lib.get_all_vulnerabilities()
         self.assertIsNotNone(data)
-        self.assertTrue("_embedded" in data)
-        self.assertTrue("sw360:vulnerabilities" in data["_embedded"])
-        vlist = data["_embedded"]["sw360:vulnerabilities"]
-        self.assertEqual(2, len(vlist))
-        self.assertEqual("Title of vulnerability 12345", vlist[0]["title"])
+        if data:  # only for mypy
+            self.assertTrue("_embedded" in data)
+            self.assertTrue("sw360:vulnerabilities" in data["_embedded"])
+            vlist = data["_embedded"]["sw360:vulnerabilities"]
+            self.assertEqual(2, len(vlist))
+            self.assertEqual("Title of vulnerability 12345", vlist[0]["title"])
 
     @responses.activate
-    def test_get_vulnerability(self):
+    def test_get_vulnerability(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -94,7 +95,8 @@ class Sw360TestVulnerabilities(unittest.TestCase):
 
         v = lib.get_vulnerability("47936")
         self.assertIsNotNone(v)
-        self.assertEqual("47936", v["externalId"])
+        if v:  # only for mypy
+            self.assertEqual("47936", v["externalId"])
 
 
 if __name__ == "__main__":

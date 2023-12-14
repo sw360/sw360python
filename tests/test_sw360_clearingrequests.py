@@ -23,12 +23,12 @@ class Sw360TestClearingRequests(unittest.TestCase):
     MYURL = "https://my.server.com/"
     ERROR_MSG_NO_LOGIN = "Unable to login"
 
-    def setUp(self):
+    def setUp(self) -> None:
         warnings.filterwarnings(
             "ignore", category=ResourceWarning,
             message="unclosed.*<ssl.SSLSocket.*>")
 
-    def _add_login_response(self):
+    def _add_login_response(self) -> None:
         """
         Add the response for a successfull login.
         """
@@ -42,7 +42,7 @@ class Sw360TestClearingRequests(unittest.TestCase):
         )
 
     @responses.activate
-    def test_get_clearing_request(self):
+    def test_get_clearing_request(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -62,10 +62,11 @@ class Sw360TestClearingRequests(unittest.TestCase):
 
         vendor = lib.get_clearing_request("12345")
         self.assertIsNotNone(vendor)
-        self.assertEqual("2021-09-04", vendor["requestedClearingDate"])
+        if vendor:  # only for mypy
+            self.assertEqual("2021-09-04", vendor["requestedClearingDate"])
 
     @responses.activate
-    def test_get_clearing_request_for_project(self):
+    def test_get_clearing_request_for_project(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
         actual = lib.login_api()
@@ -85,7 +86,8 @@ class Sw360TestClearingRequests(unittest.TestCase):
 
         vendor = lib.get_clearing_request_for_project("12345")
         self.assertIsNotNone(vendor)
-        self.assertEqual("2021-09-04", vendor["requestedClearingDate"])
+        if vendor:  # only for mypy
+            self.assertEqual("2021-09-04", vendor["requestedClearingDate"])
 
 
 if __name__ == "__main__":

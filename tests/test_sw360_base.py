@@ -24,7 +24,7 @@ class Sw360Test(unittest.TestCase):
     MYURL = "https://my.server.com/"
     ERROR_MSG_NO_LOGIN = "Unable to login"
 
-    def test_constructor(self):
+    def test_constructor(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self.assertEqual(self.MYURL, lib.url)
 
@@ -42,7 +42,7 @@ class Sw360Test(unittest.TestCase):
         self.assertEqual(self.MYURL, lib.url)
 
     @responses.activate
-    def test_login(self):
+    def test_login(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
 
         responses.add(
@@ -56,7 +56,7 @@ class Sw360Test(unittest.TestCase):
         actual = lib.login_api()
         self.assertTrue(actual)
 
-    def test_login_failed_invalid_url(self):
+    def test_login_failed_invalid_url(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
 
         have_backup = False
@@ -74,7 +74,7 @@ class Sw360Test(unittest.TestCase):
             os.environ["SW360ProductionToken"] = backup
 
     @responses.activate
-    def test_login_failed_not_authorized(self):
+    def test_login_failed_not_authorized(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
 
         responses.add(
@@ -92,7 +92,7 @@ class Sw360Test(unittest.TestCase):
         self.assertEqual(self.ERROR_MSG_NO_LOGIN, context.exception.message)
 
     @responses.activate
-    def test_login_failed_forbidden(self):
+    def test_login_failed_forbidden(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
 
         responses.add(
@@ -108,7 +108,7 @@ class Sw360Test(unittest.TestCase):
 
         self.assertEqual(self.ERROR_MSG_NO_LOGIN, context.exception.message)
 
-    def get_logged_in_lib(self):
+    def get_logged_in_lib(self) -> SW360:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         # lib.force_no_session = True
 
@@ -126,7 +126,7 @@ class Sw360Test(unittest.TestCase):
         return lib
 
     @responses.activate
-    def test_dump_rest_call_to_file(self):
+    def test_dump_rest_call_to_file(self) -> None:
         FILENAME = "delete_me.txt"
         if os.path.isfile(FILENAME):
             os.remove(FILENAME)
@@ -157,7 +157,7 @@ class Sw360Test(unittest.TestCase):
         lib.api_get_raw(self.MYURL + "resource/api/projects/123X")
 
     @responses.activate
-    def test_api_get_no_content(self):
+    def test_api_get_no_content(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
@@ -176,7 +176,7 @@ class Sw360Test(unittest.TestCase):
             self.assertIsNone(None)
 
     @responses.activate
-    def test_api_get_raw_not_logged_in(self):
+    def test_api_get_raw_not_logged_in(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = False
 
@@ -195,7 +195,7 @@ class Sw360Test(unittest.TestCase):
         self.assertEqual("login_api needs to be called first", context.exception.message)
 
     @responses.activate
-    def test_api_get_raw(self):
+    def test_api_get_raw(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
 
@@ -224,7 +224,7 @@ class Sw360Test(unittest.TestCase):
         self.assertEqual("My Testproject", p["name"])
 
     @responses.activate
-    def test_api_get_raw_error(self):
+    def test_api_get_raw_error(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
 
@@ -251,12 +251,19 @@ class Sw360Test(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.api_get_raw(self.MYURL + "resource/api/projects/123456X")
 
-        self.assertEqual(404, context.exception.response.status_code)
-        self.assertEqual("Not Found", context.exception.details["error"])
-        self.assertEqual("Requested Project Not Found", context.exception.details["message"])
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(404, context.exception.response.status_code)
+            if context.exception.details:
+                self.assertEqual("Not Found", context.exception.details["error"])
+                self.assertEqual("Requested Project Not Found", context.exception.details["message"])
 
     @responses.activate
-    def test_api_get_raw_error_string(self):
+    def test_api_get_raw_error_string(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
 
@@ -283,8 +290,14 @@ class Sw360Test(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.api_get_raw(self.MYURL + "resource/api/projects/123456X")
 
-        self.assertEqual(404, context.exception.response.status_code)
-        self.assertEqual("Error-String", context.exception.response.text)
+        if not context.exception:
+            self.assertTrue(False, "no exception")
+
+        if context.exception.response is None:
+            self.assertTrue(False, "no response")
+        else:
+            self.assertEqual(404, context.exception.response.status_code)
+            self.assertEqual("Error-String", context.exception.response.text)
 
 
 if __name__ == "__main__":

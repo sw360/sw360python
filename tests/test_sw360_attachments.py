@@ -13,6 +13,7 @@ import tempfile
 from typing import Any
 import unittest
 import warnings
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import responses

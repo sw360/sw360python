@@ -5,10 +5,11 @@
 
 # SW360 Base Library for Python
 
-## V1.3.2
+## V1.3.2rc1
 
 * have type hints.
-* drop support for Python 3.7
+* drop support for Python 3.7.
+* dependency update (urllib3 (1.26.18 -> 2.0.7), etc.).
 
 ## V1.3.1
 

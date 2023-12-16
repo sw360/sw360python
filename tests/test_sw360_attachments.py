@@ -10,7 +10,6 @@
 import os
 import sys
 import tempfile
-from typing import Any
 import unittest
 import warnings
 from typing import Any

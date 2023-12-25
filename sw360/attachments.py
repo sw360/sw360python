@@ -202,7 +202,7 @@ class AttachmentsMixin(BaseMixin):
         if resource_type not in ("releases", "components", "projects"):
             raise SW360Error(message="Invalid resource type provided!")
 
-        if (type(resource_id) is not str) or (resource_id == ""):
+        if (not isinstance(resource_id, str)) or (resource_id == ""):
             raise SW360Error(message="Invalid resource id provided!")
 
         filename = os.path.basename(upload_file)

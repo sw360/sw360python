@@ -6,8 +6,8 @@
 # SW360 Base Library for Python
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/sw360/sw360python/blob/master/License.md)
-[![Python Version](https://img.shields.io/badge/python-3.7%2C3.8%2C3.9-yellow?logo=python)](https://www.python.org/doc/versions/)
-[![PyPI version](https://img.shields.io/badge/pypi%20package-1.3.1-green)](https://pypi.org/project/sw360/)
+[![Python Version](https://img.shields.io/badge/python-3.8%2C3.9%2C3.10%2C3.11-yellow?logo=python)](https://www.python.org/doc/versions/)
+[![PyPI version](https://img.shields.io/badge/pypi%20package-1.4.0-green)](https://pypi.org/project/sw360/)
 [![Static checks](https://github.com/sw360/sw360python/actions/workflows/static-checks.yml/badge.svg)](https://github.com/sw360/sw360python/actions/workflows/static-checks.yml)
 [![Unit tests](https://github.com/sw360/sw360python/actions/workflows/unit-test.yml/badge.svg)](https://github.com/sw360/sw360python/actions/workflows/unit-test.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/tngraf/6ab639b6f9d1f6161d3db52d348d2997/raw/666fa870981726e1fa3469b6aa668c20fdd9d1b2/sw360python-cobertura-coverage.json&color=green)](https://github.com/sw360/sw360python/actions/workflows/unit-test.yml)

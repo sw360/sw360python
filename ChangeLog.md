@@ -5,7 +5,7 @@
 
 # SW360 Base Library for Python
 
-## V1.3.2rc1
+## V1.4.0
 
 * have type hints.
 * drop support for Python 3.7.

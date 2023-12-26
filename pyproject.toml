@@ -23,7 +23,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7" # because 3.7 is the minimum requirement for yarl
+python = "^3.8" # because 3.8 is the minimum requirement for isort, mypy
 requests = "^2.31.0" # fix CVE-2023-32681
 
 [tool.poetry.group.dev.dependencies]
@@ -37,6 +37,8 @@ pytest = "^7.2.2"
 coverage = "5.3"
 types-requests = "^2.27.11"
 types-urllib3 = "^1.26.25.14"
+isort = "^5.13.2"
+mypy = "^1.8.0"
 
 [build-system]
 requires = ["poetry>=0.12"]

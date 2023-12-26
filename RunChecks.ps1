@@ -14,10 +14,10 @@ Write-Host "markdownlint ..."
 npx -q markdownlint-cli *.md
 
 Write-Host "isort ..."
-isort .
+poetry run isort .
 
 Write-Host "mypy ..."
-mypy .
+poetry run mypy .
 
 Write-Host "done."
 

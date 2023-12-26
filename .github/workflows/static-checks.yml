@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10"]
+        python-version: ["3.11"]
 
     steps:
     - uses: actions/checkout@v3
@@ -55,3 +55,12 @@ jobs:
         # ignore_files: examples/ignore/*
         # ignore_path: examples/.markdownlintignore
         # rules: examples/rules/custom.js
+
+    - name: Run isort
+      run: |
+          poetry run isort .
+
+    - name: Run mypy
+      run: |
+        poetry run mypy .
+  

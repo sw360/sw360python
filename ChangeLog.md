@@ -1,5 +1,5 @@
 <!--
-# SPDX-FileCopyrightText: (c) 2019-2023 Siemens
+# SPDX-FileCopyrightText: (c) 2019-2024 Siemens
 # SPDX-License-Identifier: MIT
 -->
 
@@ -8,6 +8,7 @@
 ## V1.4.1
 
 * fix for `update_project`: ensure that there is no key error.
+* dependency updates.
 
 ## V1.4.0
 

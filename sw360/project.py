@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2023 Siemens
+# Copyright (c) 2019-2024 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -337,7 +337,7 @@ class ProjectMixin(BaseMixin):
 
         if add_subprojects:
             current = self.get_project(project_id)
-            if (current is not None and "linkedProjects" in current):
+            if (current is not None and "linkedProjects" in current and "linkedProjects" in project):
                 for sp in current["linkedProjects"]:
                     pid = self.get_id_from_href(sp["project"])
                     if pid not in project["linkedProjects"]:

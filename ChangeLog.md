@@ -5,6 +5,10 @@
 
 # SW360 Base Library for Python
 
+## V1.4.1
+
+* fix for `update_project`: ensure that there is no key error.
+
 ## V1.4.0
 
 * have type hints.

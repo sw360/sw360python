@@ -12,6 +12,8 @@
 from typing import Any, Dict, Optional
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 from .attachments import AttachmentsMixin
 from .clearing import ClearingMixin
@@ -23,6 +25,17 @@ from .sw360error import SW360Error
 from .vendor import VendorMixin
 from .vulnerabilities import VulnerabilitiesMixin
 
+# Retry mechanism for rate limiting
+adapter = HTTPAdapter(max_retries=Retry(
+    total=5,
+    status_forcelist=[429, 500, 502, 503, 504],
+    respect_retry_after_header=True,
+    backoff_factor=30,
+    allowed_methods=["HEAD", "GET", "OPTIONS", "POST", "PUT", "PATCH"]
+))
+session = requests.Session()
+session.mount("http://", adapter)
+session.mount("https://", adapter)
 
 class SW360(
     AttachmentsMixin,
@@ -75,7 +88,7 @@ class SW360(
         :raises SW360Error: if the login fails
         """
         if not self.force_no_session:
-            self.session = requests.Session()
+            self.session = session
             self.session.headers = self.api_headers.copy()  # type: ignore
 
         url = self.url + "resource/api/"

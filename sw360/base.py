@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2023 Siemens
+# Copyright (c) 2024 Siemens
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com
 #
@@ -7,6 +7,7 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
+# import urllib.parse
 from typing import Any, Dict, Optional, Tuple
 
 import requests
@@ -110,7 +111,7 @@ class BaseMixin():
 
     @classmethod
     def get_id_from_href(cls, href: str) -> str:
-        """"Extracts the identifier from the href and returns it
+        """Extracts the identifier from the href and returns it
 
         :param href: HAL href for a specific resource
         :type href: string (valid URL)
@@ -121,3 +122,18 @@ class BaseMixin():
         pos = href.rfind("/")
         identifier = href[(pos + 1):]
         return identifier
+
+    @classmethod
+    def url_encode(cls, text: str) -> str:
+        """
+        URL encodes the text, i.e. returns a string that can be properly
+        use as part of a URL.
+        Examples:
+        * SI BP => SI%20BP
+
+        In version 18 of SW360 URL encoding is not yet fully supported.
+        """
+
+        # disabled for the time being...
+        # text = urllib.parse.quote(text)
+        return text

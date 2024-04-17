@@ -112,7 +112,7 @@ class ProjectMixin(BaseMixin):
         :rtype: list of JSON project objects
         :raises SW360Error: if there is a negative HTTP response
         """
-        resp = self.api_get(self.url + "resource/api/projects?type=" + project_type)
+        resp = self.api_get(self.url + "resource/api/projects?type=" + BaseMixin.url_encode(project_type))
         if not resp:
             return []
 
@@ -164,7 +164,7 @@ class ProjectMixin(BaseMixin):
         :rtype: list of JSON project objects
         :raises SW360Error: if there is a negative HTTP response
         """
-        resp = self.api_get(self.url + "resource/api/projects?name=" + name)
+        resp = self.api_get(self.url + "resource/api/projects?name=" + BaseMixin.url_encode(name))
         if not resp:
             return []
 
@@ -191,7 +191,7 @@ class ProjectMixin(BaseMixin):
         :raises SW360Error: if there is a negative HTTP response
         """
         resp = self.api_get(self.url + "resource/api/projects/searchByExternalIds?"
-                            + ext_id_name + "=" + ext_id_value)
+                            + BaseMixin.url_encode(ext_id_name) + "=" + BaseMixin.url_encode(ext_id_value))
         if not resp:
             return []
 
@@ -214,9 +214,9 @@ class ProjectMixin(BaseMixin):
         :rtype: list of JSON project objects
         :raises SW360Error: if there is a negative HTTP response
         """
-        full_url = self.url + "resource/api/projects?group=" + group
+        full_url = self.url + "resource/api/projects?group=" + BaseMixin.url_encode(group)
         if all_details:
-            full_url = self.url + "resource/api/projects?allDetails?group=" + group
+            full_url = self.url + "resource/api/projects?allDetails?group=" + BaseMixin.url_encode(group)
 
         resp = self.api_get(full_url)
         if not resp:
@@ -241,7 +241,7 @@ class ProjectMixin(BaseMixin):
         :rtype: list of JSON project objects
         :raises SW360Error: if there is a negative HTTP response
         """
-        full_url = self.url + "resource/api/projects?tag=" + tag + "&luceneSearch=true"
+        full_url = self.url + "resource/api/projects?tag=" + BaseMixin.url_encode(tag) + "&luceneSearch=true"
         resp = self.api_get(full_url)
         if not resp:
             return []

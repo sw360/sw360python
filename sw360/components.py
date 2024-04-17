@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2023 Siemens
+# Copyright (c) 2019-2024 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -139,7 +139,7 @@ class ComponentsMixin(BaseMixin):
         :raises SW360Error: if there is a negative HTTP response
         """
 
-        resp = self.api_get(self.url + "resource/api/components?name=" + component_name)
+        resp = self.api_get(self.url + "resource/api/components?name=" + BaseMixin.url_encode(component_name))
         return resp
 
     def get_components_by_external_id(self, ext_id_name: str, ext_id_value: str = "") -> List[Dict[str, Any]]:
@@ -160,9 +160,9 @@ class ComponentsMixin(BaseMixin):
         resp = self.api_get(
             self.url
             + "resource/api/components/searchByExternalIds?"
-            + ext_id_name
+            + BaseMixin.url_encode(ext_id_name)
             + "="
-            + ext_id_value
+            + BaseMixin.url_encode(ext_id_value)
         )
         if resp and ("_embedded" in resp) and ("sw360:components" in resp["_embedded"]):
             return resp["_embedded"]["sw360:components"]

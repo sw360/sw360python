@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2023 Siemens
+# Copyright (c) 2019-2024 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -57,7 +57,7 @@ class ReleasesMixin(BaseMixin):
         :rtype: list of JSON release objects
         :raises SW360Error: if there is a negative HTTP response
         """
-        full_url = self.url + "resource/api/releases?name=" + name
+        full_url = self.url + "resource/api/releases?name=" + BaseMixin.url_encode(name)
         resp = self.api_get(full_url)
         if resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
             return resp["_embedded"]["sw360:releases"]
@@ -124,7 +124,7 @@ class ReleasesMixin(BaseMixin):
         resp = self.api_get(
             self.url
             + "resource/api/releases/searchByExternalIds?"
-            + ext_id_name + "=" + ext_id_value
+            + BaseMixin.url_encode(ext_id_name) + "=" + BaseMixin.url_encode(ext_id_value)
         )
         if resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
             return resp["_embedded"]["sw360:releases"]

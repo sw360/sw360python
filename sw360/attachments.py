@@ -219,13 +219,14 @@ class AttachmentsMixin(BaseMixin):
                 "application/json",
             ),
         }
-        response = requests.post(url, headers=self.api_headers, files=file_data)  # type: ignore
-        if response.status_code == HTTPStatus.ACCEPTED:
-            logger.warning(
-                f"Attachment upload was accepted by {url} but might not be visible yet: {response.text}"
-            )
-        if not response.ok:
-            raise SW360Error(response, url)
+        response = self.api_post_multipart(url, files=file_data)
+        if response is not None:
+            if response.status_code == HTTPStatus.ACCEPTED:
+                logger.warning(
+                    f"Attachment upload was accepted by {url} but might not be visible yet: {response.text}"
+                )
+            if not response.ok:
+                raise SW360Error(response, url)
 
     def upload_release_attachment(self, release_id: str, upload_file: str, upload_type: str = "SOURCE",
                                   upload_comment: str = "") -> None:

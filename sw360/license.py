@@ -50,13 +50,13 @@ class LicenseMixin(BaseMixin):
         license_details["text"] = text
         license_details["checked"] = checked
 
-        response = requests.post(url, json=license_details, headers=self.api_headers)
-        if response.ok:
-            return response.json()
-
+        response = self.api_post(url, json=license_details)
+        if response is not None:
+            if response.ok:
+                return response.json()
         raise SW360Error(response, url)
 
-    def delete_license(self, license_shortname: str) -> bool:
+    def delete_license(self, license_shortname: str) -> Optional[bool]:
         """Delete an existing license
 
         API endpoint: PATCH /licenses
@@ -73,14 +73,11 @@ class LicenseMixin(BaseMixin):
 
         url = self.url + "resource/api/licenses/" + license_shortname
         print(url)
-        response = requests.delete(
-            url, headers=self.api_headers,
-        )
-
-        if response.ok:
-            return True
-
-        raise SW360Error(response, url)
+        response = self.api_delete(url)
+        if response is not None:
+            if response.ok:
+                return True
+        return None
 
     def download_license_info(
         self, project_id: str, filename: str, generator: str = "XhtmlGenerator", variant: str = "DISCLOSURE"

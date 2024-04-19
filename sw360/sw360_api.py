@@ -33,9 +33,10 @@ adapter = HTTPAdapter(max_retries=Retry(
     backoff_factor=30,
     allowed_methods=["HEAD", "GET", "OPTIONS", "POST", "PUT", "PATCH"]
 ))
-session = requests.Session()
-session.mount("http://", adapter)
-session.mount("https://", adapter)
+session_default = requests.Session()
+session_default.mount("http://", adapter)
+session_default.mount("https://", adapter)
+
 
 class SW360(
     AttachmentsMixin,
@@ -65,12 +66,18 @@ class SW360(
     :type oauth2: boolean
     """
 
-    def __init__(self, url: str, token: str, oauth2: bool = False) -> None:
+    def __init__(
+        self,
+        url: str,
+        token: str,
+        oauth2: bool = False,
+        session: Optional[requests.Session] = session_default
+    ) -> None:
         """Constructor"""
         if url[-1] != "/":
             url += "/"
         self.url: str = url
-        self.session: Optional[requests.Session] = None
+        self.session: Optional[requests.Session] = session
 
         if oauth2:
             self.api_headers = {"Authorization": "Bearer " + token}
@@ -88,7 +95,6 @@ class SW360(
         :raises SW360Error: if the login fails
         """
         if not self.force_no_session:
-            self.session = session
             self.session.headers = self.api_headers.copy()  # type: ignore
 
         url = self.url + "resource/api/"

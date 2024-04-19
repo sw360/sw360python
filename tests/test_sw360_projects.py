@@ -79,7 +79,7 @@ class Sw360TestProjects(unittest.TestCase):
 
     @responses.activate
     def test_get_project_not_logged_in(self) -> None:
-        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        lib = SW360(self.MYURL, self.MYTOKEN, False, None)
 
         responses.add(
             responses.GET,

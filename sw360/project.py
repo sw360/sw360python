@@ -11,8 +11,6 @@
 
 from typing import Any, Dict, List, Optional
 
-import requests
-
 from .base import BaseMixin
 from .sw360error import SW360Error
 
@@ -305,13 +303,11 @@ class ProjectMixin(BaseMixin):
         project_details["projectType"] = project_type
 
         url = self.url + "resource/api/projects"
-        response = requests.post(
-            url, json=project_details, headers=self.api_headers
-        )
-
-        if response.ok:
-            return response.json()
-
+        response = self.api_post(
+            url, json=project_details)
+        if response is not None:
+            if response.ok:
+                return response.json()
         raise SW360Error(response, url)
 
     def update_project(self, project: Dict[str, Any], project_id: str,
@@ -345,14 +341,12 @@ class ProjectMixin(BaseMixin):
                         nsp["projectRelationship"] = sp.get("relation", "CONTAINED")
                         project["linkedProjects"][pid] = nsp
 
-        response = requests.patch(url, json=project, headers=self.api_headers)
+        return self.api_patch(url, json=project)
 
-        if response.ok:
-            return response.json()
-
-        raise SW360Error(response, url)
-
-    def update_project_releases(self, releases: List[Dict[str, Any]], project_id: str, add: bool = False) -> bool:
+    def update_project_releases(
+        self,
+        releases: List[Dict[str, Any]], project_id: str, add: bool = False
+    ) -> Optional[bool]:
         """Update the releases of an existing project. If `add` is True,
         given `releases` are added to the project, otherwise, the existing
         releases will be replaced.
@@ -383,12 +377,11 @@ class ProjectMixin(BaseMixin):
                 releases = old_releases + list(releases)
 
         url = self.url + "resource/api/projects/" + project_id + "/releases"
-        response = requests.post(url, json=releases, headers=self.api_headers)
-
-        if response.ok:
-            return True
-
-        raise SW360Error(response, url)
+        response = self.api_post(url, json=releases)
+        if response is not None:
+            if response.ok:
+                return True
+        return None
 
     def update_project_external_id(self, ext_id_name: str, ext_id_value: str,
                                    project_id: str, update_mode: str = "none") -> Any:
@@ -441,13 +434,11 @@ class ProjectMixin(BaseMixin):
             raise SW360Error(message="No project id provided!")
 
         url = self.url + "resource/api/projects/" + project_id
-        response = requests.delete(
-            url, headers=self.api_headers
-        )
-        if response.ok:
-            return response.json()
-
-        raise SW360Error(response, url)
+        response = self.api_delete(url)
+        if response is not None:
+            if response.ok:
+                return response.json()
+        return None
 
     def get_users_of_project(self, project_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about users of a project
@@ -486,14 +477,12 @@ class ProjectMixin(BaseMixin):
         project_details["clearingState"] = "OPEN"
 
         url = self.url + "resource/api/projects/duplicate/" + project_id
-        response = requests.post(
-            url, json=project_details, headers=self.api_headers
-        )
-
-        if response.ok:
-            return response.json()
-
-        raise SW360Error(response, url)
+        response = self.api_post(
+            url, json=project_details)
+        if response is not None:
+            if response.ok:
+                return response.json()
+        return None
 
     def update_project_release_relationship(
         self, project_id: str, release_id: str, new_state: str,
@@ -528,9 +517,4 @@ class ProjectMixin(BaseMixin):
         relation["comment"] = comment
 
         url = self.url + "resource/api/projects/" + project_id + "/release/" + release_id
-        response = requests.patch(url, json=relation, headers=self.api_headers)
-
-        if response.ok:
-            return response.json()
-
-        raise SW360Error(response, url)
+        return self.api_patch(url, json=relation)

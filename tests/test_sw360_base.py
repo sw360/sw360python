@@ -177,7 +177,7 @@ class Sw360Test(unittest.TestCase):
 
     @responses.activate
     def test_api_get_raw_not_logged_in(self) -> None:
-        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        lib = SW360(self.MYURL, self.MYTOKEN, False, None)
         lib.force_no_session = False
 
         responses.add(
@@ -298,7 +298,7 @@ class Sw360Test(unittest.TestCase):
         else:
             self.assertEqual(404, context.exception.response.status_code)
             self.assertEqual("Error-String", context.exception.response.text)
-    
+
     @responses.activate
     def test_login_server_not_responding(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
@@ -306,7 +306,7 @@ class Sw360Test(unittest.TestCase):
         responses.add(
             responses.GET,
             url=self.MYURL + "resource/api/",
-            body = '{"error": "Internal Server Error", "message": "An unexpected error occurred on the server."}',
+            body='{"error": "Internal Server Error", "message": "An unexpected error occurred on the server."}',
             status=500,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
@@ -316,6 +316,7 @@ class Sw360Test(unittest.TestCase):
             lib.login_api()
 
         self.assertEqual(self.ERROR_MSG_NO_LOGIN, context.exception.message)
+
 
 if __name__ == "__main__":
     unittest.main()

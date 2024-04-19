@@ -5,6 +5,12 @@
 
 # SW360 Base Library for Python
 
+## V1.5.0
+
+* when using CaPyCLI in a CI pipeline, connection problems to teh SW360 server (5xx) cause
+  the pipeline to fail. We have now add an improved session handling to all api requests.
+* dependency updates due to security vulnerabilities in idna.
+
 ## V1.4.1
 
 * fix for `update_project`: ensure that there is no key error.

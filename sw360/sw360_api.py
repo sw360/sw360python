@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2022 Siemens
+# Copyright (c) 2019-2024 Siemens
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
 #
@@ -115,7 +115,7 @@ class SW360(
 
     def close_api(self) -> None:
         """A keep-alive HTTP session is used to access the SW360 REST API.
-        This method allows to explicitely close the connection at a defined
+        This method allows to explicitly close the connection at a defined
         time. Normally, you don't need to call it - session is cleaned up
         automatically when needed."""
         if self.session:

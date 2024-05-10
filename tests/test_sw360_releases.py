@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2023 Siemens
+# Copyright (c) 2023-2024 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -31,7 +31,7 @@ class Sw360TestReleases(unittest.TestCase):
 
     def _add_login_response(self) -> None:
         """
-        Add the response for a successfull login.
+        Add the response for a successful login.
         """
         responses.add(
             method=responses.GET,

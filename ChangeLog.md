@@ -7,7 +7,7 @@
 
 ## V1.5.0
 
-* when using CaPyCLI in a CI pipeline, connection problems to teh SW360 server (5xx) cause
+* when using CaPyCLI in a CI pipeline, connection problems to the SW360 server (5xx) cause
   the pipeline to fail. We have now add an improved session handling to all api requests.
 * dependency updates due to security vulnerabilities in idna.
 
@@ -98,7 +98,7 @@
   * get_project_vulnerabilities() added.
   * SW360Error has new property `details`.
 * **Improvements**:
-  * Debug option to supress session handling.
+  * Debug option to suppress session handling.
   * unit tests added.
 * published on GitHub.
 
@@ -132,7 +132,7 @@
   * get_users_of_component
   * get_users_of_release
 * upload_attachment() has been tested with different file types
-  and different attchment types.
+  and different attachment types.
 
 ## V0.3 (2019-09-24)
 

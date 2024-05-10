@@ -30,7 +30,7 @@ class Sw360TestLicenses(unittest.TestCase):
 
     def _add_login_response(self) -> None:
         """
-        Add the response for a successfull login.
+        Add the response for a successful login.
         """
         responses.add(
             method=responses.GET,

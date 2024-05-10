@@ -455,11 +455,11 @@ class ProjectMixin(BaseMixin):
         return resp
 
     def duplicate_project(self, project_id: str, new_version: str) -> Optional[Dict[str, Any]]:
-        """Create a copy of an exisiting project.
+        """Create a copy of an existing project.
 
         API endpoint: GET /projects/duplicate/{id}
 
-        :param project_id: the id of the exisiting project
+        :param project_id: the id of the existing project
         :type project_id: string
         :param new_version: the version of the new project
         :type new_version: string
@@ -491,7 +491,7 @@ class ProjectMixin(BaseMixin):
 
         API endpoint PATCH /projects/{pid}/release{rid}
 
-        :param project_id: the id of the exisiting project
+        :param project_id: the id of the existing project
         :type project_id: string
         :param release_id: the id of the release to be requested
         :type release_id: string

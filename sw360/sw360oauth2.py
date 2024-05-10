@@ -89,7 +89,7 @@ class SW360OAuth2:
         try:
             requests.post(url, json=payload, verify=False, auth=auth, headers=headers)
         except Exception as ex:
-            raise SW360Error(None, url, message="Cant create oauth client: " + repr(ex))
+            raise SW360Error(None, url, message="Can't create oauth client: " + repr(ex))
 
     def generate_token(self) -> str:  # type: ignore
         """Generate a new bearer token

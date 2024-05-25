@@ -5,6 +5,10 @@
 
 # SW360 Base Library for Python
 
+## NEXT
+
+* update requests 2.31.0 => 2.32.2 to fix CVE-2024-35195.
+
 ## V1.5.0
 
 * when using CaPyCLI in a CI pipeline, connection problems to the SW360 server (5xx) cause

@@ -24,7 +24,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.8" # because 3.8 is the minimum requirement for isort, mypy
-requests = "^2.31.0" # fix CVE-2023-32681
+requests = "^2.32.2" # fix CVE-2024-35195 
 
 [tool.poetry.group.dev.dependencies]
 colorama = "^0.4.6"

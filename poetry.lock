@@ -1210,4 +1210,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8" # because 3.8 is the minimum requirement for isort, mypy
-content-hash = "0cf1357d737455e3cc0bfbf9c6dc5a17be266e200623effeeecb053e8d8f5ac6"
+content-hash = "0b9fc2f9e562d6d55aaae5037b4a7176766abfcc94aa350f8c171508a306d016"

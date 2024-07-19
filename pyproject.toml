@@ -3,7 +3,7 @@
 
 [tool.poetry]
 name = "sw360"
-version = "1.5.0"
+version = "1.5.1"
 description = "Python interface to the SW360 software component catalogue"
 authors = ["Thomas Graf <thomas.graf@siemens.com>",
 "Gernot Hillier <gernot.hillier@siemens.com>"]
@@ -28,7 +28,7 @@ requests = "^2.32.2" # fix CVE-2024-35195
 
 [tool.poetry.group.dev.dependencies]
 colorama = "^0.4.6"
-sphinx = "^2.4.1"
+sphinx = "^7.1.2"
 vcrpy = "4.0.2"
 yarl = "1.8.2" # force this version because 1.7.2 will not install
 flake8 = ">=3.7.8"
@@ -72,4 +72,4 @@ warn_unused_ignores         = true
 no_implicit_reexport        = true
 
 [tool.codespell]
-skip = "test_all_components.json,test_all_releases.json,./htmlcov/*,./__internal__/Links/syft/syft-sbom.json"
+skip = "test_all_components.json,test_all_releases.json,./htmlcov/*,./__internal__/*,./docs/_static/*,./docs/searchindex.js"

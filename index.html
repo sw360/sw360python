@@ -96,6 +96,153 @@
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
+<span class="target" id="module-sw360"></span><dl class="py class">
+<dt class="sig sig-object py" id="sw360.SW360">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sw360.</span></span><span class="sig-name descname"><span class="pre">SW360</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oauth2:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session:</span> <span class="pre">~requests.sessions.Session</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;requests.sessions.Session</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360.SW360" title="Permalink to this definition">¶</a></dt>
+<dd><p>Python interface to the Siemens SW360 platform</p>
+<p>Authentication against a running SW360 instance is performed using an API token.
+The token will be sent as HTTP header using the format
+<cite>Authorization: &lt;token_type&gt; &lt;token&gt;</cite>. Check your SW360 REST API
+documentation for details on needed type and how to get the token.
+token_type is “Bearer” for an OAuth workflow and “Token” for tokens
+generated via the SW360 UI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<em>string</em>) – URL of the SW360 instance</p></li>
+<li><p><strong>token</strong> (<em>string</em>) – The SW360 REST API token (the cryptic string without
+“Authorization:” and <cite>token_type</cite>).</p></li>
+<li><p><strong>oauth2</strong> (<em>boolean</em>) – flag indicating whether this is an OAuth2 token</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sw360.SW360.api_get_raw">
+<span class="sig-name descname"><span class="pre">api_get_raw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#sw360.SW360.api_get_raw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request <cite>url</cite> from REST API and return raw result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>url</strong> (<em>string</em>) – the url to be requested</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the HTTP response</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#sw360.SW360Error" title="sw360.SW360Error"><strong>SW360Error</strong></a> – if there is a negative HTTP response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sw360.SW360.close_api">
+<span class="sig-name descname"><span class="pre">close_api</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#sw360.SW360.close_api" title="Permalink to this definition">¶</a></dt>
+<dd><p>A keep-alive HTTP session is used to access the SW360 REST API.
+This method allows to explicitly close the connection at a defined
+time. Normally, you don’t need to call it - session is cleaned up
+automatically when needed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sw360.SW360.get_health_status">
+<span class="sig-name descname"><span class="pre">get_health_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#sw360.SW360.get_health_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get information about the service’s health.</p>
+<p>API endpoint: GET /health</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>service health status</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON health status object</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#sw360.SW360Error" title="sw360.SW360Error"><strong>SW360Error</strong></a> – if there is a negative HTTP response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sw360.SW360.login_api">
+<span class="sig-name descname"><span class="pre">login_api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#sw360.SW360.login_api" title="Permalink to this definition">¶</a></dt>
+<dd><p>Login to SW360 REST API. This used to have a <cite>token</cite> parameter
+due to historic reasons which is ignored.</p>
+<p>You need to call this before any other method accessing SW360.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#sw360.SW360Error" title="sw360.SW360Error"><strong>SW360Error</strong></a> – if the login fails</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="sw360.SW360Error">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sw360.</span></span><span class="sig-name descname"><span class="pre">SW360Error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Response</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360.SW360Error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base exception for SW360 operations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>string</em>) – a general error message</p></li>
+<li><p><strong>response</strong> (<em>object</em>) – the response object returned by the requests call</p></li>
+<li><p><strong>url</strong> (<em>string</em>) – the URL where the error occurred</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sw360.SW360OAuth2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sw360.</span></span><span class="sig-name descname"><span class="pre">SW360OAuth2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sw360.SW360OAuth2" title="Permalink to this definition">¶</a></dt>
+<dd><p>SW360 OAuth2 Credentials
+Restore or create Sw360 oauth2 tokens from user/password if auth server is alive
+:param url: URL of the SW360 instance
+:param user: SW360 username
+:param password: SW360 password
+:type url: string
+:type user: string
+:type password: string</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sw360.SW360OAuth2.create_client">
+<span class="sig-name descname"><span class="pre">create_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writeable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#sw360.SW360OAuth2.create_client" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an OAuth2 client</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>description (str): Some description of the client
+writeable (bool): Create the id read/writeable</p>
+</dd>
+<dt>Raises:</dt><dd><p>SW360Error: When unable to create a client</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sw360.SW360OAuth2.generate_token">
+<span class="sig-name descname"><span class="pre">generate_token</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#sw360.SW360OAuth2.generate_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a new bearer token</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sw360.SW360OAuth2.refresh_token">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">refresh_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sw360.SW360OAuth2.refresh_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the valid oauth refresh token</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sw360.SW360OAuth2.token">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#sw360.SW360OAuth2.token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the valid oauth token</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sw360.SW360OAuth2.url">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sw360.SW360OAuth2.url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return current session object url</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -106,7 +253,7 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020-2022, Siemens AG.
+      &copy;2020-2024, Siemens AG.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>

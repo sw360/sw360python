@@ -22,5 +22,5 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-.. automodule:: sw360_api
+.. automodule:: sw360
    :members:

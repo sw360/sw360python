@@ -428,7 +428,7 @@ class Sw360TestAttachments(unittest.TestCase):
         responses.add(
             method=responses.POST,
             url=self.MYURL + "resource/api/releases/1234/attachments",  # noqa
-            body='{"timestamp": "2020-12-10T07:22:06.1685Z", "status": "500", "error": "Internal Server Error", "message": "forbidded"}',  # noqa
+            body='{"timestamp": "2020-12-10T07:22:06.1685Z", "status": "500", "error": "Internal Server Error", "message": "forbidden"}',  # noqa
             status=500,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
@@ -456,7 +456,7 @@ class Sw360TestAttachments(unittest.TestCase):
             if context.exception.details:
                 self.assertEqual("500", context.exception.details["status"])
                 self.assertEqual("Internal Server Error", context.exception.details["error"])
-                self.assertEqual("forbidded", context.exception.details["message"])
+                self.assertEqual("forbidden", context.exception.details["message"])
 
     @responses.activate
     def test_upload_release_attachment_returns_202(self) -> None:

@@ -7,7 +7,7 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
-__version__ = (1, 5, 0)
+__version__ = (1, 5, 1)
 
 from .sw360_api import SW360
 from .sw360error import SW360Error

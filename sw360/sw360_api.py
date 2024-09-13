@@ -19,6 +19,7 @@ from .attachments import AttachmentsMixin
 from .clearing import ClearingMixin
 from .components import ComponentsMixin
 from .license import LicenseMixin
+from .packages import PackagesMixin
 from .project import ProjectMixin
 from .releases import ReleasesMixin
 from .sw360error import SW360Error
@@ -46,7 +47,8 @@ class SW360(
     ProjectMixin,
     ReleasesMixin,
     VendorMixin,
-    VulnerabilitiesMixin
+    VulnerabilitiesMixin,
+    PackagesMixin
 ):
     """Python interface to the Siemens SW360 platform
 

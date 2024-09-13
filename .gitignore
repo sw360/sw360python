@@ -20,6 +20,8 @@ Test.tar.gz
 Test_file.zip
 test_all_components.json
 test_all_releases.json
+test_all_packages.json
+test_all_packages_with_details.json
 real_instance_tests.py
 
 # test coverage

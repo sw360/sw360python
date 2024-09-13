@@ -5,6 +5,10 @@
 
 # SW360 Base Library for Python
 
+## NEXT (V1.6.0)
+
+* packages REST API calls implemented.
+
 ## V1.5.1
 
 * update requests 2.31.0 => 2.32.2 to fix CVE-2024-35195.

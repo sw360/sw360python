@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2023 Siemens
+# Copyright (c) 2019-2024 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -250,3 +250,39 @@ class ReleasesMixin(BaseMixin):
 
         resp = self.api_get(self.url + "resource/api/releases/usedBy/" + release_id)
         return resp
+
+    def link_packages_to_release(self, release_id: str, packages: List[str]) -> Optional[Dict[str, Any]]:
+        """Link (new) packages to a given release.
+
+        API endpoint PATCH /release/{pid}/packages{rid}
+
+        :param release_id: the id of the existing release
+        :type release_id: string
+        :param packages: list of package ids
+        :type packages: list of string
+        :rtype: JSON SW360 result object
+        :raises SW360Error: if the release id is missing ir there is a negative HTTP response
+        """
+        if not release_id:
+            raise SW360Error(message="No release id provided!")
+
+        url = self.url + "resource/api/releases/" + release_id + "/link/packages/"
+        return self.api_patch(url, json=packages)
+
+    def unlink_packages_from_release(self, release_id: str, packages: List[str]) -> Optional[Dict[str, Any]]:
+        """Unlink packages from a given release.
+
+        API endpoint PATCH /release/{pid}/packages{rid}
+
+        :param release_id: the id of the existing release
+        :type release_id: string
+        :param packages: list of package ids
+        :type packages: list of string
+        :rtype: JSON SW360 result object
+        :raises SW360Error: if the project id is missing ir there is a negative HTTP response
+        """
+        if not release_id:
+            raise SW360Error(message="No release id provided!")
+
+        url = self.url + "resource/api/releases/" + release_id + "/unlink/packages/"
+        return self.api_patch(url, json=packages)

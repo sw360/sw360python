@@ -1088,6 +1088,50 @@ class Sw360TestProjects(unittest.TestCase):
 
         lib.update_project_release_relationship("123", "987", "SPECIFIC", "STANDALONE", "mycomment")
 
+    @responses.activate
+    def test_link_packages_to_project(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.PATCH,
+            url=self.MYURL + "resource/api/projects/123/link/packages/",
+            body='["99", "88"]',
+            status=202,
+        )
+
+        lib.link_packages_to_project("123", ["99", "88"])
+
+    @responses.activate
+    def test_link_packages_to_project_no_id(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+
+        with self.assertRaises(SW360Error) as context:
+            lib.link_packages_to_project("", ["99", "88"])
+
+        self.assertEqual("No project id provided!", context.exception.message)
+
+    @responses.activate
+    def test_unlink_packages_from_project(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.PATCH,
+            url=self.MYURL + "resource/api/projects/123/unlink/packages/",
+            body='["77", "88"]',
+            status=202,
+        )
+
+        lib.unlink_packages_from_project("123", ["77", "88"])
+
+    @responses.activate
+    def test_unlink_packages_from_project_no_id(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+
+        with self.assertRaises(SW360Error) as context:
+            lib.unlink_packages_from_project("", ["77", "88"])
+
+        self.assertEqual("No project id provided!", context.exception.message)
+
 
 if __name__ == "__main__":
     unittest.main()

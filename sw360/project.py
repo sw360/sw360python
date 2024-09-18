@@ -518,3 +518,39 @@ class ProjectMixin(BaseMixin):
 
         url = self.url + "resource/api/projects/" + project_id + "/release/" + release_id
         return self.api_patch(url, json=relation)
+
+    def link_packages_to_project(self, project_id: str, packages: List[str]) -> Optional[Dict[str, Any]]:
+        """Link (new) packages to a given project.
+
+        API endpoint PATCH /projects/{pid}/packages{rid}
+
+        :param project_id: the id of the existing project
+        :type project_id: string
+        :param packages: list of package ids
+        :type packages: list of string
+        :rtype: JSON SW360 result object
+        :raises SW360Error: if the project id is missing ir there is a negative HTTP response
+        """
+        if not project_id:
+            raise SW360Error(message="No project id provided!")
+
+        url = self.url + "resource/api/projects/" + project_id + "/link/packages/"
+        return self.api_patch(url, json=packages)
+
+    def unlink_packages_from_project(self, project_id: str, packages: List[str]) -> Optional[Dict[str, Any]]:
+        """Unlink packages from a given project.
+
+        API endpoint PATCH /projects/{pid}/packages{rid}
+
+        :param project_id: the id of the existing project
+        :type project_id: string
+        :param packages: list of package ids
+        :type packages: list of string
+        :rtype: JSON SW360 result object
+        :raises SW360Error: if the project id is missing ir there is a negative HTTP response
+        """
+        if not project_id:
+            raise SW360Error(message="No project id provided!")
+
+        url = self.url + "resource/api/projects/" + project_id + "/unlink/packages/"
+        return self.api_patch(url, json=packages)

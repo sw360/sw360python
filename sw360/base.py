@@ -136,7 +136,7 @@ class BaseMixin():
 
         raise SW360Error(response, url)
 
-    def api_patch(self, url: str = "", json: Dict[str, Any] = {}) -> Optional[Dict[str, Any]]:
+    def api_patch(self, url: str = "", json: Any = {}) -> Optional[Dict[str, Any]]:
         """
         Send a PATCH request to the specified URL with the provided json data.
 
@@ -160,7 +160,10 @@ class BaseMixin():
         if response.ok:
             if response.status_code == 204:  # 204 = no content
                 return None
-            return response.json()
+            if response.content:
+                return response.json()
+            else:
+                return None
 
         raise SW360Error(response, url)
 

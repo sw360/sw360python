@@ -72,4 +72,4 @@ warn_unused_ignores         = true
 no_implicit_reexport        = true
 
 [tool.codespell]
-skip = "test_all_components.json,test_all_releases.json,./htmlcov/*,./__internal__/*,./docs/_static/*,./docs/searchindex.js"
+skip = "test_all_components.json,test_all_releases.json,./htmlcov/*,./__internal__/*,./docs/_static/*,./docs/searchindex.js,./docs/objects.inv"

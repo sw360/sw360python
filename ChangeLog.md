@@ -5,6 +5,12 @@
 
 # SW360 Base Library for Python
 
+## NEXT (V1.6.0)
+
+* packages REST API calls implemented.
+* unit test `test_login_failed_invalid_url` disabled because it delays all tests.
+* have unit tests for packages.
+
 ## V1.5.1
 
 * update requests 2.31.0 => 2.32.2 to fix CVE-2024-35195.

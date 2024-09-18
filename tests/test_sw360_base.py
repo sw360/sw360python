@@ -56,7 +56,7 @@ class Sw360Test(unittest.TestCase):
         actual = lib.login_api()
         self.assertTrue(actual)
 
-    def test_login_failed_invalid_url(self) -> None:
+    def x_test_login_failed_invalid_url(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
 
         have_backup = False

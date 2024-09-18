@@ -8,6 +8,7 @@
 ## NEXT (V1.6.0)
 
 * packages REST API calls implemented.
+* unit test `test_login_failed_invalid_url` disabled because it delays all tests.
 
 ## V1.5.1
 

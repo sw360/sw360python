@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2019-2023 Siemens
+# Copyright (c) 2019-2024 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -278,6 +278,57 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertEqual("SERVICE", projects[0]["projectType"])
 
     @responses.activate
+    def test_get_projects_by_type_no_reply(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects?type=SERVICE",
+            body='{}',
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        projects = lib.get_projects_by_type("SERVICE")
+        self.assertIsNotNone(projects)
+        self.assertEqual(0, len(projects))
+
+    @responses.activate
+    def test_get_projects_by_type_invalid_reply(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects?type=SERVICE",
+            body='{"_xxembedded": {"sw360:projects": [{"name": "My Testproject", "projectType": "SERVICE"}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        projects = lib.get_projects_by_type("SERVICE")
+        self.assertIsNotNone(projects)
+        self.assertEqual(0, len(projects))
+
+    @responses.activate
+    def test_get_projects_by_type_invalid_reply2(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects?type=SERVICE",
+            body='{"_embedded": {"xxsw360:projects": [{"name": "My Testproject", "projectType": "SERVICE"}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        projects = lib.get_projects_by_type("SERVICE")
+        self.assertIsNotNone(projects)
+        self.assertEqual(0, len(projects))
+
+    @responses.activate
     def test_get_project_names(self) -> None:
         lib = self.get_logged_in_lib()
 
@@ -294,6 +345,57 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertIsNotNone(project_names)
         self.assertTrue(len(project_names) > 0)
         self.assertEqual("My Testproject, 1.0.0", project_names[0])
+
+    @responses.activate
+    def test_get_project_names_empty_reply(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects",
+            body='{}',
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        project_names = lib.get_project_names()
+        self.assertIsNotNone(project_names)
+        self.assertEqual(0, len(project_names))
+
+    @responses.activate
+    def test_get_project_names_invalid_reply(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects",
+            body='{"_xxembedded": {"sw360:projects": [{"name": "My Testproject", "version" : "1.0.0"}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        project_names = lib.get_project_names()
+        self.assertIsNotNone(project_names)
+        self.assertEqual(0, len(project_names))
+
+    @responses.activate
+    def test_get_project_names_invalid_reply2(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects",
+            body='{"_embedded": {"xxsw360:projects": [{"name": "My Testproject", "version" : "1.0.0"}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        project_names = lib.get_project_names()
+        self.assertIsNotNone(project_names)
+        self.assertEqual(0, len(project_names))
 
     @responses.activate
     def test_get_projects_by_name(self) -> None:
@@ -328,6 +430,40 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertIsNotNone(projects)
         self.assertTrue(len(projects) > 0)
         self.assertEqual("My Testproject", projects[0]["name"])
+
+    @responses.activate
+    def test_get_projects_by_name_invalid_reply(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects?name=My",
+            body='{"_xxembedded": {"sw360:projects": [{"name": "My Testproject"}]}}',
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        projects = lib.get_projects_by_name("My")
+        self.assertIsNotNone(projects)
+        self.assertTrue(len(projects) == 0)
+
+    @responses.activate
+    def test_get_projects_by_name_invalid_reply2(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects?name=My",
+            body='{"_embedded": {"xxsw360:projects": [{"name": "My Testproject"}]}}',
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        projects = lib.get_projects_by_name("My")
+        self.assertIsNotNone(projects)
+        self.assertTrue(len(projects) == 0)
 
     @responses.activate
     def test_get_projects_by_external_id(self) -> None:
@@ -366,6 +502,38 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertEqual([], projects)
 
     @responses.activate
+    def test_get_projects_by_external_id_invalid_reply(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects/searchByExternalIds?myid=9999",
+            body='{"_xxembedded": {"sw360:projects": [{"name": "My Testproject", "externalIds": {"myid": "9999"}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        projects = lib.get_projects_by_external_id("myid", "9999")
+        self.assertEqual([], projects)
+
+    @responses.activate
+    def test_get_projects_by_external_id_invalid_reply2(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects/searchByExternalIds?myid=9999",
+            body='{"_embedded": {"xxsw360:projects": [{"name": "My Testproject", "externalIds": {"myid": "9999"}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        projects = lib.get_projects_by_external_id("myid", "9999")
+        self.assertEqual([], projects)
+
+    @responses.activate
     def test_get_projects_by_group(self) -> None:
         lib = self.get_logged_in_lib()
 
@@ -382,6 +550,40 @@ class Sw360TestProjects(unittest.TestCase):
         self.assertIsNotNone(projects)
         self.assertTrue(len(projects) > 0)
         self.assertEqual("My Testproject", projects[0]["name"])
+
+    @responses.activate
+    def test_get_projects_by_group_invalid_reply(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects?group=SI",
+            body='{"_xxembedded": {"sw360:projects": [{"name": "My Testproject", "externalIds": {"com.siemens.code.project.id": "13171"}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        projects = lib.get_projects_by_group("SI")
+        self.assertIsNotNone(projects)
+        self.assertTrue(len(projects) == 0)
+
+    @responses.activate
+    def test_get_projects_by_group_invalid_reply2(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects?group=SI",
+            body='{"_embedded": {"xxsw360:projects": [{"name": "My Testproject", "externalIds": {"com.siemens.code.project.id": "13171"}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        projects = lib.get_projects_by_group("SI")
+        self.assertIsNotNone(projects)
+        self.assertTrue(len(projects) == 0)
 
     @responses.activate
     def test_get_projects_by_group_with_details(self) -> None:
@@ -450,6 +652,40 @@ class Sw360TestProjects(unittest.TestCase):
 
         projects = lib.get_projects_by_tag("SI")
         self.assertEqual([], projects)
+
+    @responses.activate
+    def test_get_projects_by_tag_invalid_reply(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects?tag=SI BP&luceneSearch=true",
+            body='{"_xxembedded": {"sw360:projects": [{"name": "My Testproject", "externalIds": {"com.siemens.code.project.id": "13171"}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        projects = lib.get_projects_by_tag("SI BP")
+        self.assertIsNotNone(projects)
+        self.assertTrue(len(projects) == 0)
+
+    @responses.activate
+    def test_get_projects_by_tag_invalid_reply2(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects?tag=SI BP&luceneSearch=true",
+            body='{"_embedded": {"xxsw360:projects": [{"name": "My Testproject", "externalIds": {"com.siemens.code.project.id": "13171"}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        projects = lib.get_projects_by_tag("SI BP")
+        self.assertIsNotNone(projects)
+        self.assertTrue(len(projects) == 0)
 
     @responses.activate
     def test_download_license_info(self) -> None:
@@ -1134,4 +1370,5 @@ class Sw360TestProjects(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    APP = Sw360TestProjects()
+    APP.test_get_project_names_empty_reply()

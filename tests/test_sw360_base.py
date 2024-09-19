@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2019-2020 Siemens
+# Copyright (c) 2019-2024 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -14,7 +14,10 @@ import unittest
 
 import responses
 
+from sw360.base import BaseMixin
+
 sys.path.insert(1, "..")
+
 
 from sw360 import SW360, SW360Error  # noqa: E402
 
@@ -41,6 +44,23 @@ class Sw360Test(unittest.TestCase):
         lib = SW360("https://my.server.com", self.MYTOKEN, False)
         self.assertEqual(self.MYURL, lib.url)
 
+    def test_BaseMixin_constructor(self) -> None:
+        lib = BaseMixin(self.MYURL, self.MYTOKEN, False)
+        self.assertEqual(self.MYURL, lib.url)
+
+        expected_header = {"Authorization": "Token " + self.MYTOKEN}
+        self.assertEqual(expected_header, lib.api_headers)
+
+        lib = BaseMixin(self.MYURL, self.MYTOKEN, True)
+        self.assertEqual(self.MYURL, lib.url)
+
+        expected_header = {"Authorization": "Bearer " + self.MYTOKEN}
+        self.assertEqual(expected_header, lib.api_headers)
+
+        # check for trailing slash
+        lib = BaseMixin("https://my.server.com", self.MYTOKEN, False)
+        self.assertEqual(self.MYURL, lib.url)
+
     @responses.activate
     def test_login(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
@@ -56,22 +76,22 @@ class Sw360Test(unittest.TestCase):
         actual = lib.login_api()
         self.assertTrue(actual)
 
-    def x_test_login_failed_invalid_url(self) -> None:
-        lib = SW360(self.MYURL, self.MYTOKEN, False)
+    # def test_login_failed_invalid_url(self) -> None:
+    #     lib = SW360(self.MYURL, self.MYTOKEN, False)
 
-        have_backup = False
-        if "SW360ProductionToken" in os.environ:
-            have_backup = True
-            backup = os.environ["SW360ProductionToken"]
-            os.environ["SW360ProductionToken"] = ""
+    #     have_backup = False
+    #     if "SW360ProductionToken" in os.environ:
+    #         have_backup = True
+    #         backup = os.environ["SW360ProductionToken"]
+    #         os.environ["SW360ProductionToken"] = ""
 
-        with self.assertRaises(SW360Error) as context:
-            lib.login_api()
+    #     with self.assertRaises(SW360Error) as context:
+    #         lib.login_api()
 
-        self.assertTrue(context.exception.message.startswith(self.ERROR_MSG_NO_LOGIN))
+    #     self.assertTrue(context.exception.message.startswith(self.ERROR_MSG_NO_LOGIN))
 
-        if have_backup:
-            os.environ["SW360ProductionToken"] = backup
+    #     if have_backup:
+    #         os.environ["SW360ProductionToken"] = backup
 
     @responses.activate
     def test_login_failed_not_authorized(self) -> None:
@@ -157,23 +177,48 @@ class Sw360Test(unittest.TestCase):
         lib.api_get_raw(self.MYURL + "resource/api/projects/123X")
 
     @responses.activate
+    def test_api_get_no_content_no_session(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        lib.force_no_session = True
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/",
+            body="{'status': 'ok'}",
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects/123",
+            # body must be empty!
+            status=204,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        rx = lib.get_project("123")
+        self.assertIsNone(rx)
+
+    @responses.activate
     def test_api_get_no_content(self) -> None:
         lib = self.get_logged_in_lib()
 
         responses.add(
             responses.GET,
             url=self.MYURL + "resource/api/projects/123X",
-            body='{"name": "My Testproject"}',
+            # body must be empty!
             status=204,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        try:
-            result = lib.api_get(self.MYURL + "resource/api/projects/123X")
-            self.assertIsNone(result)
-        except Exception:
-            self.assertIsNone(None)
+        result = lib.api_get(self.MYURL + "resource/api/projects/123X")
+        self.assertIsNone(result)
 
     @responses.activate
     def test_api_get_raw_not_logged_in(self) -> None:
@@ -317,6 +362,47 @@ class Sw360Test(unittest.TestCase):
 
         self.assertEqual(self.ERROR_MSG_NO_LOGIN, context.exception.message)
 
+    @responses.activate
+    def test_api_post_not_logged_in(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False, None)
+        lib.force_no_session = False
+
+        with self.assertRaises(SW360Error) as context:
+            lib.api_post(self.MYURL + "resource/api/projects/123X")
+
+        self.assertEqual("login_api needs to be called first", context.exception.message)
+
+    @responses.activate
+    def test_api_post_multipart_not_logged_in(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False, None)
+        lib.force_no_session = False
+
+        with self.assertRaises(SW360Error) as context:
+            lib.api_post_multipart(self.MYURL + "resource/api/projects/123X")
+
+        self.assertEqual("login_api needs to be called first", context.exception.message)
+
+    @responses.activate
+    def test_api_patch_not_logged_in(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False, None)
+        lib.force_no_session = False
+
+        with self.assertRaises(SW360Error) as context:
+            lib.api_patch(self.MYURL + "resource/api/projects/123X")
+
+        self.assertEqual("login_api needs to be called first", context.exception.message)
+
+    @responses.activate
+    def test_api_delete_not_logged_in(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False, None)
+        lib.force_no_session = False
+
+        with self.assertRaises(SW360Error) as context:
+            lib.api_delete(self.MYURL + "resource/api/projects/123X")
+
+        self.assertEqual("login_api needs to be called first", context.exception.message)
+
 
 if __name__ == "__main__":
-    unittest.main()
+    APP = Sw360Test()
+    APP.test_api_post_multipart_not_logged_in()

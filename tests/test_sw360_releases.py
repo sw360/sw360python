@@ -216,6 +216,29 @@ class Sw360TestReleases(unittest.TestCase):
         self.assertEqual("1.3.0", releases[0]["version"])
 
     @responses.activate
+    def test_get_all_releases_with_paging_and_sorting(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/releases?page=2&page_entries=5&sort=name%2Casc",
+            body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0", "releaseDate": "2018-03-04"}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        releases = lib.get_all_releases(page=2, page_size=5, sort="name,asc")
+        self.assertIsNotNone(releases)
+        self.assertTrue(len(releases) > 0)
+        rel = releases["_embedded"]["sw360:releases"]
+        self.assertEqual("Tethys.Logging", rel[0]["name"])
+        self.assertEqual("1.3.0", rel[0]["version"])
+
+    @responses.activate
     def test_get_releases_by_external_id(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
@@ -238,6 +261,26 @@ class Sw360TestReleases(unittest.TestCase):
         self.assertEqual("1.3.0", releases[0]["version"])
 
     @responses.activate
+    def test_get_releases_by_external_id_invalid_reply(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/releases/searchByExternalIds?nuget-id=Tethys.Logging.1.4.0",  # noqa
+            body='{"_xxembedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0", "externalIds": { "nuget-id": "Tethys.Logging.1.4.0" }}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        releases = lib.get_releases_by_external_id("nuget-id", "Tethys.Logging.1.4.0")
+        self.assertIsNotNone(releases)
+        self.assertTrue(len(releases) == 0)
+
+    @responses.activate
     def test_get_releases_by_name(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
@@ -258,6 +301,26 @@ class Sw360TestReleases(unittest.TestCase):
         self.assertTrue(len(releases) > 0)
         self.assertEqual("john", releases[0]["name"])
         self.assertEqual("2.2.2", releases[0]["version"])
+
+    @responses.activate
+    def test_get_releases_by_name_invalid_answer(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/releases?name=john",
+            body='{"_xxembedded": {"sw360:releases": [{"name": "john", "version": "2.2.2", "_links": {"self": {"href": "https://my.server.com/resource/api/releases/08ddfd57636c4c47f4c879515007081f"}}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        releases = lib.get_releases_by_name("john")
+        self.assertIsNotNone(releases)
+        self.assertTrue(len(releases) == 0)
 
     @responses.activate
     def test_create_new_release(self) -> None:

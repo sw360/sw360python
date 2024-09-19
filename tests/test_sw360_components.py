@@ -142,6 +142,94 @@ class Sw360TestComponents(unittest.TestCase):
         self.assertEqual("DE", components[0]["ownerCountry"])
 
     @responses.activate
+    def test_get_all_components_with_all_details(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        lib.force_no_session = True
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/components?allDetails=true",  # noqa
+            body='{"_embedded": {"sw360:components": [{"name": "Tethys.Logging", "ownerCountry": "DE", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        components = lib.get_all_components(all_details=True)
+        self.assertIsNotNone(components)
+        self.assertTrue(len(components) > 0)
+        self.assertEqual("Tethys.Logging", components[0]["name"])
+        self.assertEqual("DE", components[0]["ownerCountry"])
+
+    @responses.activate
+    def test_get_all_components_with_all_details_and_sorting(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        lib.force_no_session = True
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/components?allDetails=true&sort=name%2Cdesc",  # noqa
+            body='{"_embedded": {"sw360:components": [{"name": "Tethys.Logging", "ownerCountry": "DE", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        components = lib.get_all_components(all_details=True, sort="name,desc")
+        self.assertIsNotNone(components)
+        self.assertTrue(len(components) > 0)
+        self.assertEqual("Tethys.Logging", components[0]["name"])
+        self.assertEqual("DE", components[0]["ownerCountry"])
+
+    @responses.activate
+    def test_get_all_components_invalid_reply(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        lib.force_no_session = True
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/components",  # noqa
+            body='{"_xxembedded": {"sw360:components": [{"name": "Tethys.Logging", "ownerCountry": "DE", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        components = lib.get_all_components(all_details=True, sort="name,desc")
+        self.assertIsNotNone(components)
+        self.assertTrue(len(components) == 0)
+
+    @responses.activate
+    def test_get_all_components_invalid_reply2(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        lib.force_no_session = True
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/components",  # noqa
+            body='{"_embedded": {"xxsw360:components": [{"name": "Tethys.Logging", "ownerCountry": "DE", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        components = lib.get_all_components(all_details=True, sort="name,desc")
+        self.assertIsNotNone(components)
+        self.assertTrue(len(components) == 0)
+
+    @responses.activate
     def test_get_all_components_by_type(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
@@ -183,6 +271,48 @@ class Sw360TestComponents(unittest.TestCase):
 
         components = lib.get_components_by_type("OSS")
         self.assertEqual([], components)
+
+    @responses.activate
+    def test_get_all_components_by_type_invalid_reply(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        lib.force_no_session = True
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/components?type=OSS",
+            body='{"_xxembedded": {"sw360:components": [{"name": "Tethys.Logging", "ownerCountry": "DE", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        components = lib.get_components_by_type("OSS")
+        self.assertIsNotNone(components)
+        self.assertTrue(len(components) == 0)
+
+    @responses.activate
+    def test_get_all_components_by_type_invalid_reply2(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        lib.force_no_session = True
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/components?type=OSS",
+            body='{"_embedded": {"xxsw360:components": [{"name": "Tethys.Logging", "ownerCountry": "DE", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        components = lib.get_components_by_type("OSS")
+        self.assertIsNotNone(components)
+        self.assertTrue(len(components) == 0)
 
     @responses.activate
     def test_get_component(self) -> None:
@@ -290,6 +420,27 @@ class Sw360TestComponents(unittest.TestCase):
         self.assertIsNotNone(components)
         self.assertTrue(len(components) > 0)
         self.assertEqual("Tethys.Logging", components[0]["name"])
+
+    @responses.activate
+    def test_get_components_by_external_id_invalid_answer(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        lib.force_no_session = True
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/components/searchByExternalIds?package-url=pkg:nuget/Tethys.Logging",  # noqa
+            body='{"_xxembedded":{"sw360:components" :[{"name": "Tethys.Logging", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        components = lib.get_components_by_external_id("package-url", "pkg:nuget/Tethys.Logging")
+        self.assertIsNotNone(components)
+        self.assertTrue(len(components) == 0)
 
     @responses.activate
     def test_update_component_external_id_add_fresh_id(self) -> None:

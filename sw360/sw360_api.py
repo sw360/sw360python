@@ -7,7 +7,10 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
-"""Python interface to the Siemens SW360 platform"""
+"""Low-Level Python interface to the SW360 REST API. This provides a low-level
+abstraction of the REST API endpoints. In most cases, JSON objects are just
+passed through unchanged from/to the SW360 REST API."""
+
 
 from typing import Any, Dict, Optional
 

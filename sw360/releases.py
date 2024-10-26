@@ -298,4 +298,7 @@ class ReleasesMixin(BaseMixin):
         """
         url = self.url + "resource/api/releases/recentReleases"
         resp = self.api_get(url)
+        if resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
+            return resp["_embedded"]["sw360:releases"]
+
         return resp

@@ -117,16 +117,10 @@ class LicenseMixin(BaseMixin):
         """
 
         resp = self.api_get(self.url + "resource/api/licenses")
-        if not resp:
-            return []
+        if resp and "_embedded" in resp and "sw360:licenses" in resp["_embedded"]:
+            return resp["_embedded"]["sw360:licenses"]
 
-        if "_embedded" not in resp:
-            return []
-
-        if "sw360:licenses" not in resp["_embedded"]:
-            return []
-
-        return resp["_embedded"]["sw360:licenses"]
+        return []
 
     def get_license(self, license_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about a license

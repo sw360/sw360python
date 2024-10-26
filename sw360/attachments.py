@@ -55,16 +55,10 @@ class AttachmentsMixin(BaseMixin):
             + "/attachments"
         )
 
-        if not resp:
-            return []
+        if resp and "_embedded" in resp and "sw360:attachments" in resp["_embedded"]:
+            return resp["_embedded"]["sw360:attachments"]
 
-        if "_embedded" not in resp:
-            return []
-
-        if "sw360:attachments" not in resp["_embedded"]:
-            return []
-
-        return resp["_embedded"]["sw360:attachments"]
+        return []
 
     def get_attachment_infos_for_release(self, release_id: str) -> List[Dict[str, Any]]:
         """Get information about the attachments of a release

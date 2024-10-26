@@ -25,6 +25,7 @@ from .releases import ReleasesMixin
 from .sw360error import SW360Error
 from .vendor import VendorMixin
 from .vulnerabilities import VulnerabilitiesMixin
+from .moderationrequests import ModerationRequestMixin
 
 # Retry mechanism for rate limiting
 adapter = HTTPAdapter(max_retries=Retry(
@@ -48,7 +49,8 @@ class SW360(
     ReleasesMixin,
     VendorMixin,
     VulnerabilitiesMixin,
-    PackagesMixin
+    PackagesMixin,
+    ModerationRequestMixin
 ):
     """Python interface to the Siemens SW360 platform
 

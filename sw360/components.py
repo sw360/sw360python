@@ -84,16 +84,10 @@ class ComponentsMixin(BaseMixin):
         """
 
         resp = self.api_get(self.url + "resource/api/components?type=" + component_type)
-        if not resp:
-            return []
+        if resp and ("_embedded" in resp) and ("sw360:components" in resp["_embedded"]):
+            return resp["_embedded"]["sw360:components"]
 
-        if "_embedded" not in resp:
-            return []
-
-        if "sw360:components" not in resp["_embedded"]:
-            return []
-
-        return resp["_embedded"]["sw360:components"]
+        return []
 
     def get_component(self, component_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about a component
@@ -304,4 +298,7 @@ class ComponentsMixin(BaseMixin):
         """
         url = self.url + "resource/api/components/recentComponents"
         resp = self.api_get(url)
+        if resp and ("_embedded" in resp) and ("sw360:components" in resp["_embedded"]):
+            return resp["_embedded"]["sw360:components"]
+
         return resp

@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2023 Siemens
+# Copyright (c) 2019-2024 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -291,4 +291,17 @@ class ComponentsMixin(BaseMixin):
         """
 
         resp = self.api_get(self.url + "resource/api/components/usedBy/" + component_id)
+        return resp
+
+    def get_recent_components(self) -> Optional[Dict[str, Any]]:
+        """Get 5 of the service's most recently created components.
+
+        API endpoint: GET /components/recentComponents
+
+        :return: a list of components
+        :rtype: JSON list of component objects
+        :raises SW360Error: if there is a negative HTTP response
+        """
+        url = self.url + "resource/api/components/recentComponents"
+        resp = self.api_get(url)
         return resp

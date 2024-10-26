@@ -19,13 +19,13 @@ from .attachments import AttachmentsMixin
 from .clearing import ClearingMixin
 from .components import ComponentsMixin
 from .license import LicenseMixin
+from .moderationrequests import ModerationRequestMixin
 from .packages import PackagesMixin
 from .project import ProjectMixin
 from .releases import ReleasesMixin
 from .sw360error import SW360Error
 from .vendor import VendorMixin
 from .vulnerabilities import VulnerabilitiesMixin
-from .moderationrequests import ModerationRequestMixin
 
 # Retry mechanism for rate limiting
 adapter = HTTPAdapter(max_retries=Retry(

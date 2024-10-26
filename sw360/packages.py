@@ -46,9 +46,8 @@ class PackagesMixin(BaseMixin):
 
         return []
 
-    # return type List[Dict[str, Any]] | Optional[Dict[str, Any]] for Python 3.11 is good,
-    # Union[List[Dict[str, Any]], Optional[Dict[str, Any]]] for lower Python versions is not good
-    def get_all_packages(self, fields: str = "", all_details: bool = False, page: int = -1,
+    def get_all_packages(self, name: str = "", version: str = "", purl: str = "",
+                         all_details: bool = False, page: int = -1,
                          page_size: int = -1, sort: str = "") -> Any:
         """Get information of about all packages
 
@@ -70,8 +69,12 @@ class PackagesMixin(BaseMixin):
         if all_details:
             full_url = self._add_param(full_url, "allDetails=true")
 
-        if fields:
-            full_url = self._add_param(full_url, "fields=" + fields)
+        if name:
+            full_url = self._add_param(full_url, "name=" + name)
+        if version:
+            full_url = self._add_param(full_url, "version=" + version)
+        if purl:
+            full_url = self._add_param(full_url, "purl=" + purl)
 
         if page > -1:
             full_url = self._add_param(full_url, "page=" + str(page))

@@ -106,14 +106,14 @@ class Sw360TestPackages(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/packages?allDetails=true&fields=packageType",
+            url=self.MYURL + "resource/api/packages?allDetails=true&purl=pkg:pypi/cli-support@2.0.0",
             body='{"_embedded": {"sw360:packages": [{"name": "Tethys.Logging", "version": "1.3.0", "packageType": "FRAMEWORK"}]}}',  # noqa
             status=200,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        packages = lib.get_all_packages("packageType", True)
+        packages = lib.get_all_packages(purl="pkg:pypi/cli-support@2.0.0", all_details=True)
         self.assertIsNotNone(packages)
         self.assertTrue(len(packages) > 0)
         self.assertEqual("Tethys.Logging", packages[0]["name"])
@@ -128,14 +128,14 @@ class Sw360TestPackages(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/packages?allDetails=true&fields=packageType&page=2&page_entries=6&sort=name%2Cdesc",  # noqa
+            url=self.MYURL + "resource/api/packages?allDetails=true&name=cli-support&version=2.0.0&page=2&page_entries=6&sort=name%2Cdesc",  # noqa
             body='{"_embedded": {"sw360:packages": [{"name": "Tethys.Logging", "version": "1.3.0", "packageType": "FRAMEWORK"}]}}',  # noqa
             status=200,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        packages = lib.get_all_packages("packageType", True, page=2, page_size=6, sort="name,desc")
+        packages = lib.get_all_packages(name="cli-support", version="2.0.0", all_details=True, page=2, page_size=6, sort="name,desc")  # noqa
         self.assertIsNotNone(packages)
         self.assertTrue(len(packages) > 0)
         pkgs = packages["_embedded"]["sw360:packages"]

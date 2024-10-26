@@ -5,7 +5,7 @@
 
 # SW360 Base Library for Python
 
-## NEXT
+## V1.7.0
 
 * more REST API endpoints implemented:
   * `get_recent_releases`

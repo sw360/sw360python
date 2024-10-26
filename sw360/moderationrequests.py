@@ -7,14 +7,14 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from .base import BaseMixin
 
 
 class ModerationRequestMixin(BaseMixin):
     def get_all_moderation_requests(self, page: int = -1, page_size: int = -1,
-                                    sort: str = "") -> List[Dict[str, Any]]:
+                                    sort: str = "") -> Optional[Dict[str, Any]]:
         """Get information of about all moderation requests
 
         API endpoint: GET /moderationrequest
@@ -45,7 +45,7 @@ class ModerationRequestMixin(BaseMixin):
 
     def get_moderation_requests_by_state(self, state: str, all_details: bool = False,
                                          page: int = -1, page_size: int = -1,
-                                         sort: str = "") -> List[Dict[str, Any]]:
+                                         sort: str = "") -> Optional[Dict[str, Any]]:
         """Get information of about all moderation requests
 
         API endpoint: GET /moderationrequest/byState

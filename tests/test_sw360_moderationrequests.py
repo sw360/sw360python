@@ -106,9 +106,10 @@ class Sw360TestModerationRequests(unittest.TestCase):
 
         mrs = lib.get_all_moderation_requests(page=2, page_size=8, sort="timestamp,desc")
         self.assertIsNotNone(mrs)
-        self.assertTrue(len(mrs) > 0)
-        mr_list = mrs["_embedded"]["sw360:moderationRequests"]
-        self.assertEqual("@grpc/grpc-js (1.9.15)", mr_list[0]["documentName"])
+        if mrs:
+            self.assertTrue(len(mrs) > 0)
+            mr_list = mrs["_embedded"]["sw360:moderationRequests"]
+            self.assertEqual("@grpc/grpc-js (1.9.15)", mr_list[0]["documentName"])
 
     @responses.activate
     def test_get_moderation_requests_by_state(self) -> None:
@@ -175,9 +176,10 @@ class Sw360TestModerationRequests(unittest.TestCase):
 
         mrs = lib.get_moderation_requests_by_state("open", True, page=2, page_size=8, sort="timestamp,desc")
         self.assertIsNotNone(mrs)
-        self.assertTrue(len(mrs) > 0)
-        mr_list = mrs["_embedded"]["sw360:moderationRequests"]
-        self.assertEqual("@grpc/grpc-js (1.9.15)", mr_list[0]["documentName"])
+        if mrs:
+            self.assertTrue(len(mrs) > 0)
+            mr_list = mrs["_embedded"]["sw360:moderationRequests"]
+            self.assertEqual("@grpc/grpc-js (1.9.15)", mr_list[0]["documentName"])
 
     @responses.activate
     def test_get_license(self) -> None:

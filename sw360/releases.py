@@ -287,7 +287,7 @@ class ReleasesMixin(BaseMixin):
         url = self.url + "resource/api/releases/" + release_id + "/unlink/packages/"
         return self.api_patch(url, json=packages)
 
-    def get_recent_releases(self) -> Optional[Dict[str, Any]]:
+    def get_recent_releases(self) -> Optional[List[Dict[str, Any]]]:
         """Get 5 of the service's most recently created releases.
 
         API endpoint: GET /releases/recentReleases
@@ -301,4 +301,4 @@ class ReleasesMixin(BaseMixin):
         if resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
             return resp["_embedded"]["sw360:releases"]
 
-        return resp
+        return []

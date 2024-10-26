@@ -287,7 +287,7 @@ class ComponentsMixin(BaseMixin):
         resp = self.api_get(self.url + "resource/api/components/usedBy/" + component_id)
         return resp
 
-    def get_recent_components(self) -> Optional[Dict[str, Any]]:
+    def get_recent_components(self) -> Optional[List[Dict[str, Any]]]:
         """Get 5 of the service's most recently created components.
 
         API endpoint: GET /components/recentComponents
@@ -301,4 +301,4 @@ class ComponentsMixin(BaseMixin):
         if resp and ("_embedded" in resp) and ("sw360:components" in resp["_embedded"]):
             return resp["_embedded"]["sw360:components"]
 
-        return resp
+        return []

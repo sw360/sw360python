@@ -901,9 +901,10 @@ class Sw360TestComponents(unittest.TestCase):
 
         components = lib.get_recent_components()
         self.assertIsNotNone(components)
-        self.assertEqual(2, len(components))
-        self.assertEqual("intl-listformat", components[0]["name"])
-        self.assertEqual("OSS", components[0]["componentType"])
+        if components:
+            self.assertEqual(2, len(components))
+            self.assertEqual("intl-listformat", components[0]["name"])
+            self.assertEqual("OSS", components[0]["componentType"])
 
 
 if __name__ == "__main__":

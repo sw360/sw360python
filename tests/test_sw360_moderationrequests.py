@@ -216,7 +216,7 @@ class Sw360TestModerationRequests(unittest.TestCase):
         mr = lib.get_moderation_request("0815")
         self.assertIsNotNone(license)
         if mr:  # only for mypy
-            self.assertEqual("b41ddfb69b40439cabb18538313a036c", mr["id"])
+            self.assertEqual("0815", mr["id"])
             self.assertEqual("@grpc/grpc-js (1.9.15)", mr["documentName"])
 
 

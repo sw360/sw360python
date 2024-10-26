@@ -286,3 +286,19 @@ class ReleasesMixin(BaseMixin):
 
         url = self.url + "resource/api/releases/" + release_id + "/unlink/packages/"
         return self.api_patch(url, json=packages)
+
+    def get_recent_releases(self) -> Optional[Dict[str, Any]]:
+        """Get 5 of the service's most recently created releases.
+
+        API endpoint: GET /releases/recentReleases
+
+        :return: a list of releases
+        :rtype: JSON list of release objects
+        :raises SW360Error: if there is a negative HTTP response
+        """
+        url = self.url + "resource/api/releases/recentReleases"
+        resp = self.api_get(url)
+        if resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
+            return resp["_embedded"]["sw360:releases"]
+
+        return resp

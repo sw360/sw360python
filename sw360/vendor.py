@@ -27,16 +27,10 @@ class VendorMixin(BaseMixin):
         """
 
         resp = self.api_get(self.url + "resource/api/vendors")
-        if not resp:
-            return []
+        if resp and "_embedded" in resp and "sw360:vendors" in resp["_embedded"]:
+            return resp["_embedded"]["sw360:vendors"]
 
-        if "_embedded" not in resp:
-            return []
-
-        if "sw360:vendors" not in resp["_embedded"]:
-            return []
-
-        return resp["_embedded"]["sw360:vendors"]
+        return []
 
     def get_vendor(self, vendor_id: str) -> Optional[Dict[str, Any]]:
         """Returns a vendor

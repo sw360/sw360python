@@ -5,6 +5,15 @@
 
 # SW360 Base Library for Python
 
+## NEXT
+
+* more REST API endpoints implemented:
+  * `get_recent_releases`
+  * `get_recent_components`
+  * `get_all_moderation_requests`
+  * `get_moderation_requests_by_state`
+  * `get_moderation_request`
+
 ## V1.6.0
 
 * packages REST API calls implemented.
@@ -21,7 +30,7 @@
 
 * when using CaPyCLI in a CI pipeline, connection problems to the SW360 server (5xx) cause
   the pipeline to fail. We have now add an improved session handling to all api requests.
-* dependency updates due to security vulnerabilities in idna.
+* dependency updates due to security vulnerabilities in `idna`.
 
 ## V1.4.1
 

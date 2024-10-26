@@ -839,11 +839,73 @@ class Sw360TestComponents(unittest.TestCase):
         lib.login_api()
         # c = lib.get_component("eaba2f0416e000e8ca5b2ccb4400633e")
         # c = lib.get_components_by_external_id( "package-url", "pkg:nuget/Tethys.Logging")
-        c = lib.api_get("https://sw360.siemens.com/resource/api/components/searchByExternalIds?package-url=pkg:nuget/Tethys.Logging")  # noqa
+        c = lib.api_get("https://my.server.com/resource/api/components/searchByExternalIds?package-url=pkg:nuget/Tethys.Logging")  # noqa
         print(c)
+
+    @responses.activate
+    def test_get_recent_components(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        lib.force_no_session = True
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/components/recentComponents",
+            body='''{
+                "_embedded": {
+                    "sw360:components": [
+                        {
+                            "id": "ff6f1b5b212b4f93b306e2cceca4f64d",
+                            "name": "intl-listformat",
+                            "description": "n/a",
+                            "componentType": "OSS",
+                            "visbility": "EVERYONE",
+                            "mainLicenseIds": [],
+                            "_links": {
+                                "self": {
+                                "href": "https://my.server.com/resource/api/components/ff"
+                                }
+                            }
+                        },
+                        {
+                            "id": "f916b35d6c864014bd8823c45615aeab",
+                            "name": "fields-metadata-plugin",
+                            "description": "n/a",
+                            "componentType": "OSS",
+                            "visbility": "EVERYONE",
+                            "mainLicenseIds": [],
+                            "_links": {
+                                "self": {
+                                "href": "https://my.server.com/resource/api/components/f9"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "_links": {
+                    "curies": [
+                        {
+                            "href": "https://my.server.com/resource/docs/{rel}.html",
+                            "name": "sw360",
+                            "templated": true
+                        }
+                    ]
+                }
+            }''',
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        components = lib.get_recent_components()
+        self.assertIsNotNone(components)
+        self.assertEqual(2, len(components))
+        self.assertEqual("intl-listformat", components[0]["name"])
+        self.assertEqual("OSS", components[0]["componentType"])
 
 
 if __name__ == "__main__":
-    # unittest.main()
     x = Sw360TestComponents()
     x.test_get_all_components_with_fields_and_paging()

@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2023 Siemens
+# Copyright (c) 2019-2024 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -84,16 +84,10 @@ class ComponentsMixin(BaseMixin):
         """
 
         resp = self.api_get(self.url + "resource/api/components?type=" + component_type)
-        if not resp:
-            return []
+        if resp and ("_embedded" in resp) and ("sw360:components" in resp["_embedded"]):
+            return resp["_embedded"]["sw360:components"]
 
-        if "_embedded" not in resp:
-            return []
-
-        if "sw360:components" not in resp["_embedded"]:
-            return []
-
-        return resp["_embedded"]["sw360:components"]
+        return []
 
     def get_component(self, component_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about a component
@@ -291,4 +285,20 @@ class ComponentsMixin(BaseMixin):
         """
 
         resp = self.api_get(self.url + "resource/api/components/usedBy/" + component_id)
+        return resp
+
+    def get_recent_components(self) -> Optional[Dict[str, Any]]:
+        """Get 5 of the service's most recently created components.
+
+        API endpoint: GET /components/recentComponents
+
+        :return: a list of components
+        :rtype: JSON list of component objects
+        :raises SW360Error: if there is a negative HTTP response
+        """
+        url = self.url + "resource/api/components/recentComponents"
+        resp = self.api_get(url)
+        if resp and ("_embedded" in resp) and ("sw360:components" in resp["_embedded"]):
+            return resp["_embedded"]["sw360:components"]
+
         return resp

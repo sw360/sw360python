@@ -616,6 +616,64 @@ class Sw360TestReleases(unittest.TestCase):
 
         self.assertEqual("No release id provided!", context.exception.message)
 
+    @responses.activate
+    def test_get_recent_releases(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/releases/recentReleases",
+            body='''
+                {
+                "_embedded": {
+                    "sw360:releases": [
+                        {
+                            "id": "f23200c333564eb98bbd5823937d5fc8",
+                            "name": "MarkupSafe",
+                            "version": "3.0.2",
+                            "_links": {
+                                "self": {
+                                "href": "https://my.server.com/resource/api/releases/f2"
+                                }
+                            }
+                        },
+                        {
+                            "id": "d39333c659d64ee3aa30d48cc0bcd930",
+                            "name": "HTTPCore",
+                            "version": "1.0.6",
+                            "_links": {
+                                "self": {
+                                "href": "https://my.server.com/resource/api/releases/d3"
+                                }
+                            }
+                        }
+                    ]
+                },
+                "_links": {
+                    "curies": [
+                        {
+                            "href": "https://my.server.com/resource/docs/{rel}.html",
+                            "name": "sw360",
+                            "templated": true
+                        }
+                    ]
+                }
+            }
+            ''',
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        releases = lib.get_recent_releases()
+        self.assertIsNotNone(releases)
+        self.assertEqual(2, len(releases))
+        self.assertEqual("MarkupSafe", releases[0]["name"])
+        self.assertEqual("3.0.2", releases[0]["version"])
+
 
 if __name__ == "__main__":
     unittest.main()

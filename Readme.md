@@ -62,7 +62,7 @@ Install sw360 and required dependencies:
 The documentation of the project is built using Sphinx:
 
 ```python
-poetry run sphinx-build .\docs-source\ .\docs\
+poetry run sphinx-build ./docs-source/ ./docs/
 ```
 
 #### Building Python package
@@ -104,3 +104,8 @@ Copyright 2019-2024 Siemens
 
 The project is licensed under the MIT license.
 SPDX-License-Identifier: MIT
+
+## SBOM
+
+For an up-to-date CycloneDX SBOM, please have a look at the
+[SBOM](https://github.com/sw360/sw360python/tree/master/SBOM) folder.

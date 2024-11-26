@@ -64,7 +64,8 @@ class ReleasesMixin(BaseMixin):
 
     # return type List[Dict[str, Any]] | Optional[Dict[str, Any]] for Python 3.11 is good,
     # Union[List[Dict[str, Any]], Optional[Dict[str, Any]]] for lower Python versions is not good
-    def get_all_releases(self, fields: str = "", all_details: bool = False, page: int = -1,
+    def get_all_releases(self, fields: str = "", all_details: bool = False,
+                         isNewClearingWithSourceAvailable: bool = False, page: int = -1,
                          page_size: int = -1, sort: str = "") -> Any:
         """Get information of about all releases
 
@@ -72,6 +73,8 @@ class ReleasesMixin(BaseMixin):
 
         :param all_details: retrieve all project details (optional))
         :type all_details: bool
+        :param isNewClearingWithSourceAvailable: retrieve releases in new clearning state with source avail
+        :type isNewClearingWithSourceAvailable: bool
         :param page: page to retrieve
         :type page: int
         :param page_size: page size to use
@@ -85,6 +88,9 @@ class ReleasesMixin(BaseMixin):
         full_url = self.url + "resource/api/releases"
         if all_details:
             full_url = self._add_param(full_url, "allDetails=true")
+
+        if isNewClearingWithSourceAvailable:
+            full_url = self._add_param(full_url, "isNewClearingWithSourceAvailable=true")
 
         if fields:
             full_url = self._add_param(full_url, "fields=" + fields)

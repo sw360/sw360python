@@ -5,6 +5,13 @@
 
 # SW360 Base Library for Python
 
+## Upcoming Release
+
+* Update `get_all_releases` to include `isNewClearingWithSourceAvailable` parameter:
+  * This parameter allows filtering releases that are in the **new clearing** state and have
+    the source available.
+  * This feature is yet to be released in the new version of SW360.
+
 ## V1.7.0
 
 * more REST API endpoints implemented:

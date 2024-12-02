@@ -1359,9 +1359,9 @@
       ],
       "name": "sw360",
       "type": "library",
-      "version": "1.7.0"
+      "version": "1.8.0"
     },
-    "timestamp": "2024-10-28T06:22:41.959113+00:00",
+    "timestamp": "2024-12-02T09:36:18.598439+00:00",
     "tools": {
       "components": [
         {
@@ -1463,7 +1463,7 @@
       ]
     }
   },
-  "serialNumber": "urn:uuid:c407cb4a-3018-43bf-84bb-d3b18bc5bca5",
+  "serialNumber": "urn:uuid:2f6c4e95-2f0c-4fa5-a719-cbbcde71f5f3",
   "version": 1,
   "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
   "bomFormat": "CycloneDX",

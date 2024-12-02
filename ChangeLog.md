@@ -5,12 +5,12 @@
 
 # SW360 Base Library for Python
 
-## Upcoming Release
+## V1.8.0
 
 * Update `get_all_releases` to include `isNewClearingWithSourceAvailable` parameter:
   * This parameter allows filtering releases that are in the **new clearing** state and have
-    the source available.
-  * This feature is yet to be released in the new version of SW360.
+    the source available. This feature is yet to be released in the new version of SW360.
+  * `get_components_by_type()` and `get_components_by_name()` support now paging.
 
 ## V1.7.0
 

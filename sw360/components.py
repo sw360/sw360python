@@ -70,7 +70,12 @@ class ComponentsMixin(BaseMixin):
 
         return resp
 
-    def get_components_by_type(self, component_type: str) -> List[Dict[str, Any]]:
+    def get_components_by_type(
+            self,
+            component_type: str,
+            page: int = -1,
+            page_size: int = -1,
+            sort: str = "") -> List[Dict[str, Any]]:
         """Get information of about all components for certain type
 
         API endpoint: GET /components
@@ -78,12 +83,30 @@ class ComponentsMixin(BaseMixin):
         :param component_type: the type of the component to be requested, one
          of INTERNAL, OSS, COTS, FREESOFTWARE, INNER_SOURCE, SERVICE
         :type component_type: string
+        :param page: page to retrieve
+        :type page: int
+        :param page_size: page size to use
+        :type page_size: int
+        :param sort: sort order for the components ("name,desc"; "name,asc")
+        :type sort: str
         :return: list of components
         :rtype: list of JSON component objects
         :raises SW360Error: if there is a negative HTTP response
         """
 
-        resp = self.api_get(self.url + "resource/api/components?type=" + component_type)
+        url = self.url + "resource/api/components?type=" + component_type
+
+        if page > -1:
+            url = self._add_param(url, "page=" + str(page))
+            url = self._add_param(url, "page_entries=" + str(page_size))
+
+        if sort:
+            # ensure HTML encoding
+            sort = sort.replace(",", "%2C")
+            url = self._add_param(url, "sort=" + sort)
+
+        resp = self.api_get(url)
+
         if resp and ("_embedded" in resp) and ("sw360:components" in resp["_embedded"]):
             return resp["_embedded"]["sw360:components"]
 
@@ -119,19 +142,40 @@ class ComponentsMixin(BaseMixin):
         resp = self.api_get(component_url)
         return resp
 
-    def get_component_by_name(self, component_name: str) -> Optional[Dict[str, Any]]:
+    def get_component_by_name(
+            self,
+            component_name: str,
+            page: int = -1,
+            page_size: int = -1,
+            sort: str = "") -> Optional[Dict[str, Any]]:
         """Get information of about a component
 
         API endpoint: GET /components
 
         :param component_name: the name of the component to look for
         :type component_name: string
+        :param page: page to retrieve
+        :type page: int
+        :param page_size: page size to use
+        :type page_size: int
+        :param sort: sort order for the components ("name,desc"; "name,asc")
+        :type sort: str
         :return: list of components
         :rtype: list of JSON component objects
         :raises SW360Error: if there is a negative HTTP response
         """
 
-        resp = self.api_get(self.url + "resource/api/components?name=" + component_name)
+        url = self.url + "resource/api/components?name=" + component_name
+        if page > -1:
+            url = self._add_param(url, "page=" + str(page))
+            url = self._add_param(url, "page_entries=" + str(page_size))
+
+        if sort:
+            # ensure HTML encoding
+            sort = sort.replace(",", "%2C")
+            url = self._add_param(url, "sort=" + sort)
+
+        resp = self.api_get(url)
         return resp
 
     def get_components_by_external_id(self, ext_id_name: str, ext_id_value: str = "") -> List[Dict[str, Any]]:

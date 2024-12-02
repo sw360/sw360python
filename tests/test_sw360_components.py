@@ -909,4 +909,4 @@ class Sw360TestComponents(unittest.TestCase):
 
 if __name__ == "__main__":
     x = Sw360TestComponents()
-    x.test_get_all_components_with_fields_and_paging()
+    x.test_get_all_components_by_type()

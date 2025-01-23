@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2024 Siemens
+# Copyright (c) 2019-2025 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -313,7 +313,8 @@ class ComponentsMixin(BaseMixin):
         response = self.api_delete(url)
         if response is not None:
             if response.ok:
-                return response.json()
+                if response.text:
+                    return response.json()
         return None
 
     def get_users_of_component(self, component_id: str) -> Optional[Dict[str, Any]]:

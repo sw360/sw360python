@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2023 Siemens
+# Copyright (c) 2019-2025 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -83,7 +83,7 @@ class VendorMixin(BaseMixin):
         url = self.url + "resource/api/vendors/" + vendor_id
         return self.api_patch(url, json=vendor)
 
-    def delete_vendor(self, vendor_id: str) -> Dict[str, Any]:
+    def delete_vendor(self, vendor_id: str) -> Optional[Dict[str, Any]]:
         """Delete an existing vendor
 
         API endpoint: DELETE /vendors
@@ -93,7 +93,7 @@ class VendorMixin(BaseMixin):
         :raises SW360Error: if there is a negative HTTP response
         """
 
-        # 2019-04-03: error 405 - not allowed
+        # 2019-04-03/2025-01-23: error 405 - not allowed
 
         if not vendor_id:
             raise SW360Error(message="No vendor id provided!")
@@ -103,5 +103,7 @@ class VendorMixin(BaseMixin):
         response = self.api_delete(url)
         if response is not None:
             if response.ok:
-                return response.json()
-        raise SW360Error(response, url)
+                if response.text:
+                    return response.json()
+
+        return None

@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2020-2024 Siemens
+# Copyright (c) 2020-2025 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -767,7 +767,7 @@ class Sw360TestComponents(unittest.TestCase):
         responses.add(
             responses.DELETE,
             url=self.MYURL + "resource/api/components/123",
-            body="4",
+            body='{\n  "resourceId" : "468abcd6e7f849199d9323c9a16b2776",\n  "status" : 200\n}',
             status=200,
         )
 

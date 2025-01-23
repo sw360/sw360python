@@ -1,5 +1,5 @@
 <!--
-# SPDX-FileCopyrightText: (c) 2019-2024 Siemens
+# SPDX-FileCopyrightText: (c) 2019-2025 Siemens
 # SPDX-License-Identifier: MIT
 -->
 
@@ -100,7 +100,7 @@ of a given project on SW360. This requires colorama>=0.4.1.
 
 ## License
 
-Copyright 2019-2024 Siemens
+Copyright 2019-2025 Siemens
 
 The project is licensed under the MIT license.
 SPDX-License-Identifier: MIT

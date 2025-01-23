@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2022 Siemens
+# Copyright (c) 2019-2025 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -67,6 +67,8 @@ class LicenseMixin(BaseMixin):
         :rtype: JSON SW360 result object
         :raises SW360Error: if there is a negative HTTP response
         """
+
+        # 2025-01-23: returns 500 - internal server error
 
         if not license_shortname:
             raise SW360Error(message="No license shortname provided!")

@@ -437,7 +437,8 @@ class ProjectMixin(BaseMixin):
         response = self.api_delete(url)
         if response is not None:
             if response.ok:
-                return response.json()
+                if response.text:
+                    return response.json()
         return None
 
     def get_users_of_project(self, project_id: str) -> Optional[Dict[str, Any]]:

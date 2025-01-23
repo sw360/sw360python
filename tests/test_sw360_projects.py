@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2019-2024 Siemens
+# Copyright (c) 2019-2025 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -1113,6 +1113,19 @@ class Sw360TestProjects(unittest.TestCase):
             responses.DELETE,
             url=self.MYURL + "resource/api/projects/123",
             body="4",
+            status=200,
+        )
+
+        lib.delete_project("123")
+
+    @responses.activate
+    def test_delete_project_empty_response(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.DELETE,
+            url=self.MYURL + "resource/api/projects/123",
+            body="",
             status=200,
         )
 

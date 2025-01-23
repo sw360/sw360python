@@ -5,6 +5,12 @@
 
 # SW360 Base Library for Python
 
+## V1.8.1
+
+* `delete_project` now works properly. Before it could have happened the you get a `JSONDecodeError`.
+  All delete methodds have been checked and made more resilient.
+* dependency updates.
+
 ## V1.8.0
 
 * Update `get_all_releases` to include `isNewClearingWithSourceAvailable` parameter:

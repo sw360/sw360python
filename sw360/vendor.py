@@ -83,7 +83,7 @@ class VendorMixin(BaseMixin):
         url = self.url + "resource/api/vendors/" + vendor_id
         return self.api_patch(url, json=vendor)
 
-    def delete_vendor(self, vendor_id: str) -> Dict[str, Any]:
+    def delete_vendor(self, vendor_id: str) -> Optional[Dict[str, Any]]:
         """Delete an existing vendor
 
         API endpoint: DELETE /vendors

@@ -8,7 +8,7 @@
 ## V1.8.1
 
 * `delete_project` now works properly. Before it could have happened the you get a `JSONDecodeError`.
-  All delete methodds have been checked and made more resilient.
+  All delete methods have been checked and made more resilient.
 * dependency updates.
 
 ## V1.8.0

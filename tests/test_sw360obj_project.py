@@ -45,7 +45,8 @@ class Sw360ObjTestProject(Sw360ObjTestBase):
         self.assertEqual(proj.name, "MyProj")
         self.assertEqual(proj.version, "11.0")
         self.assertEqual(len(proj.releases), 1)
-        self.assertIsNone(proj.releases["7c4"].component_id)
+        self.assertEqual(len(proj.projects), 0)
+        self.assertIsNone(proj.releases["7c4"].parent.id)
 
         self.assertEqual(str(proj), "MyProj 11.0 (123)")
 

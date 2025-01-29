@@ -15,7 +15,7 @@ from sw360 import Project
 
 class Sw360ObjTestProject(Sw360ObjTestBase):
     def test_repr(self):
-        prj = Project(project_id="123", name="TestPrj", version="12")
+        prj = Project(id_="123", name="TestPrj", version="12")
         prj = eval(repr(prj))
         assert prj.id == "123"
         assert prj.name == "TestPrj"
@@ -37,11 +37,12 @@ class Sw360ObjTestProject(Sw360ObjTestBase):
                 'version': '11.0',
                 '_embedded': {
                     'sw360:releases': [{
+                        'id': '7c4',
                         'name': 'acl',
                         'version': '2.2',
                         '_links': {'self': {
                             'href': SW360_BASE_URL + 'releases/7c4'}}}]}})
-        proj = Project().get(self.lib, "123")
+        proj = Project.get(self.lib, "123")
         self.assertEqual(proj.name, "MyProj")
         self.assertEqual(proj.version, "11.0")
         self.assertEqual(len(proj.releases), 1)
@@ -59,7 +60,7 @@ class Sw360ObjTestProject(Sw360ObjTestBase):
                 'name': 'MyProj',
                 'version': '11.0',
                 'externalIds': {'some.id': '7105'}})
-        proj = Project().get(self.lib, "123")
+        proj = Project.get(self.lib, "123")
         self.assertEqual(proj.external_ids["some.id"], "7105")
         self.assertEqual(len(proj.purls), 0)
 
@@ -73,7 +74,7 @@ class Sw360ObjTestProject(Sw360ObjTestBase):
                 'version': '11.0',
                 'externalIds': {
                   'package-url': 'pkg:deb/debian/app@11.0-1?arch=source'}})
-        proj = Project().get(self.lib, "123")
+        proj = Project.get(self.lib, "123")
         self.assertEqual(len(proj.purls), 1)
         self.assertEqual(proj.purls[0].name, "app")
         self.assertEqual(proj.purls[0].version, "11.0-1")
@@ -88,7 +89,7 @@ class Sw360ObjTestProject(Sw360ObjTestBase):
                 'version': '11.0',
                 'externalIds': {
                   'package-url': 'pkg:huhu'}})
-        proj = Project().get(self.lib, "123")
+        proj = Project.get(self.lib, "123")
         self.assertEqual(len(proj.purls), 0)
         self.assertEqual(proj.external_ids["package-url"], "pkg:huhu")
 

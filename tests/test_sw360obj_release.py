@@ -16,7 +16,7 @@ from sw360 import Release
 class Sw360ObjTestRelease(Sw360ObjTestBase):
     def test_repr(self):
         r = Release(release_id="123", name="TestCmp", version="1.4",
-                    component_id="456", downloadurl="http://www")
+                    downloadurl="http://www")
 
         r = eval(repr(r))
         assert r.id == "123"
@@ -46,7 +46,7 @@ class Sw360ObjTestRelease(Sw360ObjTestBase):
         self.assertEqual(r.name, "acl")
         self.assertEqual(r.details["somekey"], "value")
         self.assertEqual(len(r.purls), 0)
-        self.assertEqual(r.component_id, "7b4")
+        self.assertEqual(r.parent.id, "7b4")
 
     @responses.activate
     def test_get_release_extid(self):

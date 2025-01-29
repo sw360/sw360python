@@ -46,7 +46,8 @@ class Sw360ObjTestComponent(Sw360ObjTestBase):
         self.assertEqual(comp.details["somekey"], "value")
         self.assertEqual(len(comp.releases), 1)
         self.assertEqual(len(comp.purls), 0)
-        self.assertEqual(comp.releases["7c4"].component_id, "123")
+        self.assertEqual(comp.releases["7c4"].parent.id, "123")
+        self.assertEqual(len(comp.all_resources), 2)
 
     @responses.activate
     def test_get_component_with_purls(self):

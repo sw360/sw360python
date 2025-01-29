@@ -15,7 +15,7 @@ from sw360 import Component
 
 class Sw360ObjTestComponent(Sw360ObjTestBase):
     def test_repr(self):
-        comp = Component(component_id="123", name="TestCmp", homepage="http://www",
+        comp = Component(id_="123", name="TestCmp", homepage="http://www",
                          component_type="INTERNAL")
         comp = eval(repr(comp))
         assert comp.id == "123"
@@ -37,11 +37,12 @@ class Sw360ObjTestComponent(Sw360ObjTestBase):
                 'somekey': 'value',
                 '_embedded': {
                     'sw360:releases': [{
+                        'id': '7c4',
                         'name': 'acl',
                         'version': '2.2',
                         '_links': {'self': {
                             'href': SW360_BASE_URL + 'releases/7c4'}}}]}})
-        comp = Component().get(self.lib, "123")
+        comp = Component.get(self.lib, "123")
         self.assertEqual(comp.name, "acl")
         self.assertEqual(comp.details["somekey"], "value")
         self.assertEqual(len(comp.releases), 1)
@@ -59,7 +60,7 @@ class Sw360ObjTestComponent(Sw360ObjTestBase):
                 'somekey': 'value',
                 'externalIds': {
                     'package-url': 'pkg:deb/debian/acl@1.5.43 pkg:deb/ubuntu/acl@1.5.43-ub0'}})
-        comp = Component().get(self.lib, "123")
+        comp = Component.get(self.lib, "123")
         self.assertEqual(len(comp.purls), 2)
         self.assertEqual(comp.purls[0].name, "acl")
         self.assertNotIn("package-url", comp.external_ids)
@@ -75,7 +76,7 @@ class Sw360ObjTestComponent(Sw360ObjTestBase):
                 'externalIds': {
                     'package-url': 'pkg:xxx@0.43',
                     'purl': 'pkg:deb/debian/acl@1.5.43'}})
-        comp = Component().get(self.lib, "123")
+        comp = Component.get(self.lib, "123")
         self.assertEqual(len(comp.purls), 1)
         self.assertEqual(comp.external_ids['package-url'], 'pkg:xxx@0.43')
         self.assertEqual(comp.purls[0].name, "acl")

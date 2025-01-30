@@ -37,17 +37,17 @@ class Sw360ObjTestProject(Sw360ObjTestBase):
                 'version': '11.0',
                 '_embedded': {
                     'sw360:releases': [{
-                        'id': '7c4',
+                        'id': '7c3',
                         'name': 'acl',
                         'version': '2.2',
                         '_links': {'self': {
-                            'href': SW360_BASE_URL + 'releases/7c4'}}}]}})
+                            'href': SW360_BASE_URL + 'releases/7c3'}}},]}})
         proj = Project.get(self.lib, "123")
         self.assertEqual(proj.name, "MyProj")
         self.assertEqual(proj.version, "11.0")
         self.assertEqual(len(proj.releases), 1)
         self.assertEqual(len(proj.projects), 0)
-        self.assertIsNone(proj.releases["7c4"].parent.id)
+        self.assertIsNone(proj.releases["7c3"].parent)
 
         self.assertEqual(str(proj), "MyProj 11.0 (123)")
 
@@ -76,8 +76,9 @@ class Sw360ObjTestProject(Sw360ObjTestBase):
                   'package-url': 'pkg:deb/debian/app@11.0-1?arch=source'}})
         proj = Project.get(self.lib, "123")
         self.assertEqual(len(proj.purls), 1)
-        self.assertEqual(proj.purls[0].name, "app")
-        self.assertEqual(proj.purls[0].version, "11.0-1")
+        purl = next(iter(proj.purls))
+        self.assertEqual(purl.name, "app")
+        self.assertEqual(purl.version, "11.0-1")
 
     @responses.activate
     def test_get_project_purl_invalid(self):

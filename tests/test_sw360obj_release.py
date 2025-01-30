@@ -11,6 +11,7 @@ import responses
 import unittest
 from tests.test_sw360obj_base import Sw360ObjTestBase, SW360_BASE_URL
 from sw360 import Release
+from packageurl import PackageURL
 
 
 class Sw360ObjTestRelease(Sw360ObjTestBase):
@@ -65,42 +66,41 @@ class Sw360ObjTestRelease(Sw360ObjTestBase):
     def test_get_release_purl_string(self):
         responses.add(
             responses.GET,
-            SW360_BASE_URL + "releases/123",
+            SW360_BASE_URL + "releases/113",
             json={
                 'name': 'acl',
                 'version': '1.4',
                 'externalIds': {
                   'package-url': 'pkg:deb/debian/linux@4.19.98-1?arch=source'}})
-        r = Release.get(self.lib, "123")
+        r = Release.get(self.lib, "113")
         self.assertEqual(len(r.purls), 1)
-        self.assertEqual(r.purls[0].name, "linux")
-        self.assertEqual(r.purls[0].version, "4.19.98-1")
+        purl = next(iter(r.purls))
+        self.assertEqual(purl.name, "linux")
+        self.assertEqual(purl.version, "4.19.98-1")
 
-        r = Release.get(self.lib, "123")
+        r = Release.get(self.lib, "113")
         self.assertEqual(len(r.purls), 1)
 
         responses.replace(
             responses.GET,
-            SW360_BASE_URL + "releases/123",
+            SW360_BASE_URL + "releases/113",
             json={
                 'name': 'acl',
                 'version': '1.4'})
-        r = Release.get(self.lib, "123")
+        r = Release.get(self.lib, "113")
         self.assertEqual(len(r.purls), 1)
-        self.assertEqual(r.purls[0].name, "linux")
-        self.assertEqual(r.purls[0].version, "4.19.98-1")
 
     @responses.activate
     def test_get_release_purl_invalid(self):
         responses.add(
             responses.GET,
-            SW360_BASE_URL + "releases/123",
+            SW360_BASE_URL + "releases/120",
             json={
                 'name': 'acl',
                 'version': '1.4',
                 'externalIds': {
                   'package-url': 'pkg:huhu'}})
-        r = Release.get(self.lib, "123")
+        r = Release.get(self.lib, "120")
         self.assertEqual(len(r.purls), 0)
         self.assertEqual(r.external_ids["package-url"], "pkg:huhu")
 
@@ -118,8 +118,8 @@ class Sw360ObjTestRelease(Sw360ObjTestBase):
                     'pkg:deb/debian/linux-signed-amd64@4.19.98%2B1?arch=source']}})
         r = Release.get(self.lib, "123")
         self.assertEqual(len(r.purls), 2)
-        self.assertEqual(r.purls[1].name, "linux-signed-amd64")
-        self.assertEqual(r.purls[1].version, "4.19.98+1")
+        self.assertIn(PackageURL.from_string("pkg:deb/debian/linux@4.19.98-1?arch=source"), r.purls)
+        self.assertIn(PackageURL.from_string("pkg:deb/debian/linux-signed-amd64@4.19.98+1?arch=source"), r.purls)
 
     @responses.activate
     def test_get_release_purl_strarray(self):
@@ -135,8 +135,8 @@ class Sw360ObjTestRelease(Sw360ObjTestBase):
                                  ' "pkg:deb/debian/linux-signed-amd64@4.19.98%2B1?arch=source"]'}})
         r = Release.get(self.lib, "123")
         self.assertEqual(len(r.purls), 2)
-        self.assertEqual(r.purls[1].name, "linux-signed-amd64")
-        self.assertEqual(r.purls[1].version, "4.19.98+1")
+        self.assertIn(PackageURL.from_string("pkg:deb/debian/linux@4.19.98-1?arch=source"), r.purls)
+        self.assertIn(PackageURL.from_string("pkg:deb/debian/linux-signed-amd64@4.19.98+1?arch=source"), r.purls)
 
 
 if __name__ == "__main__":

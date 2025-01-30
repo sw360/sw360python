@@ -62,24 +62,39 @@ class Sw360ObjTestComponent(Sw360ObjTestBase):
                     'package-url': 'pkg:deb/debian/acl@1.5.43 pkg:deb/ubuntu/acl@1.5.43-ub0'}})
         comp = Component.get(self.lib, "123")
         self.assertEqual(len(comp.purls), 2)
-        self.assertEqual(comp.purls[0].name, "acl")
+        for purl in comp.purls:
+            self.assertEqual(purl.name, "acl")
         self.assertNotIn("package-url", comp.external_ids)
 
-    @responses.activate
-    def test_get_component_invalid_purls(self):
-        responses.add(
+        responses.replace(
             responses.GET,
             SW360_BASE_URL + "components/123",
             json={
                 'name': 'acl',
                 'somekey': 'value',
                 'externalIds': {
+                    'package-url': 'pkg:deb/ubuntu/acl@1.5.43-ub0'}})
+        comp = Component.get(self.lib, "123")
+        self.assertEqual(len(comp.purls), 2)
+        self.assertNotIn("package-url", comp.external_ids)
+
+
+    @responses.activate
+    def test_get_component_invalid_purls(self):
+        responses.add(
+            responses.GET,
+            SW360_BASE_URL + "components/122",
+            json={
+                'name': 'acl',
+                'somekey': 'value',
+                'externalIds': {
                     'package-url': 'pkg:xxx@0.43',
                     'purl': 'pkg:deb/debian/acl@1.5.43'}})
-        comp = Component.get(self.lib, "123")
+        comp = Component.get(self.lib, "122")
         self.assertEqual(len(comp.purls), 1)
         self.assertEqual(comp.external_ids['package-url'], 'pkg:xxx@0.43')
-        self.assertEqual(comp.purls[0].name, "acl")
+        for purl in comp.purls:
+            self.assertEqual(purl.name, "acl")
 
 
 if __name__ == "__main__":

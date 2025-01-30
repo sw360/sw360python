@@ -152,7 +152,7 @@ class SW360Resource:
 
     def _parse_purls(self, purl_value):
         """Parse package url strings"""
-        purls = []
+        purls = set()
         if type(purl_value) is str:
             if purl_value.startswith("["):
                 # as of 2022-04, SW360 returns arrays as JSON string...
@@ -164,7 +164,7 @@ class SW360Resource:
             if purl_string.startswith("pkg:"):
                 try:
                     purl = packageurl.PackageURL.from_string(purl_string)
-                    purls.append(purl)
+                    purls.add(purl)
                 except ValueError:
                     pass
         return purls
@@ -176,8 +176,6 @@ class SW360Resource:
         attributes and JSON members. If `snake_case` is set, more Python-ish
         snake_case names will be used (project_type instead of projectType).
         """
-        # delete purl list as we add purls from different external ids below
-        self.purls = []
         for key, value in json.items():
             if key in copy_attributes:
                 if snake_case:
@@ -188,7 +186,7 @@ class SW360Resource:
                         # 'package-url', but some use "purl", "purl.id", etc.
                         purls = self._parse_purls(id_value)
                         if len(purls):
-                            self.purls += purls
+                            self.purls.update(purls)
                             continue
                         self.external_ids[id_type] = id_value
                 else:
@@ -245,7 +243,7 @@ class Release(SW360Resource):
     def __init__(self, json=None, id_=None, parent=None, users={},
                  name=None, version=None, downloadurl=None, sw360=None, **kwargs):
         self.__setattrdefault__("external_ids", {})
-        self.__setattrdefault__("purls", [])
+        self.__setattrdefault__("purls", set())
         self.__setattrdefault__("attachments", {})
         self.__setattrdefault__("name", name)
         self.__setattrdefault__("version", version)
@@ -405,7 +403,7 @@ class Component(SW360Resource):
         self.__setattrdefault__("releases", {})
         self.__setattrdefault__("attachments", {})
         self.__setattrdefault__("external_ids", {})
-        self.__setattrdefault__("purls", [])
+        self.__setattrdefault__("purls", set())
         self.__setattrdefault__("name", name)
         self.__setattrdefault__("description", description)
         self.__setattrdefault__("homepage", homepage)
@@ -489,7 +487,7 @@ class Project(SW360Resource):
         self.__setattrdefault__("projects", {})
         self.__setattrdefault__("attachments", {})
         self.__setattrdefault__("external_ids", {})
-        self.__setattrdefault__("purls", [])
+        self.__setattrdefault__("purls", set())
         self.__setattrdefault__("name", name)
         self.__setattrdefault__("version", version)
         self.__setattrdefault__("description", description)

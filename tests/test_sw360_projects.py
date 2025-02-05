@@ -1004,7 +1004,7 @@ class Sw360TestProjects(unittest.TestCase):
             json={},
         )
         responses.add(
-            responses.POST,
+            responses.PATCH,
             url=self.MYURL + "resource/api/projects/123/releases",
             status=202,
         )
@@ -1016,7 +1016,7 @@ class Sw360TestProjects(unittest.TestCase):
             json={'_embedded': {'sw360:projects': []}},
         )
         responses.add(
-            responses.POST,
+            responses.PATCH,
             url=self.MYURL + "resource/api/projects/124/releases",
             status=202,
         )
@@ -1036,9 +1036,9 @@ class Sw360TestProjects(unittest.TestCase):
         )
 
         responses.add(
-            responses.POST,
+            responses.PATCH,
             url=self.MYURL + "resource/api/projects/123/releases",
-            body="4",
+            body="",
             status=202,
         )
 
@@ -1059,9 +1059,9 @@ class Sw360TestProjects(unittest.TestCase):
         )
 
         responses.add(
-            responses.POST,
+            responses.PATCH,
             url=self.MYURL + "resource/api/projects/123/releases",
-            body="4",
+            body="",
             status=404,
         )
 

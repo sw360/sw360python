@@ -367,21 +367,13 @@ class ProjectMixin(BaseMixin):
         if not project_id:
             raise SW360Error(message="No project id provided!")
 
-        if add:
-            old_releases = self.get_project_releases(project_id)
-            if (old_releases is not None and "_embedded" in old_releases
-                    and "sw360:releases" in old_releases["_embedded"]):
-                old_releases = old_releases["_embedded"]["sw360:releases"]
-                old_releases = [r["_links"]["self"]["href"] for r in old_releases]
-                old_releases = [r.split("/")[-1] for r in old_releases]
-                releases = old_releases + list(releases)
-
         url = self.url + "resource/api/projects/" + project_id + "/releases"
-        response = self.api_post(url, json=releases)
-        if response is not None:
-            if response.ok:
-                return True
-        return None
+        if add:
+            self.api_patch(url, json=releases)
+        else:
+            self.api_post(url, json=releases)
+
+        return True  # api_*() will raise an exception if something goes wrong
 
     def update_project_external_id(self, ext_id_name: str, ext_id_value: str,
                                    project_id: str, update_mode: str = "none") -> Any:

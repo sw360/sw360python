@@ -5,7 +5,7 @@
 
 # SW360 Base Library for Python
 
-## UNRELEASED
+## V1.9.0
 
 * use SW360 support for `update_project_releases(..., add=True)` instead of our own code.
   This allows to pass a dict with release details (e.g. project mainline state or relation).

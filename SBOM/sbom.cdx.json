@@ -1216,9 +1216,9 @@
       ],
       "name": "sw360",
       "type": "library",
-      "version": "1.8.1"
+      "version": "1.9.0"
     },
-    "timestamp": "2025-01-23T10:55:12.128406+00:00",
+    "timestamp": "2025-02-11T10:55:12.128406+00:00",
     "tools": {
       "components": [
         {

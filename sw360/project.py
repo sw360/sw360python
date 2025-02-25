@@ -317,7 +317,7 @@ class ProjectMixin(BaseMixin):
         API endpoint: PATCH /projects
 
         :param project: the new project data
-        :param project_id: the id of the project to be deleted
+        :param project_id: the id of the project to be updated
         :param add_subprojects: optional parameter only to add new sub-projects
         :type project: JSON
         :type project_id: string

@@ -220,7 +220,7 @@ class BaseMixin():
 
         return (old_value, ext_id_data, update)
     
-    def _add_params(self, url: str, params: dict) -> str:
+    def _add_params(self, url: str, params: Dict[str, str]) -> str:
         """Add the given parameter to the given url"""
         
         query_string = urlencode(params)

@@ -165,7 +165,7 @@ class ComponentsMixin(BaseMixin):
         :raises SW360Error: if there is a negative HTTP response
         """
 
-        fullbase_url = self.url + "resource/api/components?name=" + component_name
+        fullbase_url = self.url + "resource/api/components"
         params = {"name": component_name}
 
         if page > -1:

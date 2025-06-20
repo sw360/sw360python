@@ -3,7 +3,7 @@
 
 [tool.poetry]
 name = "sw360"
-version = "1.9.0"
+version = "1.9.1"
 description = "Python interface to the SW360 software component catalogue"
 authors = ["Thomas Graf <thomas.graf@siemens.com>",
 "Gernot Hillier <gernot.hillier@siemens.com>"]
@@ -16,7 +16,6 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Web Environment",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",

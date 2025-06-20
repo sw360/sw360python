@@ -1,9 +1,14 @@
 <!--
-# SPDX-FileCopyrightText: (c) 2019-2024 Siemens
+# SPDX-FileCopyrightText: (c) 2019-2025 Siemens
 # SPDX-License-Identifier: MIT
 -->
 
 # SW360 Base Library for Python
+
+## V1.9.1
+
+* We have now a more comprehensive query param encoding.
+* We have contribution guidelines.
 
 ## V1.9.0
 

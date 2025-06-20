@@ -202,7 +202,7 @@ class Sw360TestPackages(unittest.TestCase):
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        packages = lib.get_packages_by_packagemanager("nuget", page=1, page_size=5, sort="name%2Cdesc")
+        packages = lib.get_packages_by_packagemanager("nuget", page=1, page_size=5, sort="name,desc")
         self.assertIsNotNone(packages)
         self.assertTrue(len(packages) > 0)
         pkgs = packages["_embedded"]["sw360:packages"]
@@ -410,4 +410,4 @@ class Sw360TestPackages(unittest.TestCase):
 
 if __name__ == "__main__":
     APP = Sw360TestPackages()
-    APP.test_get_packages_by_packagemanager()
+    APP.test_get_packages_by_packagemanager_with_details()

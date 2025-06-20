@@ -52,7 +52,7 @@ class VendorMixin(BaseMixin):
 
         API endpoint: POST /vendors
 
-        :param vendor: the new vedor data
+        :param vendor: the new vendor data
         :type vendor: JSON vendor object
         :raises SW360Error: if there is a negative HTTP response
         """

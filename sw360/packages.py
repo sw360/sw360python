@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2024 Siemens
+# Copyright (c) 2024-2025 Siemens
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com
 #
@@ -67,7 +67,7 @@ class PackagesMixin(BaseMixin):
         """
         fullbase_url = self.url + "resource/api/packages"
         params = {}
-        
+
         if all_details:
             params["allDetails"] = "true"
 
@@ -79,7 +79,7 @@ class PackagesMixin(BaseMixin):
 
         if purl:
             params["purl"] = purl
-            
+
         if page > -1:
             params["page"] = str(page)
             params["page_entries"] = str(page_size)
@@ -123,7 +123,8 @@ class PackagesMixin(BaseMixin):
         if sort:
             params["sort"] = sort
 
-        resp = self.api_get(fullbase_url)
+        full_url = self._add_params(fullbase_url, params)
+        resp = self.api_get(full_url)
 
         if page == -1 and resp and ("_embedded" in resp) and ("sw360:packages" in resp["_embedded"]):
             return resp["_embedded"]["sw360:packages"]

@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2024 Siemens
+# Copyright (c) 2024-2025 Siemens
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com
 #
@@ -65,26 +65,29 @@ class PackagesMixin(BaseMixin):
         :rtype: list of JSON package objects
         :raises SW360Error: if there is a negative HTTP response
         """
-        full_url = self.url + "resource/api/packages"
+        fullbase_url = self.url + "resource/api/packages"
+        params = {}
+
         if all_details:
-            full_url = self._add_param(full_url, "allDetails=true")
+            params["allDetails"] = "true"
 
         if name:
-            full_url = self._add_param(full_url, "name=" + name)
+            params["name"] = name
+
         if version:
-            full_url = self._add_param(full_url, "version=" + version)
+            params["version"] = version
+
         if purl:
-            full_url = self._add_param(full_url, "purl=" + purl)
+            params["purl"] = purl
 
         if page > -1:
-            full_url = self._add_param(full_url, "page=" + str(page))
-            full_url = self._add_param(full_url, "page_entries=" + str(page_size))
+            params["page"] = str(page)
+            params["page_entries"] = str(page_size)
 
         if sort:
-            # ensure HTML encoding
-            sort = sort.replace(",", "%2C")
-            full_url = self._add_param(full_url, "sort=" + sort)
+            params["sort"] = sort
 
+        full_url = self._add_params(fullbase_url, params)
         resp = self.api_get(full_url)
 
         if page == -1 and resp and ("_embedded" in resp) and ("sw360:packages" in resp["_embedded"]):
@@ -110,18 +113,17 @@ class PackagesMixin(BaseMixin):
         :rtype: list of JSON package objects
         :raises SW360Error: if there is a negative HTTP response
         """
-        full_url = self.url + "resource/api/packages"
-        full_url = self._add_param(full_url, "packageManager=" + str(manager))
+        fullbase_url = self.url + "resource/api/packages"
+        params = {"packageManager": manager}
 
         if page > -1:
-            full_url = self._add_param(full_url, "page=" + str(page))
-            full_url = self._add_param(full_url, "page_entries=" + str(page_size))
+            params["page"] = str(page)
+            params["page_entries"] = str(page_size)
 
         if sort:
-            # ensure HTML encoding
-            sort = sort.replace(",", "%2C")
-            full_url = self._add_param(full_url, "sort=" + sort)
+            params["sort"] = sort
 
+        full_url = self._add_params(fullbase_url, params)
         resp = self.api_get(full_url)
 
         if page == -1 and resp and ("_embedded" in resp) and ("sw360:packages" in resp["_embedded"]):

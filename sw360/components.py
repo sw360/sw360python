@@ -37,25 +37,25 @@ class ComponentsMixin(BaseMixin):
         :rtype: list of JSON component objects
         :raises SW360Error: if there is a negative HTTP response
         """
-
-        url = self.url + "resource/api/components"
+        
+        fullbase_url = self.url + "resource/api/components"
+        params = {}
 
         if all_details:
-            url = self._add_param(url, "allDetails=true")
+            params["allDetails"] = "true"
 
         if fields:
-            url = self._add_param(url, "fields=" + fields)
+            params["fields"] = fields
 
         if page > -1:
-            url = self._add_param(url, "page=" + str(page))
-            url = self._add_param(url, "page_entries=" + str(page_size))
+            params["page"] = str(page)
+            params["page_entries"] = str(page_size)
 
         if sort:
-            # ensure HTML encoding
-            sort = sort.replace(",", "%2C")
-            url = self._add_param(url, "sort=" + sort)
+            params["sort"] = sort
 
-        resp = self.api_get(url)
+        full_url = self._add_params(fullbase_url, params)
+        resp = self.api_get(full_url)
         if not resp:
             return []
 
@@ -94,18 +94,18 @@ class ComponentsMixin(BaseMixin):
         :raises SW360Error: if there is a negative HTTP response
         """
 
-        url = self.url + "resource/api/components?type=" + component_type
+        fullbase_url = self.url + "resource/api/components"
+        params = {"type": component_type}
 
         if page > -1:
-            url = self._add_param(url, "page=" + str(page))
-            url = self._add_param(url, "page_entries=" + str(page_size))
+            params["page"] = str(page)
+            params["page_entries"] = str(page_size)
 
         if sort:
-            # ensure HTML encoding
-            sort = sort.replace(",", "%2C")
-            url = self._add_param(url, "sort=" + sort)
+            params["sort"] = sort
 
-        resp = self.api_get(url)
+        full_url = self._add_params(fullbase_url, params)
+        resp = self.api_get(full_url)
 
         if resp and ("_embedded" in resp) and ("sw360:components" in resp["_embedded"]):
             return resp["_embedded"]["sw360:components"]
@@ -165,17 +165,18 @@ class ComponentsMixin(BaseMixin):
         :raises SW360Error: if there is a negative HTTP response
         """
 
-        url = self.url + "resource/api/components?name=" + component_name
+        fullbase_url = self.url + "resource/api/components"
+        params = {"name": component_name}
+
         if page > -1:
-            url = self._add_param(url, "page=" + str(page))
-            url = self._add_param(url, "page_entries=" + str(page_size))
+            params["page"] = str(page)
+            params["page_entries"] = str(page_size)
 
         if sort:
-            # ensure HTML encoding
-            sort = sort.replace(",", "%2C")
-            url = self._add_param(url, "sort=" + sort)
+            params["sort"] = sort
 
-        resp = self.api_get(url)
+        full_url = self._add_params(fullbase_url, params)
+        resp = self.api_get(full_url)
         return resp
 
     def get_components_by_external_id(self, ext_id_name: str, ext_id_value: str = "") -> List[Dict[str, Any]]:

@@ -83,19 +83,20 @@ class ProjectMixin(BaseMixin):
         :raises SW360Error: if there is a negative HTTP response
         """
 
-        full_url = self.url + "resource/api/projects"
+        fullbase_url = self.url + "resource/api/projects"
+        params = {}
+        
         if all_details:
-            full_url = self._add_param(full_url, "allDetails=true")
+            params["allDetails"] = "true"
 
         if page > -1:
-            full_url = self._add_param(full_url, "page=" + str(page))
-            full_url = self._add_param(full_url, "page_entries=" + str(page_size))
+            params["page"] = str(page)
+            params["page_entries"] = str(page_size)
 
         if sort:
-            # ensure HTML encoding
-            sort = sort.replace(",", "%2C")
-            full_url = self._add_param(full_url, "sort=" + sort)
+            params["sort"] = sort
 
+        full_url = self._add_params(fullbase_url, params)
         resp = self.api_get(full_url)
         return resp
 

@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2024 Siemens
+# Copyright (c) 2019-2025 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -85,7 +85,7 @@ class ProjectMixin(BaseMixin):
 
         fullbase_url = self.url + "resource/api/projects"
         params = {}
-        
+
         if all_details:
             params["allDetails"] = "true"
 

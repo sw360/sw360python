@@ -37,7 +37,7 @@ class ComponentsMixin(BaseMixin):
         :rtype: list of JSON component objects
         :raises SW360Error: if there is a negative HTTP response
         """
-        
+
         fullbase_url = self.url + "resource/api/components"
         params = {}
 

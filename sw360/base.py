@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2023 Siemens
+# Copyright (c) 2023-2025 Siemens
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com
 #
@@ -8,10 +8,9 @@
 # -------------------------------------------------------------------------------
 
 from typing import Any, Dict, List, Optional, Tuple, Union
+from urllib.parse import urlencode
 
 import requests
-
-from urllib.parse import urlencode
 
 from .sw360error import SW360Error
 
@@ -219,17 +218,17 @@ class BaseMixin():
             update = False
 
         return (old_value, ext_id_data, update)
-    
+
     def _add_params(self, url: str, params: Dict[str, str]) -> str:
         """Add the given parameter to the given url"""
-        
+
         query_string = urlencode(params)
-        
+
         if "?" in url:
             return f"{url}&{query_string}"
         else:
             return f"{url}?{query_string}"
-            
+
     @classmethod
     def get_id_from_href(cls, href: str) -> str:
         """"Extracts the identifier from the href and returns it

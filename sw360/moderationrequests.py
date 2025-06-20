@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2024 Siemens
+# Copyright (c) 2024-2025 Siemens
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com
 #
@@ -66,7 +66,7 @@ class ModerationRequestMixin(BaseMixin):
 
         fullbase_url = self.url + "resource/api/moderationrequest/byState"
         params = {"state": state}
-        
+
         if all_details:
             params["allDetails"] = "true"
 
@@ -80,7 +80,7 @@ class ModerationRequestMixin(BaseMixin):
         full_url = self._add_params(fullbase_url, params)
         resp = self.api_get(full_url)
         return resp
-        
+
     def get_moderation_request(self, mr_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about a moderation request
 

@@ -30,7 +30,7 @@ requests = "^2.32.2" # fix CVE-2024-35195
 colorama = "^0.4.6"
 sphinx = "^7.1.2"
 vcrpy = "4.0.2"
-yarl = "1.8.2" # force this version because 1.7.2 will not install
+yarl = "1.9.7" # force this version because 1.8.2 will not install
 flake8 = ">=3.7.8"
 responses = "^0.17"
 pytest = "^7.2.2"

@@ -22,13 +22,12 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8" # because 3.8 is the minimum requirement for isort, mypy
-requests = "^2.32.2" # fix CVE-2024-35195 
+python = "^3.9" # 3.9 is needed for urllib 2.5 to fix CVE-2025-50181
+requests = "^2.32.4" # fix CVE-2024-47081
 
 [tool.poetry.group.dev.dependencies]
 colorama = "^0.4.6"
 sphinx = "^7.1.2"
-vcrpy = "4.0.2"
 yarl = "1.9.7" # force this version because 1.8.2 will not install
 flake8 = ">=3.7.8"
 responses = "^0.17"

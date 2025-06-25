@@ -6,7 +6,7 @@
 # SW360 Base Library for Python
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/sw360/sw360python/blob/master/License.md)
-[![Python Version](https://img.shields.io/badge/python-3.8%2C3.9%2C3.10%2C3.11-yellow?logo=python)](https://www.python.org/doc/versions/)
+[![Python Version](https://img.shields.io/badge/python-3.9%2C3.10%2C3.11-yellow?logo=python)](https://www.python.org/doc/versions/)
 [![PyPI](https://shields.io/pypi/v/sw360)](https://pypi.org/project/sw360/)
 [![Static checks](https://github.com/sw360/sw360python/actions/workflows/static-checks.yml/badge.svg)](https://github.com/sw360/sw360python/actions/workflows/static-checks.yml)
 [![Unit tests](https://github.com/sw360/sw360python/actions/workflows/unit-test.yml/badge.svg)](https://github.com/sw360/sw360python/actions/workflows/unit-test.yml)

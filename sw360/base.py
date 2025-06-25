@@ -193,7 +193,6 @@ class BaseMixin():
 
         raise SW360Error(response, url)
 
-    # type checking: not for Python 3.8: tuple[Optional[Any], Dict[str, Dict[str, str]], bool]
     def _update_external_ids(self, current_data: Dict[str, Any], ext_id_name: str, ext_id_value: str,
                              update_mode: str) -> Tuple[Optional[Any], Dict[str, Dict[str, str]], bool]:
         """Internal helper function to prepare an update/addition of external

@@ -5,7 +5,7 @@
 
 # SW360 Base Library for Python
 
-## NEXT
+## V1.10.0
 
 * Drop support for Python 3.8 (to update urllib3 to 2.5 fixing CVE-2025-50181 and -50182)
 * Update Poetry dependencies including requests 2.32.4 to fix CVE-2024-47081

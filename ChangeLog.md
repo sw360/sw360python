@@ -1,9 +1,13 @@
 <!--
-# SPDX-FileCopyrightText: (c) 2019-2025 Siemens
+# SPDX-FileCopyrightText: (c) 2019-2026 Siemens
 # SPDX-License-Identifier: MIT
 -->
 
 # SW360 Base Library for Python
+
+## NEXT
+
+* Update dependencies to fix CVE-2026-21441 in urllib3.
 
 ## V1.10.1
 

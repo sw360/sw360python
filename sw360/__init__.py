@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2025 Siemens
+# Copyright (c) 2019-2026 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -7,7 +7,7 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
-__version__ = (1, 10, 1)
+__version__ = (1, 11, 0)
 
 from .sw360_api import SW360
 from .sw360error import SW360Error

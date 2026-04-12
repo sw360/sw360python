@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: (c) 2018-2025 Siemens
+# SPDX-FileCopyrightText: (c) 2018-2026 Siemens
 # SPDX-License-Identifier: MIT
 
 [tool.poetry]
@@ -22,8 +22,8 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9" # 3.9 is needed for urllib 2.5 to fix CVE-2025-50181
-requests = "^2.32.4" # fix CVE-2024-47081
+python = "^3.11"
+requests = "^2.33"
 
 [tool.poetry.group.dev.dependencies]
 colorama = "^0.4.6"

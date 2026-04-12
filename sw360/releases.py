@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2025 Siemens
+# Copyright (c) 2019-2026 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -27,6 +27,9 @@ class ReleasesMixin(BaseMixin):
         :rtype: JSON release object
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not release_id:
+            raise SW360Error(message="No release id provided!")
+
         resp = self.api_get(self.url + "resource/api/releases/" + release_id)
         return resp
 
@@ -41,6 +44,9 @@ class ReleasesMixin(BaseMixin):
         :rtype: JSON release object
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not release_url:
+            raise SW360Error(message="No release url provided!")
+
         resp = self.api_get(release_url)
         return resp
 
@@ -55,6 +61,9 @@ class ReleasesMixin(BaseMixin):
         :rtype: list of JSON release objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not name:
+            raise SW360Error(message="No release name provided!")
+
         full_url = self.url + "resource/api/releases?name=" + name
         resp = self.api_get(full_url)
         if resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
@@ -127,6 +136,12 @@ class ReleasesMixin(BaseMixin):
         :rtype: list of JSON release objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not ext_id_name:
+            raise SW360Error(message="No external id name provided!")
+
+        if not ext_id_value:
+            raise SW360Error(message="No external id value provided!")
+
         resp = self.api_get(
             self.url
             + "resource/api/releases/searchByExternalIds?"
@@ -155,6 +170,11 @@ class ReleasesMixin(BaseMixin):
         :rtype: JSON SW360 result object
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not component_id:
+            raise SW360Error(message="No component id provided!")
+
+        if not release_details:
+            raise SW360Error(message="No release details provided!")
 
         for param in "name", "version":
             release_details[param] = locals()[param]
@@ -211,6 +231,15 @@ class ReleasesMixin(BaseMixin):
         :rtype: string
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not release_id:
+            raise SW360Error(message="No release id provided!")
+
+        if not ext_id_name:
+            raise SW360Error(message="No external id name provided!")
+
+        if not ext_id_value:
+            raise SW360Error(message="No external id value provided!")
+
         complete_data = self.get_release(release_id)
         if complete_data:
             ret = self._update_external_ids(complete_data, ext_id_name,
@@ -256,6 +285,8 @@ class ReleasesMixin(BaseMixin):
         :rtype: JSON objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not release_id:
+            raise SW360Error(message="No release id provided!")
 
         resp = self.api_get(self.url + "resource/api/releases/usedBy/" + release_id)
         return resp
@@ -275,6 +306,9 @@ class ReleasesMixin(BaseMixin):
         if not release_id:
             raise SW360Error(message="No release id provided!")
 
+        if not packages:
+            raise SW360Error(message="No packages provided!")
+
         url = self.url + "resource/api/releases/" + release_id + "/link/packages/"
         return self.api_patch(url, json=packages)
 
@@ -292,6 +326,9 @@ class ReleasesMixin(BaseMixin):
         """
         if not release_id:
             raise SW360Error(message="No release id provided!")
+
+        if not packages:
+            raise SW360Error(message="No packages provided!")
 
         url = self.url + "resource/api/releases/" + release_id + "/unlink/packages/"
         return self.api_patch(url, json=packages)

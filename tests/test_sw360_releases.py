@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2023-2025 Siemens
+# Copyright (c) 2023-2026 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -375,7 +375,12 @@ class Sw360TestReleases(unittest.TestCase):
               })
             ],
         )
-        lib.create_new_release("NewComponent", "1.0.0", "9876")
+
+        release_details = {
+            "name": "NewComponent",
+            "version": "1.0.0",
+        }
+        lib.create_new_release("NewComponent", "1.0.0", "9876", release_details)
 
     @responses.activate
     def test_create_new_release_already_exists(self) -> None:
@@ -402,7 +407,11 @@ class Sw360TestReleases(unittest.TestCase):
         )
 
         with self.assertRaises(SW360Error) as context:
-            lib.create_new_release("NewComponent", "1.0.0", "9876")
+            release_details = {
+                "name": "NewComponent",
+                "version": "1.0.0",
+            }
+            lib.create_new_release("NewComponent", "1.0.0", "9876", release_details)
 
         if not context.exception:
             self.assertTrue(False, "no exception")
@@ -704,4 +713,5 @@ class Sw360TestReleases(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    APP = Sw360TestReleases()
+    APP.test_create_new_release()

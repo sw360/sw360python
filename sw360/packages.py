@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2024-2025 Siemens
+# Copyright (c) 2024-2026 Siemens
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com
 #
@@ -25,6 +25,9 @@ class PackagesMixin(BaseMixin):
         :rtype: JSON package object
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not package_id:
+            raise SW360Error(message="No package id provided!")
+
         resp = self.api_get(self.url + "resource/api/packages/" + package_id)
         return resp
 
@@ -39,6 +42,9 @@ class PackagesMixin(BaseMixin):
         :rtype: list of JSON package objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not name:
+            raise SW360Error(message="No package name provided!")
+
         full_url = self.url + "resource/api/packages?name=" + name
         resp = self.api_get(full_url)
         if resp and ("_embedded" in resp) and ("sw360:packages" in resp["_embedded"]):
@@ -113,6 +119,9 @@ class PackagesMixin(BaseMixin):
         :rtype: list of JSON package objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not manager:
+            raise SW360Error(message="No package manager provided!")
+
         fullbase_url = self.url + "resource/api/packages"
         params = {"packageManager": manager}
 
@@ -151,6 +160,14 @@ class PackagesMixin(BaseMixin):
         :rtype: JSON SW360 result object
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not name:
+            raise SW360Error(message="No package name provided!")
+
+        if not version:
+            raise SW360Error(message="No package version provided!")
+
+        if not purl:
+            raise SW360Error(message="No package purl provided!")
 
         for param in "name", "version":
             package_details[param] = locals()[param]

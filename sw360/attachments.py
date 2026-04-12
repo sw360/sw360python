@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2023 Siemens
+# Copyright (c) 2019-2026 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -34,6 +34,8 @@ class AttachmentsMixin(BaseMixin):
 
         API endpoint: GET /attachments?sha1=
         """
+        if not hashvalue:
+            raise SW360Error(message="No hash value provided!")
 
         resp = self.api_get(
             self.url + "resource/api/attachments?sha1=" + hashvalue
@@ -46,6 +48,15 @@ class AttachmentsMixin(BaseMixin):
         Usually, you don't need to call this directly, but use one of the
         specific get_attachment_infos_for_{release,component,project} functions.
         """
+
+        if not resource_id:
+            raise SW360Error(message="No resource id provided!")
+
+        if not resource_type:
+            raise SW360Error(message="No resource type provided!")
+
+        if resource_type not in ("releases", "components", "projects"):
+            raise SW360Error(message="Invalid resource type!")
 
         resp = self.api_get(
             self.url + "resource/api/"
@@ -65,6 +76,8 @@ class AttachmentsMixin(BaseMixin):
 
         :param release_id: id of the release from which to list attachments
         """
+        if not release_id:
+            raise SW360Error(message="No release id provided!")
 
         resp = self.get_attachment_infos_for_resource("releases", release_id)
         return resp
@@ -74,6 +87,8 @@ class AttachmentsMixin(BaseMixin):
 
         :param component_id: id of the component from which to list attachments
         """
+        if not component_id:
+            raise SW360Error(message="No component id provided!")
 
         resp = self.get_attachment_infos_for_resource("components", component_id)
         return resp
@@ -83,6 +98,8 @@ class AttachmentsMixin(BaseMixin):
 
         :param project_id: id of the project from which to list attachments
         """
+        if not project_id:
+            raise SW360Error(message="No project id provided!")
 
         resp = self.get_attachment_infos_for_resource("projects", project_id)
         return resp
@@ -92,6 +109,9 @@ class AttachmentsMixin(BaseMixin):
 
         :param url: the full url of the attachment to be requested
         """
+        if not url:
+            raise SW360Error(message="No url provided!")
+
         resp = self.api_get(url)
         return resp
 
@@ -102,6 +122,8 @@ class AttachmentsMixin(BaseMixin):
 
         :param attachment_id: id of the attachment
         """
+        if not attachment_id:
+            raise SW360Error(message="No attachment id provided!")
 
         resp = self.api_get(self.url + "resource/api/attachments/" + attachment_id)
         return resp
@@ -111,6 +133,8 @@ class AttachmentsMixin(BaseMixin):
 
         API endpoint: GET /attachments
         """
+        if not release_id:
+            raise SW360Error(message="No release id provided!")
 
         self.download_resource_attachment(
             filename, "releases", release_id, attachment_id
@@ -121,6 +145,8 @@ class AttachmentsMixin(BaseMixin):
 
         API endpoint: GET /attachments
         """
+        if not project_id:
+            raise SW360Error(message="No project id provided!")
 
         self.download_resource_attachment(
             filename, "projects", project_id, attachment_id
@@ -131,6 +157,8 @@ class AttachmentsMixin(BaseMixin):
 
         API endpoint: GET /attachments
         """
+        if not component_id:
+            raise SW360Error(message="No component id provided!")
 
         self.download_resource_attachment(
             filename, "components", component_id, attachment_id
@@ -142,6 +170,8 @@ class AttachmentsMixin(BaseMixin):
 
         API endpoint: GET /attachments
         """
+        if not filename:
+            raise SW360Error(message="No filename provided!")
 
         if not resource_id:
             raise SW360Error(message="No resource id provided!")
@@ -165,6 +195,11 @@ class AttachmentsMixin(BaseMixin):
 
         API endpoint: GET /attachments
         """
+        if not filename:
+            raise SW360Error(message="No filename provided!")
+
+        if not download_url:
+            raise SW360Error(message="No download url provided!")
 
         hdr = self.api_headers.copy()
         hdr["Accept"] = "application/*"
@@ -238,6 +273,8 @@ class AttachmentsMixin(BaseMixin):
 
         API endpoint: POST /attachments
         """
+        if not release_id:
+            raise SW360Error(message="No release id provided!")
 
         self._upload_resource_attachment(
             "releases", release_id, upload_file,
@@ -259,6 +296,8 @@ class AttachmentsMixin(BaseMixin):
 
         API endpoint: POST /attachments
         """
+        if not component_id:
+            raise SW360Error(message="No component id provided!")
 
         self._upload_resource_attachment(
             "components", component_id, upload_file,
@@ -280,6 +319,8 @@ class AttachmentsMixin(BaseMixin):
 
         API endpoint: POST /attachments
         """
+        if not project_id:
+            raise SW360Error(message="No project id provided!")
 
         self._upload_resource_attachment(
             "projects", project_id, upload_file,

@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2024-2025 Siemens
+# Copyright (c) 2024-2026 Siemens
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com
 #
@@ -8,6 +8,8 @@
 # -------------------------------------------------------------------------------
 
 from typing import Any, Dict, Optional
+
+from sw360.sw360error import SW360Error
 
 from .base import BaseMixin
 
@@ -63,6 +65,8 @@ class ModerationRequestMixin(BaseMixin):
         :rtype: list of JSON moderation requests objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not state:
+            raise SW360Error(message="No state provided!")
 
         fullbase_url = self.url + "resource/api/moderationrequest/byState"
         params = {"state": state}
@@ -92,6 +96,8 @@ class ModerationRequestMixin(BaseMixin):
         :rtype: JSON moderation request object
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not mr_id:
+            raise SW360Error(message="No moderation request id provided!")
 
         resp = self.api_get(self.url + "resource/api/moderationrequest/" + mr_id)
         return resp

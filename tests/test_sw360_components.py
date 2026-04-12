@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2020-2025 Siemens
+# Copyright (c) 2020-2026 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -559,7 +559,7 @@ class Sw360TestComponents(unittest.TestCase):
 
         lib.update_component_external_id(
             "package-url",
-            "",
+            "value",
             "bc75c910ca9866886cb4d7b3a301061f",
             update_mode="delete")
 
@@ -596,7 +596,7 @@ class Sw360TestComponents(unittest.TestCase):
 
         lib.update_component_external_id(
             "package-url",
-            "",
+            "value",
             "bc75c910ca9866886cb4d7b3a301061f",
             update_mode="delete")
 

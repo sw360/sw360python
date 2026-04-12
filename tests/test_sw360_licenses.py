@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2020-2023 Siemens
+# Copyright (c) 2020-2026 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -150,12 +150,12 @@ class Sw360TestLicenses(unittest.TestCase):
                 "shortName": "LGPL-2.0-only",
                 "fullName": "GNU Library General Public License v2 only",
                 "checked": True,
-                "text": ""})]
+                "text": "xxx"})]
         )
         lib.create_new_license(
             shortName="LGPL-2.0-only",
             fullName="GNU Library General Public License v2 only",
-            text="",
+            text="xxx",
             checked=True,
         )
 
@@ -185,14 +185,14 @@ class Sw360TestLicenses(unittest.TestCase):
                 "shortName": "LGPL-2.0-only",
                 "fullName": "GNU Library General Public License v2 only",
                 "checked": True,
-                "text": ""})]
+                "text": "xxx"})]
         )
 
         with self.assertRaises(SW360Error) as context:
             lib.create_new_license(
                 shortName="LGPL-2.0-only",
                 fullName="GNU Library General Public License v2 only",
-                text="",
+                text="xxx",
                 checked=True,
             )
 

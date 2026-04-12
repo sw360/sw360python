@@ -1,5 +1,5 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2019-2025 Siemens
+# Copyright (c) 2019-2026 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -991,9 +991,25 @@ class Sw360TestProjects(unittest.TestCase):
         )
 
         with self.assertRaises(SW360Error) as context:
-            lib.update_project_releases([], "")
+            lib.update_project_releases([{"releaseId": "123"}], "")
 
         self.assertEqual("No project id provided!", context.exception.message)
+
+    @responses.activate
+    def test_update_project_releases_no_releases(self) -> None:
+        lib = self.get_logged_in_lib()
+
+        responses.add(
+            responses.PATCH,
+            url=self.MYURL + "resource/api/projects/123",
+            body="4",
+            status=202,
+        )
+
+        with self.assertRaises(SW360Error) as context:
+            lib.update_project_releases([], "123")
+
+        self.assertEqual("No releases provided!", context.exception.message)
 
     @responses.activate
     def test_update_project_releases_fresh_prj(self) -> None:
@@ -1008,7 +1024,7 @@ class Sw360TestProjects(unittest.TestCase):
             url=self.MYURL + "resource/api/projects/123/releases",
             status=202,
         )
-        lib.update_project_releases([], "123", add=True)
+        lib.update_project_releases([{"releaseId": "123"}], "123", add=True)
 
         responses.add(
             responses.GET,
@@ -1020,7 +1036,7 @@ class Sw360TestProjects(unittest.TestCase):
             url=self.MYURL + "resource/api/projects/124/releases",
             status=202,
         )
-        lib.update_project_releases([], "124", add=True)
+        lib.update_project_releases([{"releaseId": "123"}], "124", add=True)
 
     @responses.activate
     def test_update_project_releases(self) -> None:
@@ -1042,7 +1058,7 @@ class Sw360TestProjects(unittest.TestCase):
             status=202,
         )
 
-        releases: List[Dict[str, Any]] = []
+        releases: List[Dict[str, Any]] = [{"releaseId": "123"}]
         lib.update_project_releases(releases, "123", add=True)
 
     @responses.activate
@@ -1065,7 +1081,7 @@ class Sw360TestProjects(unittest.TestCase):
             status=404,
         )
 
-        releases: List[Dict[str, Any]] = []
+        releases: List[Dict[str, Any]] = [{"releaseId": "123"}]
         with self.assertRaises(SW360Error) as context:
             lib.update_project_releases(releases, "123", add=True)
 
@@ -1384,4 +1400,4 @@ class Sw360TestProjects(unittest.TestCase):
 
 if __name__ == "__main__":
     APP = Sw360TestProjects()
-    APP.test_get_project_names_empty_reply()
+    APP.test_update_project_releases_no_releases()

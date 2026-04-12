@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2025 Siemens
+# Copyright (c) 2019-2026 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -43,6 +43,8 @@ class VendorMixin(BaseMixin):
         :rtype: list of JSON vendor objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not vendor_id:
+            raise SW360Error(message="No vendor id provided!")
 
         resp = self.api_get(self.url + "resource/api/vendors/" + vendor_id)
         return resp
@@ -56,6 +58,8 @@ class VendorMixin(BaseMixin):
         :type vendor: JSON vendor object
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not vendor:
+            raise SW360Error(message="No vendor data provided!")
 
         url = self.url + "resource/api/vendors"
         response = self.api_post(

@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2020-2024 Siemens
+# Copyright (c) 2020-2026 Siemens
 # All Rights Reserved.
 # Author: thomas.graf@siemens.com
 #
@@ -176,7 +176,7 @@ class Sw360TestAttachments(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.download_release_attachment("myfile.txt", "", "5678")
 
-        self.assertEqual("No resource id provided!", context.exception.message)
+        self.assertEqual("No release id provided!", context.exception.message)
 
     @responses.activate
     def test_download_release_attachment_no_attachment_id(self) -> None:
@@ -384,7 +384,7 @@ class Sw360TestAttachments(unittest.TestCase):
         with self.assertRaises(SW360Error) as context:
             lib.upload_release_attachment("", filename)
 
-        self.assertTrue(context.exception.message.startswith("Invalid resource id provided!"))
+        self.assertTrue(context.exception.message.startswith("No release id provided!"))
         try:
             os.remove(filename)
         except OSError:

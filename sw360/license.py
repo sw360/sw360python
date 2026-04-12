@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2025 Siemens
+# Copyright (c) 2019-2026 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -42,6 +42,14 @@ class LicenseMixin(BaseMixin):
         :rtype: JSON SW360 result object
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not shortName:
+            raise SW360Error(message="No short name provided!")
+
+        if not fullName:
+            raise SW360Error(message="No full name provided!")
+
+        if not text:
+            raise SW360Error(message="No license text provided!")
 
         url = self.url + "resource/api/licenses"
 
@@ -94,6 +102,12 @@ class LicenseMixin(BaseMixin):
         :type project_id: string
         :type filename: string
         """
+        if not project_id:
+            raise SW360Error(message="No project id provided!")
+
+        if not filename:
+            raise SW360Error(message="No filename provided!")
+
         hdr = self.api_headers.copy()
         hdr["Accept"] = "application/*"
         url = (
@@ -135,6 +149,8 @@ class LicenseMixin(BaseMixin):
         :rtype: JSON license object
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not license_id:
+            raise SW360Error(message="No license id provided!")
 
         resp = self.api_get(self.url + "resource/api/licenses/" + license_id)
         return resp

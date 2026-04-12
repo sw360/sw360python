@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2025 Siemens
+# Copyright (c) 2019-2026 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -93,6 +93,8 @@ class ComponentsMixin(BaseMixin):
         :rtype: list of JSON component objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not component_type:
+            raise SW360Error(message="No component type provided!")
 
         fullbase_url = self.url + "resource/api/components"
         params = {"type": component_type}
@@ -123,6 +125,8 @@ class ComponentsMixin(BaseMixin):
         :rtype: JSON component object
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not component_id:
+            raise SW360Error(message="No component id provided!")
 
         resp = self.api_get(self.url + "resource/api/components/" + component_id)
         return resp
@@ -138,6 +142,8 @@ class ComponentsMixin(BaseMixin):
         :rtype: JSON component object
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not component_url:
+            raise SW360Error(message="No component url provided!")
 
         resp = self.api_get(component_url)
         return resp
@@ -164,6 +170,8 @@ class ComponentsMixin(BaseMixin):
         :rtype: list of JSON component objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not component_name:
+            raise SW360Error(message="No component name provided!")
 
         fullbase_url = self.url + "resource/api/components"
         params = {"name": component_name}
@@ -193,6 +201,11 @@ class ComponentsMixin(BaseMixin):
         :rtype: list of JSON component objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not ext_id_name:
+            raise SW360Error(message="No external id name provided!")
+
+        if not ext_id_value:
+            raise SW360Error(message="No external id value provided!")
 
         resp = self.api_get(
             self.url
@@ -284,6 +297,15 @@ class ComponentsMixin(BaseMixin):
         :rtype: string
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not component_id:
+            raise SW360Error(message="No component id provided!")
+
+        if not ext_id_name:
+            raise SW360Error(message="No external id name provided!")
+
+        if not ext_id_value:
+            raise SW360Error(message="No external id value provided!")
+
         complete_data = self.get_component(component_id)
         if not complete_data:
             return None
@@ -329,6 +351,8 @@ class ComponentsMixin(BaseMixin):
         :rtype: JSON objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not component_id:
+            raise SW360Error(message="No component id provided!")
 
         resp = self.api_get(self.url + "resource/api/components/usedBy/" + component_id)
         return resp

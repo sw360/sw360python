@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2025 Siemens
+# Copyright (c) 2019-2026 Siemens
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
@@ -27,6 +27,9 @@ class ProjectMixin(BaseMixin):
         :rtype: JSON project object
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not project_id:
+            raise SW360Error(message="No project id provided!")
+
         resp = self.api_get(self.url + "resource/api/projects/" + project_id)
         return resp
 
@@ -43,6 +46,9 @@ class ProjectMixin(BaseMixin):
         :rtype: JSON
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not project_id:
+            raise SW360Error(message="No project id provided!")
+
         trans = "false"
         if transitive:
             trans = "true"
@@ -61,6 +67,9 @@ class ProjectMixin(BaseMixin):
         :rtype: JSON project object
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not url:
+            raise SW360Error(message="No project url provided!")
+
         resp = self.api_get(url)
         return resp
 
@@ -111,6 +120,9 @@ class ProjectMixin(BaseMixin):
         :rtype: list of JSON project objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not project_type:
+            raise SW360Error(message="No project type provided!")
+
         resp = self.api_get(self.url + "resource/api/projects?type=" + project_type)
         if not resp:
             return []
@@ -163,6 +175,9 @@ class ProjectMixin(BaseMixin):
         :rtype: list of JSON project objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not name:
+            raise SW360Error(message="No project name provided!")
+
         resp = self.api_get(self.url + "resource/api/projects?name=" + name)
         if not resp:
             return []
@@ -189,6 +204,12 @@ class ProjectMixin(BaseMixin):
         :rtype: list of JSON project objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not ext_id_name:
+            raise SW360Error(message="No external id name provided!")
+
+        if not ext_id_value:
+            raise SW360Error(message="No external id value provided!")
+
         resp = self.api_get(self.url + "resource/api/projects/searchByExternalIds?"
                             + ext_id_name + "=" + ext_id_value)
         if not resp:
@@ -213,6 +234,9 @@ class ProjectMixin(BaseMixin):
         :rtype: list of JSON project objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not group:
+            raise SW360Error(message="No group provided!")
+
         full_url = self.url + "resource/api/projects?group=" + group
         if all_details:
             full_url = self.url + "resource/api/projects?allDetails?group=" + group
@@ -240,6 +264,9 @@ class ProjectMixin(BaseMixin):
         :rtype: list of JSON project objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not tag:
+            raise SW360Error(message="No tag provided!")
+
         full_url = self.url + "resource/api/projects?tag=" + tag + "&luceneSearch=true"
         resp = self.api_get(full_url)
         if not resp:
@@ -264,6 +291,9 @@ class ProjectMixin(BaseMixin):
         :rtype: JSON object
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not project_id:
+            raise SW360Error(message="No project id provided!")
+
         full_url = self.url + "resource/api/projects/" + project_id + "/vulnerabilities"
         resp = self.api_get(full_url)
         if not resp:
@@ -330,6 +360,9 @@ class ProjectMixin(BaseMixin):
         if not project_id:
             raise SW360Error(message="No project id provided!")
 
+        if not project:
+            raise SW360Error(message="No project data provided!")
+
         url = self.url + "resource/api/projects/" + project_id
 
         if add_subprojects:
@@ -368,6 +401,9 @@ class ProjectMixin(BaseMixin):
         if not project_id:
             raise SW360Error(message="No project id provided!")
 
+        if not releases:
+            raise SW360Error(message="No releases provided!")
+
         url = self.url + "resource/api/projects/" + project_id + "/releases"
         if add:
             self.api_patch(url, json=releases)
@@ -399,6 +435,15 @@ class ProjectMixin(BaseMixin):
         :rtype: string
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not project_id:
+            raise SW360Error(message="No project id provided!")
+
+        if not ext_id_name:
+            raise SW360Error(message="No external id name provided!")
+
+        if not ext_id_value:
+            raise SW360Error(message="No external id value provided!")
+
         complete_data = self.get_project(project_id)
         if not complete_data:
             return
@@ -445,6 +490,9 @@ class ProjectMixin(BaseMixin):
         :rtype: JSON objects
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not project_id:
+            raise SW360Error(message="No project id provided!")
+
         resp = self.api_get(self.url + "resource/api/projects/usedBy/" + project_id)
         return resp
 
@@ -464,6 +512,9 @@ class ProjectMixin(BaseMixin):
 
         if not project_id:
             raise SW360Error(message="No project id provided!")
+
+        if not new_version:
+            raise SW360Error(message="No new version provided!")
 
         project_details = {}
         project_details["version"] = new_version
@@ -505,6 +556,12 @@ class ProjectMixin(BaseMixin):
         if not release_id:
             raise SW360Error(message="No release id provided!")
 
+        if not new_relation:
+            raise SW360Error(message="No new relation provided!")
+
+        if not new_state:
+            raise SW360Error(message="No new state provided!")
+
         relation = {}
         relation["releaseRelation"] = new_relation
         relation["mainlineState"] = new_state
@@ -528,6 +585,9 @@ class ProjectMixin(BaseMixin):
         if not project_id:
             raise SW360Error(message="No project id provided!")
 
+        if not packages:
+            raise SW360Error(message="No packages provided!")
+
         url = self.url + "resource/api/projects/" + project_id + "/link/packages/"
         return self.api_patch(url, json=packages)
 
@@ -545,6 +605,9 @@ class ProjectMixin(BaseMixin):
         """
         if not project_id:
             raise SW360Error(message="No project id provided!")
+
+        if not packages:
+            raise SW360Error(message="No packages provided!")
 
         url = self.url + "resource/api/projects/" + project_id + "/unlink/packages/"
         return self.api_patch(url, json=packages)

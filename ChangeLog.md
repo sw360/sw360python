@@ -5,7 +5,7 @@
 
 # SW360 Base Library for Python
 
-## NEXT
+## V1.11.0
 
 * Update dependencies to fix CVE-2026-21441 in urllib3.
 * Drop support for Python 3.9 and 3.10.

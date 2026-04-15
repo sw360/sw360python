@@ -139,9 +139,6 @@ class ReleasesMixin(BaseMixin):
         if not ext_id_name:
             raise SW360Error(message="No external id name provided!")
 
-        if not ext_id_value:
-            raise SW360Error(message="No external id value provided!")
-
         resp = self.api_get(
             self.url
             + "resource/api/releases/searchByExternalIds?"

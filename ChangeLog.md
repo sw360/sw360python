@@ -5,6 +5,10 @@
 
 # SW360 Base Library for Python
 
+## V1.11.1
+
+* Relax input validation for `get_components_by_external_id()` and `get_releases_by_external_id()`.
+
 ## V1.11.0
 
 * Update dependencies to fix CVE-2026-21441 in urllib3.

@@ -5,6 +5,10 @@
 
 # SW360 Base Library for Python
 
+## NEXT
+
+* Dependency updates ... to fix CVE-2026-41066 for lxml.
+
 ## V1.11.1
 
 * Relax input validation for `get_components_by_external_id()` and `get_releases_by_external_id()`.

@@ -8,6 +8,7 @@
 ## NEXT
 
 * Dependency updates ... to fix CVE-2026-41066 for lxml.
+* Dependency updates ... to fix CVE-2026-44431 and CVE-2026-44432 for urllib3.
 
 ## V1.11.1
 

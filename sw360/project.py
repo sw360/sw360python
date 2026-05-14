@@ -401,8 +401,8 @@ class ProjectMixin(BaseMixin):
         if not project_id:
             raise SW360Error(message="No project id provided!")
 
-        if not releases:
-            raise SW360Error(message="No releases provided!")
+        if releases is None:
+            raise SW360Error(message="No releases list provided!")
 
         url = self.url + "resource/api/projects/" + project_id + "/releases"
         if add:

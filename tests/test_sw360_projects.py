@@ -7,6 +7,7 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
+import json
 import os
 import sys
 import tempfile
@@ -999,17 +1000,11 @@ class Sw360TestProjects(unittest.TestCase):
     def test_update_project_releases_no_releases(self) -> None:
         lib = self.get_logged_in_lib()
 
-        responses.add(
-            responses.PATCH,
-            url=self.MYURL + "resource/api/projects/123",
-            body="4",
-            status=202,
-        )
+        # Passing None should raise an error (parameter not provided)
+        with self.assertRaises(SW360Error) as sw360er:
+            lib.update_project_releases(releases=None, project_id="123")  # type: ignore
 
-        with self.assertRaises(SW360Error) as context:
-            lib.update_project_releases([], "123")
-
-        self.assertEqual("No releases provided!", context.exception.message)
+            self.assertEqual("No releases list provided!", sw360er.message)  # type: ignore
 
     @responses.activate
     def test_update_project_releases_fresh_prj(self) -> None:
@@ -1060,6 +1055,62 @@ class Sw360TestProjects(unittest.TestCase):
 
         releases: List[Dict[str, Any]] = [{"releaseId": "123"}]
         lib.update_project_releases(releases, "123", add=True)
+
+    @responses.activate
+    def test_override_releases_from_project(self) -> None:
+        """Test unlinking releases from a project by replacing the release list with a subset"""
+        lib = self.get_logged_in_lib()
+
+        # List of releases to override with add=False to replace the current list of linked releases
+        releases_to_override = [
+            {"releaseId": "111"},
+            {"releaseId": "333"}
+        ]
+
+        # Replace releases with only 111 and 333 (unlinking a possible222)
+        responses.add(
+            responses.POST,
+            url=self.MYURL + "resource/api/projects/123/releases",
+            body=json.dumps(releases_to_override),
+            status=202,
+        )
+
+        lib.update_project_releases(releases=releases_to_override, project_id="123", add=False)
+
+        # Verify that POST (not PATCH) was called with the correct parameters
+        self.assertGreaterEqual(len(responses.calls), 2)
+        last_call = responses.calls[-1]
+        self.assertEqual("POST", last_call.request.method)
+        self.assertIn("/resource/api/projects/123/releases", last_call.request.url)
+        # Verify the request body contains the provided list
+        request_body = json.loads(last_call.request.body)
+        self.assertEqual(releases_to_override, request_body)
+
+    @responses.activate
+    def test_unlink_all_releases_from_project(self) -> None:
+        """Test unlinking all releases from a project by passing an empty list"""
+        lib = self.get_logged_in_lib()
+
+        # Unlink all releases by passing empty list (with add=False to use POST, not PATCH)
+        responses.add(
+            responses.POST,
+            url=self.MYURL + "resource/api/projects/123/releases",
+            body=json.dumps([]),
+            status=201,
+        )
+
+        # Call update_project_releases with empty list to unlink all releases
+        empty_releases: List[Dict[str, Any]] = []
+        lib.update_project_releases(empty_releases, "123", add=False)
+
+        # Verify that POST (not PATCH) was called with the correct parameters
+        self.assertGreaterEqual(len(responses.calls), 2)
+        last_call = responses.calls[-1]
+        self.assertEqual("POST", last_call.request.method)
+        self.assertIn("/resource/api/projects/123/releases", last_call.request.url)
+        # Verify the request body contains an empty list
+        request_body = json.loads(last_call.request.body)
+        self.assertEqual([], request_body)
 
     @responses.activate
     def test_update_project_releases_failed(self) -> None:

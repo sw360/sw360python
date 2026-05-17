@@ -1004,7 +1004,7 @@ class Sw360TestProjects(unittest.TestCase):
         with self.assertRaises(SW360Error) as sw360er:
             lib.update_project_releases(releases=None, project_id="123")  # type: ignore
 
-            self.assertEqual("No releases list provided!", sw360er.message)
+            self.assertEqual("No releases list provided!", sw360er.message)  # type: ignore
 
     @responses.activate
     def test_update_project_releases_fresh_prj(self) -> None:
@@ -1100,7 +1100,7 @@ class Sw360TestProjects(unittest.TestCase):
         )
 
         # Call update_project_releases with empty list to unlink all releases
-        empty_releases = []
+        empty_releases: List[Dict[str, Any]] = []
         lib.update_project_releases(empty_releases, "123", add=False)
 
         # Verify that POST (not PATCH) was called with the correct parameters

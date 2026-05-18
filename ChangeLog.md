@@ -5,10 +5,11 @@
 
 # SW360 Base Library for Python
 
-## NEXT
+## V1.11.2
 
 * Dependency updates ... to fix CVE-2026-41066 for lxml.
 * Dependency updates ... to fix CVE-2026-44431 and CVE-2026-44432 for urllib3.
+* Fix: update release validation to check for None instead of empty list.
 
 ## V1.11.1
 

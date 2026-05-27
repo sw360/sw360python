@@ -24,6 +24,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.11"
 requests = "^2.33"
+pyjwt = "^2.13.0"
 
 [tool.poetry.group.dev.dependencies]
 colorama = "^0.4.6"

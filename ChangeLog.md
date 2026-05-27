@@ -5,6 +5,10 @@
 
 # SW360 Base Library for Python
 
+## NEXT
+
+* Support Keycloak (OpenID) token generation.
+
 ## V1.11.2
 
 * Dependency updates ... to fix CVE-2026-41066 for lxml.

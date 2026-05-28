@@ -8,6 +8,7 @@
 ## NEXT
 
 * Support Keycloak (OpenID) token generation.
+  We have new methods `get_keycloak_token()`, `is_token_expired()`, and `is_write_token()`.
 
 ## V1.11.2
 

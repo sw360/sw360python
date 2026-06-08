@@ -160,5 +160,9 @@ class SW360(
         :rtype: JSON health status object
         :raises SW360Error: if there is a negative HTTP response
         """
-        resp = self.api_get(self.url + "resource/api/health/")
-        return resp
+        try:
+            # SW360 >= 19.0 has changed the endpoint path
+            return self.api_get(self.url + "resource/api/health/")
+        except SW360Error:
+            # try to fallback to old endpoint for SW360 <= 18.x
+            return self.api_get(self.url + "resource/health/")

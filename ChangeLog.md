@@ -5,7 +5,7 @@
 
 # SW360 Base Library for Python
 
-## NEXT
+## V1.12.0.dev1
 
 * Support Keycloak (OpenID) token generation.
   We have new methods `get_keycloak_token()`, `is_token_expired()`, and `is_write_token()`.

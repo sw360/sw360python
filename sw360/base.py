@@ -1,7 +1,8 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2023-2025 Siemens
+# Copyright (c) 2023-2026 Siemens
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com
+# Authors: gernot.hillier@siemens.com
 #
 # Licensed under the MIT license.
 # SPDX-License-Identifier: MIT
@@ -241,3 +242,65 @@ class BaseMixin():
         pos = href.rfind("/")
         identifier = href[(pos + 1):]
         return identifier
+
+    @classmethod
+    def get_linked_id(cls, data: Dict[str, Any], link_key: str = "self") -> Optional[str]:
+        """Extract the resource ID from a HAL ``_links`` entry.
+
+        Looks up ``data["_links"][link_key]["href"]`` and returns the last
+        path segment, which is the resource identifier in the SW360 REST API.
+
+        It defaults to the "self" link, but can be used for any link relation key
+        like "sw360:component" or "sw360:project". The "sw360:" prefix can be
+        omitted in the `link_key` argument.
+
+        :param data: a JSON response dict containing a ``_links`` section
+        :param link_key: the link relation key, e.g. ``"self"`` or
+            ``"sw360:component"``
+        :return: the extracted resource ID, or ``None`` if the path does not
+            exist
+        :rtype: Optional[str]
+        """
+        links = data.get("_links")
+        if not isinstance(links, dict):
+            return None
+
+        if link_key in links:
+            entry = links.get(link_key)
+        else:
+            entry = links.get("sw360:" + link_key)
+        if not isinstance(entry, dict):
+            return None
+
+        href = entry.get("href")
+        if not isinstance(href, str):
+            return None
+
+        return cls.get_id_from_href(href)
+
+    @classmethod
+    def get_embedded(cls, data: Dict[str, Any], key: str) -> List[Dict[str, Any]]:
+        """Safely retrieve an embedded resource list from a HAL response.
+
+        Returns ``data["_embedded"][key]`` if it exists and is a list,
+        otherwise returns an empty list. The "sw360:" prefix can be omitted
+        in the `key` argument.
+
+        :param data: a JSON response dict potentially containing an
+            ``_embedded`` section
+        :param key: the embedded resource key, e.g. ``"sw360:releases"``
+        :return: the list of embedded resources, or ``[]`` if not present
+        :rtype: List[Dict[str, Any]]
+        """
+        embedded = data.get("_embedded")
+        if not isinstance(embedded, dict):
+            return []
+
+        if key in embedded:
+            items = embedded.get(key)
+        else:
+            items = embedded.get("sw360:" + key)
+        if not isinstance(items, list):
+            return []
+
+        return items

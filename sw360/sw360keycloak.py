@@ -13,7 +13,7 @@ from typing import Optional
 import jwt
 import requests
 
-from sw360 import SW360, SW360Error
+from .sw360error import SW360Error                          
 
 
 class SW360Keycloak:

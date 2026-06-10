@@ -13,7 +13,7 @@ from typing import Optional
 import jwt
 import requests
 
-from .sw360error import SW360Error                          
+from .sw360error import SW360Error
 
 
 class SW360Keycloak:
@@ -24,9 +24,7 @@ class SW360Keycloak:
     access token from Keycloak to authenticate with the SW360 API.
 
     :param url: URL of the SW360 instance
-    :param config_file: Path to the configuration file containing Keycloak credentials
     :type url: string
-    :type config_file: string
     """
 
     def __init__(self, url: str) -> None:
@@ -91,20 +89,20 @@ class SW360Keycloak:
             #   'exp': 1776699510,
             #   'iat': 1702769910,
             #   'jti': 'trrtcc:6f1d3934-b319-1183-a059-8b7606f0a647',
-            #   'iss': 'https://stage.sw360.siemens.com/kc/realms/sw360',
+            #   'iss': 'https://stage.sw360.com/kc/realms/sw360',
             #   'aud': 'account',
-            #   'sub': 'cf3fb608-4dba-42e0-bb89-7e13f995b931',
+            #   'sub': 'xxx',
             #   'typ': 'Bearer',
-            #   'azp': '7f75885d309970833f4187295d9babb8',
+            #   'azp': 'yyy',
             #   'acr': '1',
             #   'realm_access': {'roles': ['default-roles-sw360', 'offline_access', 'uma_authorization']},
             #   'resource_access': {'account': {'roles': ['manage-account', 'manage-account-links', 'view-profile']}},
             #   'scope': ''READ profile email'',
-            #   'clientHost': '139.21.146.160'
+            #   'clientHost': '192.168.146.160'
             #   'email_verified': False,
-            #   'preferred_username': 'service-account-7f75885d309970833f4187295d9babb8',
-            #   'clientAddress': '139.21.146.160',
-            #   'email': 'thomas.graf@siemens.com',
+            #   'preferred_username': 'service-account-zzzz',
+            #   'clientAddress': '192.168.146.160',
+            #   'email': 'john.doe@sw360.com',
             #   'client_id': 'xxx'
             # }
         except Exception as ex:

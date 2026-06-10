@@ -16,7 +16,7 @@ import requests
 from sw360 import SW360, SW360Error
 
 
-class SW360Keycloak(SW360):
+class SW360Keycloak:
     """SW360 Keycloak Authentication
 
     This class extends the SW360 class to support authentication using Keycloak.

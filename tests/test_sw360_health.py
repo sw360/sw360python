@@ -62,6 +62,33 @@ class Sw360TestHealth(unittest.TestCase):
         if status:  # only for mypy
             self.assertTrue("status" in status)
 
+    @responses.activate
+    def test_get_health_status_pre_v19_fallback(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/health/",
+            body='{"status":404,"error":"Not Found","path":"/resource/api/health/"}',
+            status=404,
+        )
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/health/",
+            body='{"status": "UP"}',
+            status=200,
+            content_type="application/json",
+        )
+
+        status = lib.get_health_status()
+        self.assertIsNotNone(status)
+        if status:
+            self.assertTrue("status" in status)
+
 
 if __name__ == "__main__":
     unittest.main()

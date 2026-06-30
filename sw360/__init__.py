@@ -9,6 +9,7 @@
 
 __version__ = (1, 11, 2)
 
+from .base import SW360Response
 from .sw360_api import SW360
 from .sw360error import SW360Error
 from .sw360keycloak import SW360Keycloak
@@ -18,5 +19,6 @@ __all__ = [
     "SW360",
     "SW360Error",
     "SW360OAuth2",
-    "SW360Keycloak"
+    "SW360Keycloak",
+    "SW360Response",
 ]

@@ -12,6 +12,7 @@
 from typing import Any, Dict, List, Optional
 
 from .base import BaseMixin
+from .sorting import ProjectSortColumn, ReleaseSortColumn, SortParam
 from .sw360error import SW360Error
 
 
@@ -19,7 +20,7 @@ class ProjectMixin(BaseMixin):
     def get_project(self, project_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about a project
 
-        API endpoint: GET /projects
+        API endpoint: GET /projects/{id}
 
         :param project_id: the id of the project to be requested
         :type project_id: string
@@ -52,8 +53,9 @@ class ProjectMixin(BaseMixin):
         trans = "false"
         if transitive:
             trans = "true"
-        resp = self.api_get(self.url + "resource/api/projects/"
-                            + project_id + "/releases?transitive=" + trans)
+        url = self.url + "resource/api/projects/" + project_id + "/releases"
+        url = self._add_params(url, {"transitive": trans})
+        resp = self.api_get_all(url, ReleaseSortColumn.CREATED_ON.desc())
         return resp
 
     def get_project_by_url(self, url: str) -> Optional[Dict[str, Any]]:
@@ -73,57 +75,37 @@ class ProjectMixin(BaseMixin):
         resp = self.api_get(url)
         return resp
 
-    def get_projects(self, all_details: bool = False, page: int = -1,
-                     page_size: int = -1, sort: str = "") -> Optional[Dict[str, Any]]:
-        """Get all projects
+    def __get_projects_filtered(
+        self, url: str, page: int = -1, page_size: int = -1,
+        sort: Optional[SortParam] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Take a pre-generated URL of projects endpoint, with filters applied.
+        Then call the API with appropriate pagination and sorting to get the
+        projects.
 
-        API endpoint: GET /projects
-
-        :param all_details: retrieve all project details (optional))
-        :type all_details: bool
+        :param url: projects API URL with filters in the query
+        :type url: str
         :param page: page to retrieve
         :type page: int
-        :param page_size: page size to use
+        :param page_size: page size to use, `-1` to get all
         :type page_size: int
-        :param sort: sort order for the projects ("name,desc"; "name,asc")
-        :type sort: str
+        :param sort: sort order for the projects (Sort by name if `None`)
+        :type sort: SortParam
         :return: list of projects
         :rtype: list of JSON project objects
         :raises SW360Error: if there is a negative HTTP response
         """
 
-        fullbase_url = self.url + "resource/api/projects"
-        params = {}
+        full_url = self._add_params(url, {"luceneSearch": "true"})
+        if page > -1 and page_size > -1:
+            full_url = self._add_pagination(url, page, page_size, sort)
 
-        if all_details:
-            params["allDetails"] = "true"
+        if page_size == -1:
+            resp = self.api_get_all(full_url, sort)
+        else:
+            resp = self.api_get(full_url)
 
-        if page > -1:
-            params["page"] = str(page)
-            params["page_entries"] = str(page_size)
-
-        if sort:
-            params["sort"] = sort
-
-        full_url = self._add_params(fullbase_url, params)
-        resp = self.api_get(full_url)
-        return resp
-
-    def get_projects_by_type(self, project_type: str) -> List[Dict[str, Any]]:
-        """Get information of about all projects of a certain type
-
-        API endpoint: GET /projects
-
-        :param project_type: the full url of the project to be requested
-        :type project_type: string, one of CUSTOMER, INTERNAL, PRODUCT, SERVICE, INNER_SOURCE
-        :return: list of projects
-        :rtype: list of JSON project objects
-        :raises SW360Error: if there is a negative HTTP response
-        """
-        if not project_type:
-            raise SW360Error(message="No project type provided!")
-
-        resp = self.api_get(self.url + "resource/api/projects?type=" + project_type)
         if not resp:
             return []
 
@@ -134,6 +116,74 @@ class ProjectMixin(BaseMixin):
             return []
 
         return resp["_embedded"]["sw360:projects"]
+
+    def get_projects(
+        self, all_details: bool = False, page: int = -1, page_size: int = -1,
+        sort: Optional[SortParam] = None
+    ) -> List[Dict[str, Any]]:
+        """Get all projects
+
+        API endpoint: GET /projects
+
+        :param all_details: retrieve all project details (optional)
+        :type all_details: bool
+        :param page: page to retrieve
+        :type page: int
+        :param page_size: page size to use, `-1` to get all
+        :type page_size: int
+        :param sort: sort order for the projects (Sort by name if `None`)
+        :type sort: SortParam
+        :return: list of projects
+        :rtype: list of JSON project objects
+        :raises SW360Error: if there is a negative HTTP response
+        """
+
+        fullbase_url = self.url + "resource/api/projects"
+        params = {}
+
+        if all_details:
+            params["allDetails"] = "true"
+        url_with_param = self._add_params(fullbase_url, params)
+
+        if sort is None:
+            sort = ProjectSortColumn.NAME.asc()
+
+        return self.__get_projects_filtered(url_with_param, page, page_size,
+                                            sort)
+
+    def get_projects_by_type(
+        self, project_type: str, page: int = -1, page_size: int = -1,
+        sort: Optional[SortParam] = None
+    ) -> List[Dict[str, Any]]:
+        """Get information of about all projects of a certain type
+
+        API endpoint: GET /projects
+
+        :param project_type: the full url of the project to be requested
+        :type project_type: string, one of CUSTOMER, INTERNAL, PRODUCT, SERVICE, INNER_SOURCE
+        :param page: page to retrieve
+        :type page: int
+        :param page_size: page size to use, `-1` to get all
+        :type page_size: int
+        :param sort: sort order for the projects (Sort by name if `None`)
+        :type sort: SortParam
+        :return: list of projects
+        :rtype: list of JSON project objects
+        :raises SW360Error: if there is a negative HTTP response
+        """
+        if not project_type:
+            raise SW360Error(message="No project type provided!")
+
+        fullbase_url = self.url + "resource/api/projects"
+        params = {"type": project_type}
+
+        url_with_param = self._add_params(fullbase_url, params)
+
+        if sort is None:
+            sort = ProjectSortColumn.NAME.asc()
+
+        return self.__get_projects_filtered(url_with_param, page, page_size,
+                                            sort)
 
     def get_project_names(self) -> List[str]:
         """Get all project names
@@ -149,13 +199,7 @@ class ProjectMixin(BaseMixin):
         if not all_projects:
             return resp
 
-        if "_embedded" not in all_projects:
-            return resp
-
-        if "sw360:projects" not in all_projects["_embedded"]:
-            return resp
-
-        projects: List[Dict[str, Any]] = all_projects["_embedded"]["sw360:projects"]
+        projects: List[Dict[str, Any]] = all_projects
         if not projects:
             return resp
 
@@ -164,13 +208,22 @@ class ProjectMixin(BaseMixin):
 
         return resp
 
-    def get_projects_by_name(self, name: str) -> List[Dict[str, Any]]:
+    def get_projects_by_name(
+        self, name: str, page: int = -1, page_size: int = -1,
+        sort: Optional[SortParam] = None
+    ) -> List[Dict[str, Any]]:
         """Get a project by its name
 
         API endpoint: GET /projects
 
         :param name: the project name or a prefix of it
         :type name: string
+        :param page: page to retrieve
+        :type page: int
+        :param page_size: page size to use, `-1` to get all
+        :type page_size: int
+        :param sort: sort order for the projects (Sort by score if `None`)
+        :type sort: SortParam
         :return: list of projects
         :rtype: list of JSON project objects
         :raises SW360Error: if there is a negative HTTP response
@@ -178,19 +231,20 @@ class ProjectMixin(BaseMixin):
         if not name:
             raise SW360Error(message="No project name provided!")
 
-        resp = self.api_get(self.url + "resource/api/projects?name=" + name)
-        if not resp:
-            return []
+        fullbase_url = self.url + "resource/api/projects"
+        params = {"name": name}
 
-        if "_embedded" not in resp:
-            return []
+        url_with_param = self._add_params(fullbase_url, params)
 
-        if "sw360:projects" not in resp["_embedded"]:
-            return []
+        if sort is None:
+            sort = ProjectSortColumn.SCORE.asc()
 
-        return resp["_embedded"]["sw360:projects"]
+        return self.__get_projects_filtered(url_with_param, page, page_size,
+                                            sort)
 
-    def get_projects_by_external_id(self, ext_id_name: str, ext_id_value: str = "") -> List[Dict[str, Any]]:
+    def get_projects_by_external_id(
+        self, ext_id_name: str, ext_id_value: str = ""
+    ) -> List[Dict[str, Any]]:
         """Get projects by external id. `ext_id_value` can be left blank to
         search for all projects with `ext_id_name`.
 
@@ -223,13 +277,24 @@ class ProjectMixin(BaseMixin):
 
         return resp["_embedded"]["sw360:projects"]
 
-    def get_projects_by_group(self, group: str, all_details: bool = False) -> List[Dict[str, Any]]:
+    def get_projects_by_group(
+        self, group: str, all_details: bool = False, page: int = -1,
+        page_size: int = -1, sort: Optional[SortParam] = None
+    ) -> List[Dict[str, Any]]:
         """Get projects by group.
 
         API endpoint: GET /projects?group=
 
         :param group: the group the projects shall belong to
         :type group: string
+        :param all_details: retrieve all project details (optional)
+        :type all_details: bool
+        :param page: page to retrieve
+        :type page: int
+        :param page_size: page size to use, `-1` to get all
+        :type page_size: int
+        :param sort: sort order for the projects (Sort by score if `None`)
+        :type sort: SortParam
         :return: list of projects
         :rtype: list of JSON project objects
         :raises SW360Error: if there is a negative HTTP response
@@ -237,29 +302,36 @@ class ProjectMixin(BaseMixin):
         if not group:
             raise SW360Error(message="No group provided!")
 
-        full_url = self.url + "resource/api/projects?group=" + group
+        fullbase_url = self.url + "resource/api/projects"
+        params = {"group": group}
+
         if all_details:
-            full_url = self.url + "resource/api/projects?allDetails?group=" + group
+            params["allDetails"] = "true"
 
-        resp = self.api_get(full_url)
-        if not resp:
-            return []
+        url_with_param = self._add_params(fullbase_url, params)
 
-        if "_embedded" not in resp:
-            return []
+        if sort is None:
+            sort = ProjectSortColumn.SCORE.asc()
 
-        if "sw360:projects" not in resp["_embedded"]:
-            return []
+        return self.__get_projects_filtered(url_with_param, page, page_size,
+                                            sort)
 
-        return resp["_embedded"]["sw360:projects"]
-
-    def get_projects_by_tag(self, tag: str) -> List[Dict[str, Any]]:
+    def get_projects_by_tag(
+        self, tag: str, page: int = -1, page_size: int = -1,
+        sort: Optional[SortParam] = None
+    ) -> List[Dict[str, Any]]:
         """Get projects by tag.
 
         API endpoint: GET /projects?tag=
 
-        :param group: the group the projects shall belong to
-        :type group: string
+        :param tag: the group the projects shall belong to
+        :type tag: string
+        :param page: page to retrieve
+        :type page: int
+        :param page_size: page size to use, `-1` to get all
+        :type page_size: int
+        :param sort: sort order for the projects (Sort by score if `None`)
+        :type sort: SortParam
         :return: list of projects
         :rtype: list of JSON project objects
         :raises SW360Error: if there is a negative HTTP response
@@ -267,18 +339,16 @@ class ProjectMixin(BaseMixin):
         if not tag:
             raise SW360Error(message="No tag provided!")
 
-        full_url = self.url + "resource/api/projects?tag=" + tag + "&luceneSearch=true"
-        resp = self.api_get(full_url)
-        if not resp:
-            return []
+        fullbase_url = self.url + "resource/api/projects"
+        params = {"tag": tag}
 
-        if "_embedded" not in resp:
-            return []
+        url_with_param = self._add_params(fullbase_url, params)
 
-        if "sw360:projects" not in resp["_embedded"]:
-            return []
+        if sort is None:
+            sort = ProjectSortColumn.SCORE.asc()
 
-        return resp["_embedded"]["sw360:projects"]
+        return self.__get_projects_filtered(url_with_param, page, page_size,
+                                            sort)
 
     def get_project_vulnerabilities(self, project_id: str) -> Optional[Dict[str, Any]]:
         """Get the security vulnerabilities for the specified project.
@@ -295,15 +365,17 @@ class ProjectMixin(BaseMixin):
             raise SW360Error(message="No project id provided!")
 
         full_url = self.url + "resource/api/projects/" + project_id + "/vulnerabilities"
-        resp = self.api_get(full_url)
+        resp = self.api_get_all(full_url)
         if not resp:
             return None
 
         return resp
 
-    def create_new_project(self, name: str, project_type: str, visibility: Any,
-                           description: str = "", version: str = "",
-                           project_details: Dict[str, Any] = {}) -> Optional[Dict[str, Any]]:
+    def create_new_project(
+        self, name: str, project_type: str, visibility: Any,
+        description: str = "", version: str = "",
+        project_details: Dict[str, Any] = {}
+    ) -> Optional[Dict[str, Any]]:
         """Create a new project.
 
         The parameters list only the most common project attributes, check the
@@ -341,8 +413,10 @@ class ProjectMixin(BaseMixin):
                 return response.json()
         raise SW360Error(response, url)
 
-    def update_project(self, project: Dict[str, Any], project_id: str,
-                       add_subprojects: bool = False) -> Optional[Dict[str, Any]]:
+    def update_project(
+        self, project: Dict[str, Any], project_id: str,
+        add_subprojects: bool = False
+    ) -> Optional[Dict[str, Any]]:
         """Update an existing project
 
         API endpoint: PATCH /projects
@@ -367,12 +441,15 @@ class ProjectMixin(BaseMixin):
 
         if add_subprojects:
             current = self.get_project(project_id)
-            if (current is not None and "linkedProjects" in current and "linkedProjects" in project):
+            if current is not None and "linkedProjects" in current and "linkedProjects" in project:
                 for sp in current["linkedProjects"]:
                     pid = self.get_id_from_href(sp["project"])
                     if pid not in project["linkedProjects"]:
-                        nsp = {}
-                        nsp["projectRelationship"] = sp.get("relation", "CONTAINED")
+                        nsp = {
+                            "projectRelationship": sp.get(
+                                "relation", "CONTAINED"
+                            )
+                        }
                         project["linkedProjects"][pid] = nsp
 
         return self.api_patch(url, json=project)
@@ -385,13 +462,13 @@ class ProjectMixin(BaseMixin):
         given `releases` are added to the project, otherwise, the existing
         releases will be replaced.
 
-        API endpoint: POST /projects/<id>/releases
+        API endpoint: POST /projects/{id}/releases
 
-        :param releases: list of relase_ids to be linked in the project
-        :param project_id: the id of the project to modify
-        :param add: add given releases if set to True, replace otherwise
+        :param releases: list of release_ids to be linked in the project
         :type releases: list of release_id strings
+        :param project_id: the id of the project to modify
         :type project_id: string
+        :param add: add given releases if set to True, replace otherwise
         :type add: boolean
         :return: SW360 result
         :rtype: JSON SW360 result object
@@ -421,7 +498,7 @@ class ProjectMixin(BaseMixin):
         The method will return the old value of the external id or None if it
         was not set.
 
-        API endpoint: PATCH /projects
+        API endpoint: PATCH /projects/{id}
 
         :param ext_id_name: name of the external id
         :param ext_id_value: value of the external id
@@ -458,7 +535,7 @@ class ProjectMixin(BaseMixin):
     def delete_project(self, project_id: str) -> Optional[Dict[str, Any]]:
         """Delete an existing project
 
-        API endpoint: DELETE /projects
+        API endpoint: DELETE /projects/{id}
 
         :param project_id: the id of the project to be requested
         :type project_id: string
@@ -499,7 +576,7 @@ class ProjectMixin(BaseMixin):
     def duplicate_project(self, project_id: str, new_version: str) -> Optional[Dict[str, Any]]:
         """Create a copy of an existing project.
 
-        API endpoint: GET /projects/duplicate/{id}
+        API endpoint: POST /projects/duplicate/{id}
 
         :param project_id: the id of the existing project
         :type project_id: string
@@ -534,7 +611,7 @@ class ProjectMixin(BaseMixin):
             new_relation: str, comment: str) -> Optional[Dict[str, Any]]:
         """Update the relationship for a specific release of a project
 
-        API endpoint PATCH /projects/{pid}/release{rid}
+        API endpoint PATCH /projects/{pid}/release/{rid}
 
         :param project_id: the id of the existing project
         :type project_id: string
@@ -573,7 +650,7 @@ class ProjectMixin(BaseMixin):
     def link_packages_to_project(self, project_id: str, packages: List[str]) -> Optional[Dict[str, Any]]:
         """Link (new) packages to a given project.
 
-        API endpoint PATCH /projects/{pid}/packages{rid}
+        API endpoint PATCH /projects/{pid}/packages/{rid}
 
         :param project_id: the id of the existing project
         :type project_id: string
@@ -594,7 +671,7 @@ class ProjectMixin(BaseMixin):
     def unlink_packages_from_project(self, project_id: str, packages: List[str]) -> Optional[Dict[str, Any]]:
         """Unlink packages from a given project.
 
-        API endpoint PATCH /projects/{pid}/packages{rid}
+        API endpoint PATCH /projects/{pid}/packages/{rid}
 
         :param project_id: the id of the existing project
         :type project_id: string
@@ -611,3 +688,35 @@ class ProjectMixin(BaseMixin):
 
         url = self.url + "resource/api/projects/" + project_id + "/unlink/packages/"
         return self.api_patch(url, json=packages)
+
+    def upload_attachment_to_project(
+        self, project_id: str, upload_file: str, upload_type: str = "SOURCE",
+        upload_comment: str = ""
+    ) -> Optional[Dict[str, Any]]:
+        """Upload an attachment to a given project.
+
+        API endpoint: POST /attachments & PATCH /projects/{id}
+
+        :param project_id: the id of the Project
+        :type project_id: string
+        :param upload_file: path of the file to be uploaded
+        :type upload_file: string
+        :param upload_type: the type of the attachment
+        :type upload_type: string
+        :param upload_comment: a comment for the attachment
+        :type upload_comment: string
+        :raises SW360Error: if the project id is missing or there is a negative HTTP response
+        """
+        if not project_id:
+            raise SW360Error(message="No project id provided!")
+
+        attachment_content = self._upload_resource_file(upload_file, upload_type, upload_comment)
+        # Make sure the type is correct, override
+        attachment_content['attachmentType'] = upload_type
+        attachment_content['createdComment'] = upload_comment
+
+        current_project = self.get_project(project_id)
+        attachments = self._get_attachments(current_project)
+
+        attachments.append(attachment_content)
+        return self.update_project({'attachments': attachments}, project_id)

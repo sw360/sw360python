@@ -7,12 +7,20 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
+import json
+import logging
+import os
+from http import HTTPStatus
 from typing import Any, Dict, List, Optional, Tuple, Union
 from urllib.parse import urlencode
 
 import requests
 
+from .sorting import SortParam
 from .sw360error import SW360Error
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.WARNING)
 
 
 class BaseMixin():
@@ -25,16 +33,19 @@ class BaseMixin():
     token_type is "Bearer" for an OAuth workflow and "Token" for tokens
     generated via the SW360 UI.
 
-    :param url: URL of the SW360 instance
-    :param token: The SW360 REST API token (the cryptic string without
+    :ivar url: URL of the SW360 instance
+    :ivar token: The SW360 REST API token (the cryptic string without
      "Authorization:" and `token_type`).
-    :param oauth2: flag indicating whether this is an OAuth2 token
+    :ivar oauth2: flag indicating whether this is an OAuth2 token
+    :ivar default_batch_size: Default size of batch to use while fetching all items from API
     :type url: string
     :type token: string
     :type oauth2: boolean
+    :type default_batch_size: int
     """
 
-    def __init__(self, url: str, token: str, oauth2: bool = False) -> None:
+    def __init__(self, url: str, token: str, oauth2: bool = False,
+                 default_batch_size: int = 50) -> None:
         """Constructor"""
         if url[-1] != "/":
             url += "/"
@@ -47,6 +58,7 @@ class BaseMixin():
             self.api_headers = {"Authorization": "Token " + token}
 
         self.force_no_session = False
+        self.default_batch_size = default_batch_size
 
     def api_get(self, url: str = "") -> Optional[Dict[str, Any]]:
         """Request `url` from REST API and return json answer.
@@ -68,11 +80,75 @@ class BaseMixin():
                 response = self.session.get(url)
 
         if response.ok:
-            if response.status_code == 204:  # 204 = no content
+            if response.status_code == HTTPStatus.NO_CONTENT:
                 return None
             return response.json()
 
         raise SW360Error(response, url)
+
+    def api_get_all(self, url: str, sort: Optional[SortParam] = None,
+                    batch: int = -1, page: int = 0,
+                    _data: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+        """
+        Retrieve all pages of data from the specified URL.
+
+        :param url: The URL to request data from.
+        :param sort: The sort parameter to sort data by.
+        :param page: Page number to fetch
+        :param batch: How many rows to fetch at a time, use
+                      `default_batch_size` if -1
+        :param _data: Internal param for aggregating data.
+        :return: The combined JSON data from all pages.
+        :rtype: Optional[Dict[str, Any]]
+        """
+        if _data is None:
+            _data = {}
+        if batch == -1:
+            batch = self.default_batch_size
+
+        paginated_url = self._add_pagination(url, page, batch, sort)
+        resp = self.api_get(paginated_url)
+        if resp is not None and 'page' in resp:
+            total_pages = resp['page']['totalPages']
+            # Clean up meta info
+            if '_links' in resp:
+                del resp['_links']
+            del resp['page']
+            # Update data and get next page
+            _data = self.__merge_responses(_data, resp)
+            if page + 1 < total_pages:
+                return self.api_get_all(url, sort, batch, page + 1, _data)
+        else:
+            # Clean up meta info
+            if resp is not None and '_links' in resp:
+                del resp['_links']
+            _data = self.__merge_responses(_data, resp)
+        return _data
+
+    def __merge_responses(self, previous: Dict[str, Any],
+                          next: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Function to merge previous and next response of the same API
+        recursively.
+        :param previous: The previous response data.
+        :param next: The next response data.
+        :return: The merged response data.
+        """
+        if next is None:
+            return previous
+        for key, value in next.items():
+            if (key in previous and isinstance(previous[key], dict) and
+                    isinstance(value, dict)):
+                previous[key] = self.__merge_responses(previous[key], value)
+            elif (key in previous and isinstance(previous[key], list) and
+                    isinstance(value, list)):
+                previous[key].extend(value)
+            elif (key in previous and isinstance(previous[key], tuple) and
+                    isinstance(value, tuple)):
+                previous[key].extend(value)
+            else:
+                previous[key] = value
+        return previous
 
     def api_post_multipart(self, url: str = "", files: Dict[str, Any] = {}) -> Optional[requests.Response]:
         """
@@ -97,7 +173,7 @@ class BaseMixin():
                 response = self.session.post(url, files=files)
 
         if response.ok:
-            if response.status_code == 204:  # 204 = no content
+            if response.status_code == HTTPStatus.NO_CONTENT:
                 return None
             return response
 
@@ -131,7 +207,7 @@ class BaseMixin():
                 response = self.session.post(url, json=json)
 
         if response.ok:
-            if response.status_code == 204:  # 204 = no content
+            if response.status_code == HTTPStatus.NO_CONTENT:
                 return None
             return response
 
@@ -159,7 +235,7 @@ class BaseMixin():
                 response = self.session.patch(url, json=json)
 
         if response.ok:
-            if response.status_code == 204:  # 204 = no content
+            if response.status_code == HTTPStatus.NO_CONTENT:
                 return None
             if response.content:
                 return response.json()
@@ -187,7 +263,7 @@ class BaseMixin():
                 response = self.session.delete(url)
 
         if response.ok:
-            if response.status_code == 204:  # 204 = no content
+            if response.status_code == HTTPStatus.NO_CONTENT:
                 return None
             return response
 
@@ -223,14 +299,37 @@ class BaseMixin():
 
         query_string = urlencode(params)
 
+        if query_string == "":
+            return url
+
         if "?" in url:
             return f"{url}&{query_string}"
         else:
             return f"{url}?{query_string}"
 
+    def _add_pagination(self, url: str, page: int, page_entries: int,
+                        sort: Optional[SortParam] = None) -> str:
+        """
+        Add pagination parameters to the GET request URL
+        :param url: URL to add params to
+        :param page: Page number to fetch
+        :param page_entries: Number of entries to fetch per request
+        :param sort: Sorting parameter (optional)
+        :return: URL with pagination parameters added
+        """
+
+        params = {
+            "page": str(page),
+            "page_entries": str(page_entries)
+        }
+        if sort is not None:
+            params["sort"] = str(sort)
+
+        return self._add_params(url, params)
+
     @classmethod
     def get_id_from_href(cls, href: str) -> str:
-        """"Extracts the identifier from the href and returns it
+        """Extracts the identifier from the href and returns it
 
         :param href: HAL href for a specific resource
         :type href: string (valid URL)
@@ -241,3 +340,89 @@ class BaseMixin():
         pos = href.rfind("/")
         identifier = href[(pos + 1):]
         return identifier
+
+    def _upload_resource_file(self, upload_file: str,
+                              upload_type: str = "SOURCE",
+                              upload_comment: str = "") -> Dict[str, str]:
+        """Upload `upload_file` as attachment to SW360 which can then be used
+        by various resources as attachment content.
+        `upload_type` can be:
+        "DOCUMENT"
+        "SOURCE"
+        "CLEARING_REPORT"
+        "COMPONENT_LICENSE_INFO_XML"
+        "SOURCE_SELF"
+        "BINARY"
+        "BINARY_SELF"
+        "LICENSE_AGREEMENT"
+        "README_OSS"
+
+        API endpoint: POST /attachments
+
+        :return: Returns the attachment content of the uploaded file which
+                 can be used by other resources.
+        :raises SW360Error: if unable to extract content from the upload
+        """
+        if not os.path.exists(upload_file):
+            raise SW360Error(message="ERROR: file not found: " + upload_file)
+
+        filename = os.path.basename(upload_file)
+        url = self.url + "resource/api/attachments"
+        attachment_data = {
+            "filename": filename,
+            "createdComment": upload_comment,
+            "attachmentType": upload_type
+        }
+
+        file_data = {
+            "files": (filename, open(upload_file, "rb"), "multipart/form-data"),
+            "attachment": (
+                "",  # dummy filename
+                json.dumps(attachment_data),
+                "application/json",
+            ),
+        }
+        response = self.api_post_multipart(url, files=file_data)
+        attachment_content = None
+        if response is not None:
+            if response.status_code == HTTPStatus.ACCEPTED:
+                logger.warning(
+                    f"Attachment upload was accepted by {url} but might not be visible yet: {response.text}"
+                )
+            if response.status_code == HTTPStatus.OK:
+                r = response.json()
+                if '_embedded' in r and 'sw360:attachments' in r['_embedded'] \
+                        and len(r['_embedded']['sw360:attachments']) == 1:
+                    content = r['_embedded']['sw360:attachments'][0]
+                    attachment_content = {
+                        'attachmentContentId': content['attachmentContentId'],
+                        'filename': content['filename'],
+                        'sha1': content['sha1'],
+                        'attachmentType': content['attachmentType'],
+                        'createdComment': content['createdComment'],
+                        'checkStatus': content['checkStatus']
+                    }
+            if not response.ok:
+                raise SW360Error(response, url)
+        if attachment_content is None:
+            raise SW360Error(response, url,
+                             "Unable to fetch attachment content from the response.")
+        return attachment_content
+
+    @staticmethod
+    def _get_attachments(
+        resource: Optional[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
+        attachments: List[Dict[str, Any]] = []
+        if resource is None:
+            return attachments
+        if 'attachments' in resource:
+            attachments.extend(resource['attachments'])
+        if '_embedded' in resource and \
+                'sw360:attachments' in resource['_embedded']:
+            attachments.extend(resource['_embedded']['sw360:attachments'])
+        # Remove meta properties like "_links" from attachments
+        for attachment in attachments:
+            if '_links' in attachment:
+                del attachment['_links']
+        return attachments

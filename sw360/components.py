@@ -44,7 +44,7 @@ class ComponentsMixin(BaseMixin):
 
         full_url = self._add_params(url, {"luceneSearch": "true"})
         if page > -1 and page_size > -1:
-            full_url = self._add_pagination(url, page, page_size, sort)
+            full_url = self._add_pagination(full_url, page, page_size, sort)
 
         if page_size == -1:
             resp = self.api_get_all(full_url, sort)

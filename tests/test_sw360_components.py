@@ -128,7 +128,7 @@ class Sw360TestComponents(unittest.TestCase):
         self.assertTrue(actual)
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/components?fields=ownerCountry&page=1&page_entries=2&sort=name,asc",  # noqa
+            url=self.MYURL + "resource/api/components?fields=ownerCountry&luceneSearch=true&page=1&page_entries=2&sort=name,asc",  # noqa
             body='{"_embedded": {"sw360:components": [{"name": "Tethys.Logging", "ownerCountry": "DE", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
             status=200,
             content_type="application/json",

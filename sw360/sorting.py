@@ -52,3 +52,8 @@ class ComponentSortColumn(BaseSortMixin, Enum):
     VENDOR_NAMES = "vendorNames"
     MAIN_LICENSE_IDS = "mainLicenseIds"
     TYPE = "type"
+
+class LicenseSortColumn(BaseSortMixin, Enum):
+    SCORE = "score"
+    FULL_NAME = "fullName"
+    SHORT_NAME = "shortName"

@@ -39,8 +39,8 @@ class ClearingMixin(BaseMixin):
 
         API endpoint: GET /clearingrequest/project/{id}
 
-        :param request_id: the id of the clearing request to be requested
-        :type request_id: string
+        :param project_id: the id of the Project to fetch clearing requests for
+        :type project_id: string
         :return: a clearing request
         :rtype: JSON clearing request object
         :raises SW360Error: if there is a negative HTTP response

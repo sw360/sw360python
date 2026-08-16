@@ -79,3 +79,10 @@ class VendorSortColumn(BaseSortMixin, Enum):
     SCORE = "score"
     FULL_NAME = "fullName"
     SHORT_NAME = "shortName"
+
+class VulnerabilitySortColumn(BaseSortMixin, Enum):
+    LAST_UPDATE_DATE = "lastUpdateDate"
+    EXTERNAL_ID = "externalId"
+    TITLE = "title"
+    CVSS = "cvss"
+    PUBLISH_DATE = "publishDate"

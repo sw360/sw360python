@@ -57,3 +57,13 @@ class LicenseSortColumn(BaseSortMixin, Enum):
     SCORE = "score"
     FULL_NAME = "fullName"
     SHORT_NAME = "shortName"
+
+class ModerationSortColumn(BaseSortMixin, Enum):
+    SCORE = "score"
+    DOCUMENT_NAME = "documentName"
+    DOCUMENT_TYPE = "documentType"
+    COMPONENT_TYPE = "componentType"
+    MODERATION_STATE = "moderationState"
+    REQUEST_DATE = "requestDate"
+    REQUESTING_USER = "requestingUser"
+    REQUESTING_USER_DEPARTMENT = "requestingUserDepartment"

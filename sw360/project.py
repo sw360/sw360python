@@ -55,7 +55,10 @@ class ProjectMixin(BaseMixin):
             trans = "true"
         url = self.url + "resource/api/projects/" + project_id + "/releases"
         url = self._add_params(url, {"transitive": trans})
-        resp = self.api_get_all(url, ReleaseSortColumn.CREATED_ON.desc())
+        if self.is_above_version_18():
+            resp = self.api_get_all(url, ReleaseSortColumn.CREATED_ON.desc())
+        else:
+            resp = self.api_get(url)
         return resp
 
     def get_project_by_url(self, url: str) -> Optional[Dict[str, Any]]:
@@ -97,11 +100,15 @@ class ProjectMixin(BaseMixin):
         :raises SW360Error: if there is a negative HTTP response
         """
 
-        full_url = self._add_params(url, {"luceneSearch": "true"})
+        if self.is_above_version_18():
+            full_url = self._add_params(url, {"luceneSearch": "true"})
+        else:
+            full_url = url
+
         if page > -1 and page_size > -1:
             full_url = self._add_pagination(full_url, page, page_size, sort)
 
-        if page_size == -1:
+        if self.is_above_version_18() and page_size == -1:
             resp = self.api_get_all(full_url, sort)
         else:
             resp = self.api_get(full_url)
@@ -237,7 +244,10 @@ class ProjectMixin(BaseMixin):
         url_with_param = self._add_params(fullbase_url, params)
 
         if sort is None:
-            sort = ProjectSortColumn.SCORE.asc()
+            if self.is_above_version_18():
+                sort = ProjectSortColumn.SCORE.asc()
+            else:
+                sort = ProjectSortColumn.NAME.asc()
 
         return self.__get_projects_filtered(url_with_param, page, page_size,
                                             sort)
@@ -311,7 +321,10 @@ class ProjectMixin(BaseMixin):
         url_with_param = self._add_params(fullbase_url, params)
 
         if sort is None:
-            sort = ProjectSortColumn.SCORE.asc()
+            if self.is_above_version_18():
+                sort = ProjectSortColumn.SCORE.asc()
+            else:
+                sort = ProjectSortColumn.NAME.asc()
 
         return self.__get_projects_filtered(url_with_param, page, page_size,
                                             sort)
@@ -345,7 +358,10 @@ class ProjectMixin(BaseMixin):
         url_with_param = self._add_params(fullbase_url, params)
 
         if sort is None:
-            sort = ProjectSortColumn.SCORE.asc()
+            if self.is_above_version_18():
+                sort = ProjectSortColumn.SCORE.asc()
+            else:
+                sort = ProjectSortColumn.NAME.asc()
 
         return self.__get_projects_filtered(url_with_param, page, page_size,
                                             sort)
@@ -365,7 +381,10 @@ class ProjectMixin(BaseMixin):
             raise SW360Error(message="No project id provided!")
 
         full_url = self.url + "resource/api/projects/" + project_id + "/vulnerabilities"
-        resp = self.api_get_all(full_url)
+        if self.is_above_version_18():
+            resp = self.api_get_all(full_url)
+        else:
+            resp = self.api_get(full_url)
         if not resp:
             return None
 

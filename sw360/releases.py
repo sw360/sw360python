@@ -40,11 +40,15 @@ class ReleasesMixin(BaseMixin):
         :raises SW360Error: if there is a negative HTTP response
         """
 
-        full_url = self._add_params(url, {"luceneSearch": "true"})
+        if self.is_above_version_18():
+            full_url = self._add_params(url, {"luceneSearch": "true"})
+        else:
+            full_url = url
+
         if page > -1 and page_size > -1:
             full_url = self._add_pagination(full_url, page, page_size, sort)
 
-        if page_size == -1:
+        if self.is_above_version_18() and page_size == -1:
             resp = self.api_get_all(full_url, sort)
         else:
             resp = self.api_get(full_url)
@@ -119,7 +123,10 @@ class ReleasesMixin(BaseMixin):
         url_with_param = self._add_params(fullbase_url, params)
 
         if sort is None:
-            sort = ReleaseSortColumn.SCORE.asc()
+            if self.is_above_version_18():
+                sort = ReleaseSortColumn.SCORE.asc()
+            else:
+                sort = ReleaseSortColumn.VERSION.desc()
 
         return self.__get_releases_filtered(url_with_param, page, page_size,
                                             sort)

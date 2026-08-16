@@ -42,3 +42,15 @@ class SW360Error(IOError):
             super().__init__(message)
         else:
             super().__init__(str(response))
+
+    def __str__(self) -> str:
+        return_str = "Operation failed "
+        if self.message != "":
+            return_str = f"{self.message} "
+        if self.url != "":
+            return_str += f"for '{self.url}' "
+        if self.response is not None:
+            return_str += f"with status code {self.response.status_code}. "
+        if self.details is not None:
+            return_str += f"Response body: {self.details}"
+        return return_str.strip()

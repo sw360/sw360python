@@ -42,6 +42,13 @@ class Sw360TestProjects(unittest.TestCase):
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/version",
+            body='{"apiVersion":"20.1.76","buildTime":"2026-08-14T13:17:47Z","buildNumber":"a8a0997","sw360Version":"20.1.0","gitBranch":"main"}',
+            status=200,
+            content_type="application/json",
+        )
         actual = lib.login_api()
         self.assertTrue(actual)
 

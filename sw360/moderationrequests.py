@@ -37,7 +37,10 @@ class ModerationRequestMixin(BaseMixin):
         """
 
         fullbase_url = self.url + "resource/api/moderationrequest"
-        params = {"luceneSearch": "true"}
+        if self.is_above_version_18():
+            params = {"luceneSearch": "true"}
+        else:
+            params = {}
 
         if sort is None:
             sort = ModerationSortColumn.REQUEST_DATE.desc()
@@ -46,7 +49,7 @@ class ModerationRequestMixin(BaseMixin):
         if page > -1 and page_size > -1:
             full_url = self._add_pagination(full_url, page, page_size, sort)
 
-        if page_size == -1:
+        if self.is_above_version_18() and page_size == -1:
             resp = self.api_get_all(full_url, sort)
         else:
             resp = self.api_get(full_url)
@@ -92,7 +95,7 @@ class ModerationRequestMixin(BaseMixin):
         if page > -1 and page_size > -1:
             full_url = self._add_pagination(full_url, page, page_size, sort)
 
-        if page_size == -1:
+        if self.is_above_version_18() and page_size == -1:
             resp = self.api_get_all(full_url, sort)
         else:
             resp = self.api_get(full_url)

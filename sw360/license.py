@@ -133,7 +133,12 @@ class LicenseMixin(BaseMixin):
         """
 
         fullbase_url = self.url + "resource/api/licenses"
-        resp = self.api_get_all(fullbase_url)
+        sort = LicenseSortColumn.SHORT_NAME.asc()
+
+        if self.is_above_version_18():
+            resp = self.api_get_all(fullbase_url)
+        else:
+            resp = self.api_get(fullbase_url)
 
         if resp and "_embedded" in resp and "sw360:licenses" in resp["_embedded"]:
             return resp["_embedded"]["sw360:licenses"]

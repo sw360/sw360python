@@ -182,6 +182,29 @@ class Sw360TestComponents(unittest.TestCase):
         self.assertEqual("DE", components[0]["ownerCountry"])
 
     @responses.activate
+    def test_get_all_components_with_all_details_v18_style(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        lib.force_no_session = True
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/components?allDetails=true",  # noqa
+            body='{"_embedded": {"sw360:components": [{"name": "Tethys.Logging", "ownerCountry": "DE", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        components = lib.get_all_components(all_details=True)
+        self.assertIsNotNone(components)
+        self.assertTrue(len(components) > 0)
+        self.assertEqual("Tethys.Logging", components[0]["name"])
+        self.assertEqual("DE", components[0]["ownerCountry"])
+
+    @responses.activate
     def test_get_all_components_with_all_details_and_sorting(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True

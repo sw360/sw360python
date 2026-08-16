@@ -218,6 +218,28 @@ class Sw360TestReleases(unittest.TestCase):
         self.assertEqual("1.3.0", releases[0]["version"])
 
     @responses.activate
+    def test_get_all_releases_all_details_v18_style(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/releases?allDetails=true",
+            body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0", "releaseDate": "2018-03-04"}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        releases = lib.get_all_releases("", True)
+        self.assertIsNotNone(releases)
+        self.assertTrue(len(releases) > 0)
+        self.assertEqual("Tethys.Logging", releases[0]["name"])
+        self.assertEqual("1.3.0", releases[0]["version"])
+
+    @responses.activate
     def test_get_all_releases_with_fields(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()

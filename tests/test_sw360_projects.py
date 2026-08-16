@@ -206,6 +206,25 @@ class Sw360TestProjects(unittest.TestCase):
             self.assertEqual("My Testproject", projects[0]["name"])
 
     @responses.activate
+    def test_get_projects_v18_style(self) -> None:
+        lib = self.get_logged_in_lib()
+        lib.api_version = (18, 0)
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects",
+            body='{"_embedded": {"sw360:projects": [{"name": "My Testproject"}]}}',
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        projects = lib.get_projects()
+        self.assertIsNotNone(projects)
+        if projects:  # only for mypy
+            self.assertEqual("My Testproject", projects[0]["name"])
+
+    @responses.activate
     def test_get_projects_with_details(self) -> None:
         lib = self.get_logged_in_lib()
 

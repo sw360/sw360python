@@ -23,6 +23,7 @@ from .moderationrequests import ModerationRequestMixin
 from .packages import PackagesMixin
 from .project import ProjectMixin
 from .releases import ReleasesMixin
+from .reports import ReportsMixin
 from .sw360error import SW360Error
 from .vendor import VendorMixin
 from .vulnerabilities import VulnerabilitiesMixin
@@ -47,6 +48,7 @@ class SW360(
     LicenseMixin,
     ProjectMixin,
     ReleasesMixin,
+    ReportsMixin,
     VendorMixin,
     VulnerabilitiesMixin,
     PackagesMixin,
@@ -80,6 +82,7 @@ class SW360(
         session: Optional[requests.Session] = session_default,
         default_batch_size: int = 50
     ) -> None:
+        super().__init__(url, token, oauth2)
         """Constructor"""
         super().__init__(url, token, oauth2, default_batch_size)
         if url[-1] != "/":

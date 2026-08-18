@@ -70,3 +70,11 @@ class ModerationSortColumn(BaseSortMixin, Enum):
     REQUEST_DATE = "requestDate"
     REQUESTING_USER = "requestingUser"
     REQUESTING_USER_DEPARTMENT = "requestingUserDepartment"
+
+
+class PackageSortColumn(BaseSortMixin, Enum):
+    SCORE = "score"
+    CREATED_ON = "createdOn"
+    NAME = "name"
+    VERSION = "version"
+    PACKAGE_MANAGER = "packageManager"

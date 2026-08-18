@@ -17,6 +17,7 @@ import responses
 sys.path.insert(1, "..")
 
 from sw360 import SW360, SW360Error  # noqa: E402
+from sw360.sorting import PackageSortColumn  # noqa: E402
 
 
 class Sw360TestPackages(unittest.TestCase):
@@ -106,7 +107,9 @@ class Sw360TestPackages(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/packages?allDetails=true&purl=pkg:pypi/cli-support@2.0.0",
+            url=self.MYURL
+            + "resource/api/packages?allDetails=true&purl=pkg:pypi/cli-support@2.0.0"
+            + "&luceneSearch=true&page=0&page_entries=50&sort=score,asc",
             body='{"_embedded": {"sw360:packages": [{"name": "Tethys.Logging", "version": "1.3.0", "packageType": "FRAMEWORK"}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -128,19 +131,19 @@ class Sw360TestPackages(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/packages?allDetails=true&name=cli-support&version=2.0.0&page=2&page_entries=6&sort=name%2Cdesc",  # noqa
+            url=self.MYURL
+            + "resource/api/packages?allDetails=true&name=cli-support&version=2.0.0&luceneSearch=true&page=2&page_entries=6&sort=name,desc",  # noqa
             body='{"_embedded": {"sw360:packages": [{"name": "Tethys.Logging", "version": "1.3.0", "packageType": "FRAMEWORK"}]}}',  # noqa
             status=200,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        packages = lib.get_all_packages(name="cli-support", version="2.0.0", all_details=True, page=2, page_size=6, sort="name,desc")  # noqa
+        packages = lib.get_all_packages(name="cli-support", version="2.0.0", all_details=True, page=2, page_size=6, sort=PackageSortColumn.NAME.desc())  # noqa
         self.assertIsNotNone(packages)
         self.assertTrue(len(packages) > 0)
-        pkgs = packages["_embedded"]["sw360:packages"]
-        self.assertEqual("Tethys.Logging", pkgs[0]["name"])
-        self.assertEqual("1.3.0", pkgs[0]["version"])
+        self.assertEqual("Tethys.Logging", packages[0]["name"])
+        self.assertEqual("1.3.0", packages[0]["version"])
 
     @responses.activate
     def test_get_packages_by_name(self) -> None:
@@ -151,7 +154,8 @@ class Sw360TestPackages(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/packages?name=john",
+            url=self.MYURL
+            + "resource/api/packages?name=john&luceneSearch=true&page=0&page_entries=50&sort=score,asc",
             body='{"_embedded": {"sw360:packages": [{"name": "john", "version": "2.2.2", "_links": {"self": {"href": "https://my.server.com/resource/api/packages/08ddfd57636c4c47f4c879515007081f"}}}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -173,7 +177,8 @@ class Sw360TestPackages(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/packages?packageManager=nuget",
+            url=self.MYURL
+            + "resource/api/packages?packageManager=nuget&luceneSearch=true&page=0&page_entries=50&sort=score,asc",
             body='{"_embedded": {"sw360:packages": [{"name": "john", "version": "2.2.2", "_links": {"self": {"href": "https://my.server.com/resource/api/packages/08ddfd57636c4c47f4c879515007081f"}}}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -195,19 +200,19 @@ class Sw360TestPackages(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/packages?packageManager=nuget&page=1&page_entries=5&sort=name%2Cdesc",
+            url=self.MYURL + "resource/api/packages?packageManager=nuget&luceneSearch=true"
+            + "&page=1&page_entries=5&sort=name%2Cdesc",
             body='{"_embedded": {"sw360:packages": [{"name": "john", "version": "2.2.2", "_links": {"self": {"href": "https://my.server.com/resource/api/packages/08ddfd57636c4c47f4c879515007081f"}}}]}}',  # noqa
             status=200,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        packages = lib.get_packages_by_packagemanager("nuget", page=1, page_size=5, sort="name,desc")
+        packages = lib.get_packages_by_packagemanager("nuget", page=1, page_size=5, sort=PackageSortColumn.NAME.desc())
         self.assertIsNotNone(packages)
         self.assertTrue(len(packages) > 0)
-        pkgs = packages["_embedded"]["sw360:packages"]
-        self.assertEqual("john", pkgs[0]["name"])
-        self.assertEqual("2.2.2", pkgs[0]["version"])
+        self.assertEqual("john", packages[0]["name"])
+        self.assertEqual("2.2.2", packages[0]["version"])
 
     @responses.activate
     def test_create_new_package(self) -> None:

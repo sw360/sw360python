@@ -1,7 +1,8 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2019-2024 Siemens
+# Copyright (c) 2019-2026 Siemens
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
+# Authors: mishra.gaurav@siemens.com
 #
 # Licensed under the MIT license.
 # SPDX-License-Identifier: MIT
@@ -68,6 +69,8 @@ class SW360(
     :type url: string
     :type token: string
     :type oauth2: boolean
+    :ivar default_batch_size: Default size of batch to use while fetching all items from API
+    :type default_batch_size: int
     """
 
     def __init__(
@@ -75,9 +78,11 @@ class SW360(
         url: str,
         token: str,
         oauth2: bool = False,
-        session: Optional[requests.Session] = session_default
+        session: Optional[requests.Session] = session_default,
+        default_batch_size: int = 50
     ) -> None:
         """Constructor"""
+        super().__init__(url, token, oauth2, default_batch_size)
         if url[-1] != "/":
             url += "/"
         self.url: str = url
@@ -89,6 +94,7 @@ class SW360(
             self.api_headers = {"Authorization": "Token " + token}
 
         self.force_no_session = False
+        self.default_batch_size = default_batch_size
 
     def login_api(self, token: str = "") -> bool:
         """Login to SW360 REST API. This used to have a `token` parameter

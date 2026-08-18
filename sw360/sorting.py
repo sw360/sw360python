@@ -45,6 +45,7 @@ class ReleaseSortColumn(BaseSortMixin, Enum):
     MAINLINE_STATE = "mainlineState"
     SCORE = "score"
 
+
 class ComponentSortColumn(BaseSortMixin, Enum):
     SCORE = "score"
     CREATED_ON = "createdOn"

@@ -12,10 +12,50 @@
 from typing import Any, Dict, List, Optional
 
 from .base import BaseMixin
+from .sorting import ReleaseSortColumn, SortParam
 from .sw360error import SW360Error
 
 
 class ReleasesMixin(BaseMixin):
+
+    def __get_releases_filtered(
+        self, url: str, page: int = -1, page_size: int = -1,
+        sort: Optional[SortParam] = None
+    ) -> Any:
+        """
+        Take a pre-generated URL of releases endpoint, with filters applied.
+        Then call the API with appropriate pagination and sorting to get the
+        releases.
+
+        :param url: Releases API URL with filters in the query
+        :type url: str
+        :param page: page to retrieve
+        :type page: int
+        :param page_size: page size to use, `-1` to get all
+        :type page_size: int
+        :param sort: sort order for the releases
+        :type sort: SortParam
+        :return: list of releases
+        :rtype: list of JSON release objects
+        :raises SW360Error: if there is a negative HTTP response
+        """
+
+        full_url = self._add_params(url, {"luceneSearch": "true"})
+        if page > -1 and page_size > -1:
+            full_url = self._add_pagination(full_url, page, page_size, sort)
+
+        if page_size == -1:
+            resp = self.api_get_all(full_url, sort)
+        else:
+            resp = self.api_get(full_url)
+
+        if (resp and
+            "_embedded" in resp and
+            "sw360:releases" in resp["_embedded"]):
+            return resp["_embedded"]["sw360:releases"]
+
+        return []
+
     def get_release(self, release_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about a release
 
@@ -38,8 +78,8 @@ class ReleasesMixin(BaseMixin):
 
         API endpoint: GET /releases
 
-        :param url: the full url of the release to be requested
-        :type url: string
+        :param release_url: the full url of the release to be requested
+        :type release_url: string
         :return: a release
         :rtype: JSON release object
         :raises SW360Error: if there is a negative HTTP response
@@ -50,13 +90,22 @@ class ReleasesMixin(BaseMixin):
         resp = self.api_get(release_url)
         return resp
 
-    def get_releases_by_name(self, name: str) -> List[Any]:
+    def get_releases_by_name(
+        self, name: str, page: int = -1, page_size: int = -1,
+        sort: Optional[SortParam] = None
+    ) -> List[Any]:
         """Gets a list of releases that match the given name.
 
         API endpoint: GET /releases?name=
 
         :param name: the name
         :type name: string
+        :param page: page to retrieve
+        :type page: int
+        :param page_size: page size to use, `-1` to get all
+        :type page_size: int
+        :param sort: sort order for the releases (Sort by score if `None`)
+        :type sort: SortParam
         :return: list of releases
         :rtype: list of JSON release objects
         :raises SW360Error: if there is a negative HTTP response
@@ -64,32 +113,40 @@ class ReleasesMixin(BaseMixin):
         if not name:
             raise SW360Error(message="No release name provided!")
 
-        full_url = self.url + "resource/api/releases?name=" + name
-        resp = self.api_get(full_url)
-        if resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
-            return resp["_embedded"]["sw360:releases"]
+        fullbase_url = self.url + "resource/api/releases"
+        params = {"name": name}
 
-        return []
+        url_with_param = self._add_params(fullbase_url, params)
+
+        if sort is None:
+            sort = ReleaseSortColumn.SCORE.asc()
+
+        return self.__get_releases_filtered(url_with_param, page, page_size,
+                                            sort)
 
     # return type List[Dict[str, Any]] | Optional[Dict[str, Any]] for Python 3.11 is good,
     # Union[List[Dict[str, Any]], Optional[Dict[str, Any]]] for lower Python versions is not good
-    def get_all_releases(self, fields: str = "", all_details: bool = False,
-                         isNewClearingWithSourceAvailable: bool = False, page: int = -1,
-                         page_size: int = -1, sort: str = "") -> Any:
+    def get_all_releases(
+        self, fields: str = "", all_details: bool = False,
+        isNewClearingWithSourceAvailable: bool = False, page: int = -1,
+        page_size: int = -1, sort: Optional[SortParam] = None
+    ) -> Any:
         """Get information of about all releases
 
         API endpoint: GET /releases
 
-        :param all_details: retrieve all project details (optional))
+        :param fields: fields to include
+        :type fields: string
+        :param all_details: retrieve all release details (optional)
         :type all_details: bool
-        :param isNewClearingWithSourceAvailable: retrieve releases in new clearning state with source avail
+        :param isNewClearingWithSourceAvailable: retrieve releases in new clearing state with source available
         :type isNewClearingWithSourceAvailable: bool
         :param page: page to retrieve
         :type page: int
-        :param page_size: page size to use
+        :param page_size: page size to use, `-1` to get all
         :type page_size: int
-        :param sort: sort order for the releases ("name,desc"; "name,asc")
-        :type sort: str
+        :param sort: sort order for the releases (Sort by name if `None`)
+        :type sort: SortParam
         :return: list of releases
         :rtype: list of JSON release objects
         :raises SW360Error: if there is a negative HTTP response
@@ -106,31 +163,23 @@ class ReleasesMixin(BaseMixin):
         if fields:
             params["fields"] = fields
 
-        if page > -1:
-            params["page"] = str(page)
-            params["page_entries"] = str(page_size)
+        url_with_param = self._add_params(fullbase_url, params)
 
-        if sort:
-            params["sort"] = sort
+        if sort is None:
+            sort = ReleaseSortColumn.NAME.asc()
 
-        full_url = self._add_params(fullbase_url, params)
-
-        resp = self.api_get(full_url)
-
-        if page == -1 and resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
-            return resp["_embedded"]["sw360:releases"]
-
-        return resp
+        return self.__get_releases_filtered(url_with_param, page, page_size,
+                                            sort)
 
     def get_releases_by_external_id(self, ext_id_name: str, ext_id_value: str = "") -> List[Dict[str, Any]]:
         """Get releases by external id. `ext_id_value` can be left blank to
         search for all releases with `ext_id_name`.
 
-        API endpoint: GET /releases
+        API endpoint: GET /releases/searchByExternalIds
 
         :param ext_id_name: the name of the external id to look for
-        :param ext_id_value: the value of the external id to look for
         :type ext_id_name: string
+        :param ext_id_value: the value of the external id to look for
         :type ext_id_value: string
         :return: list of releases
         :rtype: list of JSON release objects
@@ -139,11 +188,14 @@ class ReleasesMixin(BaseMixin):
         if not ext_id_name:
             raise SW360Error(message="No external id name provided!")
 
-        resp = self.api_get(
-            self.url
-            + "resource/api/releases/searchByExternalIds?"
-            + ext_id_name + "=" + ext_id_value
+        url = self._add_params(
+            self.url + "resource/api/releases/searchByExternalIds",
+            {
+                ext_id_name: ext_id_value
+            }
         )
+
+        resp = self.api_get(url)
         if resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
             return resp["_embedded"]["sw360:releases"]
 
@@ -291,7 +343,7 @@ class ReleasesMixin(BaseMixin):
     def link_packages_to_release(self, release_id: str, packages: List[str]) -> Optional[Dict[str, Any]]:
         """Link (new) packages to a given release.
 
-        API endpoint PATCH /release/{pid}/packages{rid}
+        API endpoint PATCH /release/{rid}/link/packages
 
         :param release_id: the id of the existing release
         :type release_id: string
@@ -345,3 +397,33 @@ class ReleasesMixin(BaseMixin):
             return resp["_embedded"]["sw360:releases"]
 
         return []
+
+    def upload_attachment_to_release(
+        self, release_id: str, upload_file: str, upload_type: str = "SOURCE",
+        upload_comment: str = ""
+    ) -> Optional[Dict[str, Any]]:
+        """Upload an attachment to a given Release.
+
+        API endpoint: POST /attachments & PATCH /releases/{id}
+
+        :param release_id: the id of the Release
+        :type release_id: string
+        :param upload_file: path of the file to be uploaded
+        :type upload_file: string
+        :param upload_type: the type of the attachment
+        :type upload_type: string
+        :param upload_comment: a comment for the attachment
+        :type upload_comment: string
+        :raises SW360Error: if the release id is missing or there is a negative HTTP response
+        """
+        if not release_id:
+            raise SW360Error(message="No release id provided!")
+
+        attachment_content = self._upload_resource_file(upload_file, upload_type, upload_comment)
+        attachment_content['attachmentType'] = upload_type # Make sure the type is correct
+        attachment_content['createdComment'] = upload_comment # Override
+
+        current_release = self.get_release(release_id)
+        attachments = self._get_attachments(current_release)
+        attachments.append(attachment_content)
+        return self.update_release({'attachments': attachments}, release_id)

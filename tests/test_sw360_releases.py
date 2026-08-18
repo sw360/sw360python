@@ -17,6 +17,7 @@ import responses
 sys.path.insert(1, "..")
 
 from sw360 import SW360, SW360Error  # noqa: E402
+from sw360.sorting import ReleaseSortColumn  # noqa: E402
 
 
 class Sw360TestReleases(unittest.TestCase):
@@ -161,7 +162,7 @@ class Sw360TestReleases(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/releases?isNewClearingWithSourceAvailable=true",
+            url=self.MYURL + "resource/api/releases?isNewClearingWithSourceAvailable=true&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0"}]}}',
             status=200,
             content_type="application/json",
@@ -185,7 +186,7 @@ class Sw360TestReleases(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/releases?allDetails=true",
+            url=self.MYURL + "resource/api/releases?allDetails=true&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0", "releaseDate": "2018-03-04"}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -207,7 +208,7 @@ class Sw360TestReleases(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/releases?fields=releaseDate",
+            url=self.MYURL + "resource/api/releases?fields=releaseDate&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0", "releaseDate": "2018-03-04"}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -229,7 +230,7 @@ class Sw360TestReleases(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/releases?allDetails=true&fields=releaseDate",
+            url=self.MYURL + "resource/api/releases?allDetails=true&fields=releaseDate&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0", "releaseDate": "2018-03-04"}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -251,19 +252,18 @@ class Sw360TestReleases(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/releases?page=2&page_entries=5&sort=name%2Casc",
+            url=self.MYURL + "resource/api/releases?page=2&page_entries=5&sort=name%2Casc&luceneSearch=true",
             body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0", "releaseDate": "2018-03-04"}]}}',  # noqa
             status=200,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        releases = lib.get_all_releases(page=2, page_size=5, sort="name,asc")
+        releases = lib.get_all_releases(page=2, page_size=5, sort=ReleaseSortColumn.NAME.asc())
         self.assertIsNotNone(releases)
         self.assertTrue(len(releases) > 0)
-        rel = releases["_embedded"]["sw360:releases"]
-        self.assertEqual("Tethys.Logging", rel[0]["name"])
-        self.assertEqual("1.3.0", rel[0]["version"])
+        self.assertEqual("Tethys.Logging", releases[0]["name"])
+        self.assertEqual("1.3.0", releases[0]["version"])
 
     @responses.activate
     def test_get_releases_by_external_id(self) -> None:
@@ -316,7 +316,7 @@ class Sw360TestReleases(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/releases?name=john",
+            url=self.MYURL + "resource/api/releases?name=john&luceneSearch=true&page=0&page_entries=50&sort=score,asc",
             body='{"_embedded": {"sw360:releases": [{"name": "john", "version": "2.2.2", "_links": {"self": {"href": "https://my.server.com/resource/api/releases/08ddfd57636c4c47f4c879515007081f"}}}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -338,7 +338,7 @@ class Sw360TestReleases(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/releases?name=john",
+            url=self.MYURL + "resource/api/releases?name=john&luceneSearch=true&page=0&page_entries=50&sort=score,asc",
             body='{"_xxembedded": {"sw360:releases": [{"name": "john", "version": "2.2.2", "_links": {"self": {"href": "https://my.server.com/resource/api/releases/08ddfd57636c4c47f4c879515007081f"}}}]}}',  # noqa
             status=200,
             content_type="application/json",

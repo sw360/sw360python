@@ -122,7 +122,9 @@ class Sw360TestPackages(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/packages?allDetails=true&purl=pkg:pypi/cli-support@2.0.0&luceneSearch=true&page=0&page_entries=50&sort=score,asc",
+            url=self.MYURL
+            + "resource/api/packages?allDetails=true&purl=pkg:pypi/cli-support@2.0.0"
+            + "&luceneSearch=true&page=0&page_entries=50&sort=score,asc",
             body='{"_embedded": {"sw360:packages": [{"name": "Tethys.Logging", "version": "1.3.0", "packageType": "FRAMEWORK"}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -145,7 +147,8 @@ class Sw360TestPackages(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/packages?allDetails=true&name=cli-support&version=2.0.0&luceneSearch=true&page=2&page_entries=6&sort=name,desc",  # noqa
+            url=self.MYURL
+            + "resource/api/packages?allDetails=true&name=cli-support&version=2.0.0&luceneSearch=true&page=2&page_entries=6&sort=name,desc",  # noqa
             body='{"_embedded": {"sw360:packages": [{"name": "Tethys.Logging", "version": "1.3.0", "packageType": "FRAMEWORK"}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -168,7 +171,8 @@ class Sw360TestPackages(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/packages?name=john&luceneSearch=true&page=0&page_entries=50&sort=score,asc",
+            url=self.MYURL
+            + "resource/api/packages?name=john&luceneSearch=true&page=0&page_entries=50&sort=score,asc",
             body='{"_embedded": {"sw360:packages": [{"name": "john", "version": "2.2.2", "_links": {"self": {"href": "https://my.server.com/resource/api/packages/08ddfd57636c4c47f4c879515007081f"}}}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -191,7 +195,8 @@ class Sw360TestPackages(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/packages?packageManager=nuget&luceneSearch=true&page=0&page_entries=50&sort=score,asc",
+            url=self.MYURL
+            + "resource/api/packages?packageManager=nuget&luceneSearch=true&page=0&page_entries=50&sort=score,asc",
             body='{"_embedded": {"sw360:packages": [{"name": "john", "version": "2.2.2", "_links": {"self": {"href": "https://my.server.com/resource/api/packages/08ddfd57636c4c47f4c879515007081f"}}}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -214,7 +219,8 @@ class Sw360TestPackages(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/packages?packageManager=nuget&luceneSearch=true&page=1&page_entries=5&sort=name%2Cdesc",
+            url=self.MYURL + "resource/api/packages?packageManager=nuget&luceneSearch=true"
+            + "&page=1&page_entries=5&sort=name%2Cdesc",
             body='{"_embedded": {"sw360:packages": [{"name": "john", "version": "2.2.2", "_links": {"self": {"href": "https://my.server.com/resource/api/packages/08ddfd57636c4c47f4c879515007081f"}}}]}}',  # noqa
             status=200,
             content_type="application/json",

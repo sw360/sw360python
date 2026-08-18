@@ -3,7 +3,7 @@
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
-# Authors: helio.chissini-de-castro@bmw.de
+# Authors: helio.chissini-de-castro@bmw.de, mishra.gaurav@siemens.com
 #
 # Licensed under the MIT license.
 # SPDX-License-Identifier: MIT

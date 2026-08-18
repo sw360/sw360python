@@ -1,7 +1,7 @@
 # -------------------------------------------------------------------------------
 # Copyright (c) 2024-2026 Siemens
 # All Rights Reserved.
-# Authors: thomas.graf@siemens.com
+# Authors: thomas.graf@siemens.com, mishra.gaurav@siemens.com
 #
 # Licensed under the MIT license.
 # SPDX-License-Identifier: MIT
@@ -53,7 +53,7 @@ class PackagesMixin(BaseMixin):
 
         if (resp and
             "_embedded" in resp and
-            "sw360:packages" in resp["_embedded"]):
+                "sw360:packages" in resp["_embedded"]):
             return resp["_embedded"]["sw360:packages"]
 
         return []
@@ -109,8 +109,7 @@ class PackagesMixin(BaseMixin):
             else:
                 sort = PackageSortColumn.NAME.asc()
 
-        return self.__get_packages_filtered(url_with_param, page, page_size,
-                                              sort)
+        return self.__get_packages_filtered(url_with_param, page, page_size, sort)
 
     def get_all_packages(
         self, name: str = "", version: str = "", purl: str = "",
@@ -307,6 +306,6 @@ class PackagesMixin(BaseMixin):
         if not package_id:
             raise SW360Error(message="No package id provided!")
 
-        resp = self.api_get(self.url + "resource/api/packages/"+ package_id
+        resp = self.api_get(self.url + "resource/api/packages/" + package_id
                             + "/usage")
         return resp

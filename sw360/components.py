@@ -3,7 +3,7 @@
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
-# Authors: helio.chissini-de-castro@bmw.de
+# Authors: helio.chissini-de-castro@bmw.de, mishra.gaurav@siemens.com
 #
 # Licensed under the MIT license.
 # SPDX-License-Identifier: MIT
@@ -12,27 +12,70 @@
 from typing import Any, Dict, List, Optional
 
 from .base import BaseMixin
+from .sorting import ComponentSortColumn, SortParam
 from .sw360error import SW360Error
 
 
 class ComponentsMixin(BaseMixin):
     # return type List[Dict[str, Any]] | Optional[Dict[str, Any]] for Python 3.11 is good,
     # Union[List[Dict[str, Any]], Optional[Dict[str, Any]]] for lower Python versions is not good
-    def get_all_components(self, fields: str = "", page: int = -1, page_size: int = -1,
-                           all_details: bool = False,
-                           sort: str = "") -> Any:
+
+    def __get_components_filtered(
+        self, url: str, page: int = -1, page_size: int = -1,
+        sort: Optional[SortParam] = None
+    ) -> Any:
+        """
+        Take a pre-generated URL of components endpoint, with filters applied.
+        Then call the API with appropriate pagination and sorting to get the
+        components.
+
+        :param url: Components API URL with filters in the query
+        :type url: str
+        :param page: page to retrieve
+        :type page: int
+        :param page_size: page size to use, `-1` to get all
+        :type page_size: int
+        :param sort: sort order for the components (Sort by name if `None`)
+        :type sort: SortParam
+        :return: list of components
+        :rtype: list of JSON component objects
+        :raises SW360Error: if there is a negative HTTP response
+        """
+
+        full_url = self._add_params(url, {"luceneSearch": "true"})
+        if page > -1 and page_size > -1:
+            full_url = self._add_pagination(url, page, page_size, sort)
+
+        if page_size == -1:
+            resp = self.api_get_all(full_url, sort)
+        else:
+            resp = self.api_get(full_url)
+
+        if (resp and
+            "_embedded" in resp and
+                "sw360:components" in resp["_embedded"]):
+            return resp["_embedded"]["sw360:components"]
+
+        return []
+
+    def get_all_components(
+        self, fields: str = "", page: int = -1, page_size: int = -1,
+        all_details: bool = False, sort: Optional[SortParam] = None
+    ) -> Any:
         """Get information of about all components
 
         API endpoint: GET /components
 
+        :param fields: Comma-separated fields in the components object to fetch
+        :type fields: string
         :param page: page to retrieve
         :type page: int
-        :param page_size: page size to use
+        :param page_size: page size to use, `-1` to get all
         :type page_size: int
-        :param all_details: retrieve all component details (optional))
+        :param all_details: retrieve all component details (optional)
         :type all_details: bool
-        :param sort: sort order for the components ("name,desc"; "name,asc")
-        :type sort: str
+        :param sort: sort order for the components (Sort by name if `None`)
+        :type sort: SortParam
         :return: list of components
         :rtype: list of JSON component objects
         :raises SW360Error: if there is a negative HTTP response
@@ -47,48 +90,32 @@ class ComponentsMixin(BaseMixin):
         if fields:
             params["fields"] = fields
 
-        if page > -1:
-            params["page"] = str(page)
-            params["page_entries"] = str(page_size)
+        url_with_param = self._add_params(fullbase_url, params)
 
-        if sort:
-            params["sort"] = sort
+        if sort is None:
+            sort = ComponentSortColumn.NAME.asc()
 
-        full_url = self._add_params(fullbase_url, params)
-        resp = self.api_get(full_url)
-        if not resp:
-            return []
-
-        if "_embedded" not in resp:
-            return []
-
-        if "sw360:components" not in resp["_embedded"]:
-            return []
-
-        if page == -1:
-            return resp["_embedded"]["sw360:components"]
-
-        return resp
+        return self.__get_components_filtered(url_with_param, page, page_size,
+                                              sort)
 
     def get_components_by_type(
-            self,
-            component_type: str,
-            page: int = -1,
-            page_size: int = -1,
-            sort: str = "") -> List[Dict[str, Any]]:
+        self, component_type: str, page: int = -1, page_size: int = -1,
+        sort: Optional[SortParam] = None
+    ) -> List[Dict[str, Any]]:
         """Get information of about all components for certain type
 
-        API endpoint: GET /components
+        API endpoint: GET /components?type=
 
         :param component_type: the type of the component to be requested, one
-         of INTERNAL, OSS, COTS, FREESOFTWARE, INNER_SOURCE, SERVICE
+         of INTERNAL, OSS, COTS, FREESOFTWARE, INNER_SOURCE, SERVICE,
+         CODE_SNIPPET, COTS_TRUSTED_SUPPLIER
         :type component_type: string
         :param page: page to retrieve
         :type page: int
-        :param page_size: page size to use
+        :param page_size: page size to use, `-1` to get all
         :type page_size: int
-        :param sort: sort order for the components ("name,desc"; "name,asc")
-        :type sort: str
+        :param sort: sort order for the components (Sort by name if `None`)
+        :type sort: SortParam
         :return: list of components
         :rtype: list of JSON component objects
         :raises SW360Error: if there is a negative HTTP response
@@ -99,20 +126,13 @@ class ComponentsMixin(BaseMixin):
         fullbase_url = self.url + "resource/api/components"
         params = {"type": component_type}
 
-        if page > -1:
-            params["page"] = str(page)
-            params["page_entries"] = str(page_size)
+        url_with_param = self._add_params(fullbase_url, params)
 
-        if sort:
-            params["sort"] = sort
+        if sort is None:
+            sort = ComponentSortColumn.NAME.asc()
 
-        full_url = self._add_params(fullbase_url, params)
-        resp = self.api_get(full_url)
-
-        if resp and ("_embedded" in resp) and ("sw360:components" in resp["_embedded"]):
-            return resp["_embedded"]["sw360:components"]
-
-        return []
+        return self.__get_components_filtered(url_with_param, page, page_size,
+                                              sort)
 
     def get_component(self, component_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about a component
@@ -149,23 +169,21 @@ class ComponentsMixin(BaseMixin):
         return resp
 
     def get_component_by_name(
-            self,
-            component_name: str,
-            page: int = -1,
-            page_size: int = -1,
-            sort: str = "") -> Optional[Dict[str, Any]]:
+        self, component_name: str, page: int = -1, page_size: int = -1,
+        sort: Optional[SortParam] = None
+    ) -> Dict[str, Any]:
         """Get information of about a component
 
-        API endpoint: GET /components
+        API endpoint: GET /components?name=
 
         :param component_name: the name of the component to look for
         :type component_name: string
         :param page: page to retrieve
         :type page: int
-        :param page_size: page size to use
+        :param page_size: page size to use, `-1` to get all
         :type page_size: int
-        :param sort: sort order for the components ("name,desc"; "name,asc")
-        :type sort: str
+        :param sort: sort order for the components (Sort by score if `None`)
+        :type sort: SortParam
         :return: list of components
         :rtype: list of JSON component objects
         :raises SW360Error: if there is a negative HTTP response
@@ -176,16 +194,13 @@ class ComponentsMixin(BaseMixin):
         fullbase_url = self.url + "resource/api/components"
         params = {"name": component_name}
 
-        if page > -1:
-            params["page"] = str(page)
-            params["page_entries"] = str(page_size)
+        url_with_param = self._add_params(fullbase_url, params)
 
-        if sort:
-            params["sort"] = sort
+        if sort is None:
+            sort = ComponentSortColumn.SCORE.asc()
 
-        full_url = self._add_params(fullbase_url, params)
-        resp = self.api_get(full_url)
-        return resp
+        return self.__get_components_filtered(url_with_param, page, page_size,
+                                              sort)
 
     def get_components_by_external_id(self, ext_id_name: str, ext_id_value: str = "") -> List[Dict[str, Any]]:
         """Get components by external id. `ext_id_value` can be left blank to
@@ -194,8 +209,8 @@ class ComponentsMixin(BaseMixin):
         API endpoint: GET /components
 
         :param ext_id_name: the name of the external id to look for
-        :param ext_id_value: the value of the external id to look for
         :type ext_id_name: string
+        :param ext_id_value: the value of the external id to look for
         :type ext_id_value: string
         :return: list of components
         :rtype: list of JSON component objects
@@ -204,13 +219,12 @@ class ComponentsMixin(BaseMixin):
         if not ext_id_name:
             raise SW360Error(message="No external id name provided!")
 
-        resp = self.api_get(
-            self.url
-            + "resource/api/components/searchByExternalIds?"
-            + ext_id_name
-            + "="
-            + ext_id_value
-        )
+        fullbase_url = self.url + "resource/api/components/searchByExternalIds"
+        params = {ext_id_name: ext_id_value}
+
+        url_with_param = self._add_params(fullbase_url, params)
+
+        resp = self.api_get(url_with_param)
         if resp and ("_embedded" in resp) and ("sw360:components" in resp["_embedded"]):
             return resp["_embedded"]["sw360:components"]
 
@@ -225,7 +239,8 @@ class ComponentsMixin(BaseMixin):
         :param name: name of the new component
         :param description: description of the new component
         :param component_type: type of the new component, one of
-         "INTERNAL", "OSS", "COTS", "FREESOFTWARE", "INNER_SOURCE", "SERVICE", "CODE_SNIPPET"
+         "INTERNAL", "OSS", "COTS", "FREESOFTWARE", "INNER_SOURCE", "SERVICE",
+         "CODE_SNIPPET", "COTS_TRUSTED_SUPPLIER"
         :param homepage: homepage url of the new component
         :param component_details: further component details as defined by SW360 REST API
         :type name: string
@@ -369,3 +384,33 @@ class ComponentsMixin(BaseMixin):
             return resp["_embedded"]["sw360:components"]
 
         return []
+
+    def upload_attachment_to_component(
+        self, component_id: str, upload_file: str, upload_type: str = "SOURCE",
+        upload_comment: str = ""
+    ) -> Optional[Dict[str, Any]]:
+        """Upload an attachment to a given Component.
+
+        API endpoint: POST /attachments & PATCH /components/{id}
+
+        :param component_id: the id of the Component
+        :type component_id: string
+        :param upload_file: path of the file to be uploaded
+        :type upload_file: string
+        :param upload_type: the type of the attachment
+        :type upload_type: string
+        :param upload_comment: a comment for the attachment
+        :type upload_comment: string
+        :raises SW360Error: if the component id is missing or there is a negative HTTP response
+        """
+        if not component_id:
+            raise SW360Error(message="No component id provided!")
+
+        attachment_content = self._upload_resource_file(upload_file, upload_type, upload_comment)
+        attachment_content['attachmentType'] = upload_type  # Make sure the type is correct
+        attachment_content['createdComment'] = upload_comment  # Override
+
+        current_component = self.get_component(component_id)
+        attachments = self._get_attachments(current_component)
+        attachments.append(attachment_content)
+        return self.update_component({'attachments': attachments}, component_id)

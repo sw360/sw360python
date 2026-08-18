@@ -44,3 +44,12 @@ class ReleaseSortColumn(BaseSortMixin, Enum):
     CLEARING_STATE = "clearingState"
     MAINLINE_STATE = "mainlineState"
     SCORE = "score"
+
+
+class ComponentSortColumn(BaseSortMixin, Enum):
+    SCORE = "score"
+    CREATED_ON = "createdOn"
+    NAME = "name"
+    VENDOR_NAMES = "vendorNames"
+    MAIN_LICENSE_IDS = "mainLicenseIds"
+    TYPE = "type"

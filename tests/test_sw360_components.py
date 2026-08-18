@@ -18,6 +18,7 @@ import responses
 sys.path.insert(1, "..")
 
 from sw360 import SW360, SW360Error  # noqa: E402
+from sw360.sorting import ComponentSortColumn  # noqa: E402
 
 
 class Sw360TestComponents(unittest.TestCase):
@@ -105,7 +106,7 @@ class Sw360TestComponents(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/components?fields=ownerCountry",  # noqa
+            url=self.MYURL + "resource/api/components?fields=ownerCountry&luceneSearch=true&page=0&page_entries=50&sort=name,asc",  # noqa
             body='{"_embedded": {"sw360:components": [{"name": "Tethys.Logging", "ownerCountry": "DE", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -127,15 +128,14 @@ class Sw360TestComponents(unittest.TestCase):
         self.assertTrue(actual)
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/components?fields=ownerCountry&page=1&page_entries=2",  # noqa
+            url=self.MYURL + "resource/api/components?fields=ownerCountry&page=1&page_entries=2&sort=name,asc",  # noqa
             body='{"_embedded": {"sw360:components": [{"name": "Tethys.Logging", "ownerCountry": "DE", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
             status=200,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        data = lib.get_all_components("ownerCountry", 1, 2)
-        components = data["_embedded"]["sw360:components"]
+        components = lib.get_all_components("ownerCountry", 1, 2)
         self.assertIsNotNone(components)
         self.assertTrue(len(components) > 0)
         self.assertEqual("Tethys.Logging", components[0]["name"])
@@ -151,7 +151,7 @@ class Sw360TestComponents(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/components?allDetails=true",  # noqa
+            url=self.MYURL + "resource/api/components?allDetails=true&luceneSearch=true&page=0&page_entries=50&sort=name,asc",  # noqa
             body='{"_embedded": {"sw360:components": [{"name": "Tethys.Logging", "ownerCountry": "DE", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -174,14 +174,14 @@ class Sw360TestComponents(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/components?allDetails=true&sort=name%2Cdesc",  # noqa
+            url=self.MYURL + "resource/api/components?allDetails=true&luceneSearch=true&page=0&page_entries=50&sort=name,desc",  # noqa
             body='{"_embedded": {"sw360:components": [{"name": "Tethys.Logging", "ownerCountry": "DE", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
             status=200,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        components = lib.get_all_components(all_details=True, sort="name,desc")
+        components = lib.get_all_components(all_details=True, sort=ComponentSortColumn.NAME.desc())
         self.assertIsNotNone(components)
         self.assertTrue(len(components) > 0)
         self.assertEqual("Tethys.Logging", components[0]["name"])
@@ -204,7 +204,7 @@ class Sw360TestComponents(unittest.TestCase):
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        components = lib.get_all_components(all_details=True, sort="name,desc")
+        components = lib.get_all_components(all_details=True, sort=ComponentSortColumn.NAME.desc())
         self.assertIsNotNone(components)
         self.assertTrue(len(components) == 0)
 
@@ -225,7 +225,7 @@ class Sw360TestComponents(unittest.TestCase):
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        components = lib.get_all_components(all_details=True, sort="name,desc")
+        components = lib.get_all_components(all_details=True, sort=ComponentSortColumn.NAME.desc())
         self.assertIsNotNone(components)
         self.assertTrue(len(components) == 0)
 
@@ -239,7 +239,7 @@ class Sw360TestComponents(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/components?type=OSS",
+            url=self.MYURL + "resource/api/components?type=OSS&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"sw360:components": [{"name": "Tethys.Logging", "ownerCountry": "DE", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -262,7 +262,7 @@ class Sw360TestComponents(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/components?type=OSS",
+            url=self.MYURL + "resource/api/components?type=OSS&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{}',
             status=200,
             content_type="application/json",
@@ -282,7 +282,7 @@ class Sw360TestComponents(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/components?type=OSS",
+            url=self.MYURL + "resource/api/components?type=OSS&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{"_xxembedded": {"sw360:components": [{"name": "Tethys.Logging", "ownerCountry": "DE", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -303,7 +303,7 @@ class Sw360TestComponents(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/components?type=OSS",
+            url=self.MYURL + "resource/api/components?type=OSS&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"xxsw360:components": [{"name": "Tethys.Logging", "ownerCountry": "DE", "componentType": "OSS", "externalIds": {"package-url": "pkg:nuget/Tethys.Logging"}}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -366,7 +366,8 @@ class Sw360TestComponents(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/components?name=MyComponent",
+            url=self.MYURL
+            + "resource/api/components?name=MyComponent&luceneSearch=true&page=0&page_entries=50&sort=score,asc",
             body='{"name": "MyComponent"}',
             status=200,
             content_type="application/json",

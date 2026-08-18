@@ -12,55 +12,66 @@ from typing import Any, Dict, Optional
 from sw360.sw360error import SW360Error
 
 from .base import BaseMixin
+from .sorting import ModerationSortColumn, SortParam
 
 
 class ModerationRequestMixin(BaseMixin):
-    def get_all_moderation_requests(self, page: int = -1, page_size: int = -1,
-                                    sort: str = "") -> Optional[Dict[str, Any]]:
+    def get_all_moderation_requests(
+        self, page: int = -1, page_size: int = -1,
+        sort: Optional[SortParam] = None
+    ) -> Optional[Dict[str, Any]]:
         """Get information of about all moderation requests
 
         API endpoint: GET /moderationrequest
 
         :param page: page to retrieve
         :type page: int
-        :param page_size: page size to use
+        :param page_size: page size to use, `-1` to get all
         :type page_size: int
-        :param sort: sort order for the packages ("name,desc"; "name,asc")
-        :type sort: str
+        :param sort: sort order for the components (Sort by request date if
+        `None`)
+        :type sort: SortParam
         :return: list of moderation requests
         :rtype: list of JSON moderation requests objects
         :raises SW360Error: if there is a negative HTTP response
         """
 
         fullbase_url = self.url + "resource/api/moderationrequest"
-        params = {}
+        params = {"luceneSearch": "true"}
 
-        if page > -1:
-            params["page"] = str(page)
-            params["page_entries"] = str(page_size)
-
-        if sort:
-            params["sort"] = sort
+        if sort is None:
+            sort = ModerationSortColumn.REQUEST_DATE.desc()
 
         full_url = self._add_params(fullbase_url, params)
-        resp = self.api_get(full_url)
+        if page > -1 and page_size > -1:
+            full_url = self._add_pagination(full_url, page, page_size, sort)
+
+        if page_size == -1:
+            resp = self.api_get_all(full_url, sort)
+        else:
+            resp = self.api_get(full_url)
+
         return resp
 
-    def get_moderation_requests_by_state(self, state: str, all_details: bool = False,
-                                         page: int = -1, page_size: int = -1,
-                                         sort: str = "") -> Optional[Dict[str, Any]]:
+    def get_moderation_requests_by_state(
+        self, state: str, all_details: bool = False, page: int = -1,
+        page_size: int = -1, sort: Optional[SortParam] = None
+    ) -> Optional[Dict[str, Any]]:
         """Get information of about all moderation requests
 
         API endpoint: GET /moderationrequest/byState
 
-        :param all_details: retrieve all package details (optional))
+        :param state: State of the moderation request. One of "open", "closed"
+        :type state: string
+        :param all_details: retrieve all moderation details (optional)
         :type all_details: bool
         :param page: page to retrieve
         :type page: int
-        :param page_size: page size to use
+        :param page_size: page size to use, `-1` to get all
         :type page_size: int
-        :param sort: sort order for the packages ("name,desc"; "name,asc")
-        :type sort: str
+        :param sort: sort order for the components (Sort by request date if
+        `None`)
+        :type sort: SortParam
         :return: list of moderation requests
         :rtype: list of JSON moderation requests objects
         :raises SW360Error: if there is a negative HTTP response
@@ -74,15 +85,18 @@ class ModerationRequestMixin(BaseMixin):
         if all_details:
             params["allDetails"] = "true"
 
-        if page > -1:
-            params["page"] = str(page)
-            params["page_entries"] = str(page_size)
-
-        if sort:
-            params["sort"] = sort
+        if sort is None:
+            sort = ModerationSortColumn.REQUEST_DATE.desc()
 
         full_url = self._add_params(fullbase_url, params)
-        resp = self.api_get(full_url)
+        if page > -1 and page_size > -1:
+            full_url = self._add_pagination(full_url, page, page_size, sort)
+
+        if page_size == -1:
+            resp = self.api_get_all(full_url, sort)
+        else:
+            resp = self.api_get(full_url)
+
         return resp
 
     def get_moderation_request(self, mr_id: str) -> Optional[Dict[str, Any]]:

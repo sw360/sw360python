@@ -225,7 +225,8 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects?page=1&page_entries=2&sort=name,asc",
+            url=self.MYURL
+            + "resource/api/projects?luceneSearch=true&page=1&page_entries=2&sort=name,asc",
             body='{"_embedded": {"sw360:projects": [{"name": "My Testproject"}]}}',
             status=200,
             content_type="application/json",
@@ -243,7 +244,8 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects?allDetails=true&page=3&page_entries=4&sort=name%2Cdesc",  # noqa
+            url=self.MYURL
+            + "resource/api/projects?allDetails=true&luceneSearch=true&page=3&page_entries=4&sort=name%2Cdesc",  # noqa
             body='{"_embedded": {"sw360:projects": [{"name": "My Testproject"}]}}',
             status=200,
             content_type="application/json",

@@ -1,7 +1,7 @@
 ﻿# -------------------------------------------------------------------------------
-# Copyright (c) 2024 Siemens
+# Copyright (c) 2024-2026 Siemens
 # All Rights Reserved.
-# Author: thomas.graf@siemens.com
+# Author: thomas.graf@siemens.com, mishra.gaurav@siemens.com
 #
 # Licensed under the MIT license.
 # SPDX-License-Identifier: MIT
@@ -14,6 +14,7 @@ import warnings
 import responses
 
 from sw360 import SW360
+from sw360.sorting import ModerationSortColumn
 
 sys.path.insert(1, "..")
 
@@ -50,7 +51,8 @@ class Sw360TestModerationRequests(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/moderationrequest?page=2&page_entries=8&sort=timestamp%2Cdesc",
+            url=self.MYURL
+            + "resource/api/moderationrequest?luceneSearch=true&page=2&page_entries=8&sort=requestDate%2Cdesc",
             body='''{
                 "_embedded": {
                     "sw360:moderationRequests": [
@@ -104,7 +106,7 @@ class Sw360TestModerationRequests(unittest.TestCase):
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        mrs = lib.get_all_moderation_requests(page=2, page_size=8, sort="timestamp,desc")
+        mrs = lib.get_all_moderation_requests(page=2, page_size=8, sort=ModerationSortColumn.REQUEST_DATE.desc())
         self.assertIsNotNone(mrs)
         if mrs:
             self.assertTrue(len(mrs) > 0)
@@ -120,7 +122,8 @@ class Sw360TestModerationRequests(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/moderationrequest/byState?state=open&allDetails=true&page=2&page_entries=8&sort=timestamp%2Cdesc",  # noqa
+            url=self.MYURL
+            + "resource/api/moderationrequest/byState?state=open&allDetails=true&page=2&page_entries=8&sort=requestDate%2Cdesc",  # noqa
             body='''{
                 "_embedded": {
                     "sw360:moderationRequests": [
@@ -174,7 +177,8 @@ class Sw360TestModerationRequests(unittest.TestCase):
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        mrs = lib.get_moderation_requests_by_state("open", True, page=2, page_size=8, sort="timestamp,desc")
+        mrs = lib.get_moderation_requests_by_state("open", True, page=2, page_size=8,
+                                                   sort=ModerationSortColumn.REQUEST_DATE.desc())
         self.assertIsNotNone(mrs)
         if mrs:
             self.assertTrue(len(mrs) > 0)

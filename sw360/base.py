@@ -130,6 +130,7 @@ class BaseMixin():
 
         self.force_no_session = False
         self.default_batch_size = default_batch_size
+        self.api_version = (18, 0)
 
     def api_get(self, url: str = "") -> Optional[SW360Response]:
         """Request `url` from REST API and return json answer.
@@ -373,7 +374,8 @@ class BaseMixin():
 
         return (old_value, ext_id_data, update)
 
-    def _add_params(self, url: str, params: Dict[str, str]) -> str:
+    @staticmethod
+    def _add_params(url: str, params: Dict[str, str]) -> str:
         """Add the given parameter to the given url"""
 
         query_string = urlencode(params)
@@ -505,6 +507,17 @@ class BaseMixin():
             if '_links' in attachment:
                 del attachment['_links']
         return attachments
+
+    def is_above_version_18(self) -> bool:
+        """Check if API version is above version 18.
+         Used to check version >= 19 features."""
+        return self.api_version >= (19, 0)
+
+    def is_above_version_19(self) -> bool:
+        """Check if API version is above version 19.
+         Used to check version >= 20 features."""
+        return self.api_version >= (20, 0)
+
     @classmethod
     def get_linked_id(cls, data: Dict[str, Any], link_key: str = "self") -> Optional[str]:
         """Extract the resource ID from a HAL ``_links`` entry.

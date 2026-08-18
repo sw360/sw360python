@@ -41,16 +41,30 @@ class Sw360TestHealth(unittest.TestCase):
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
+    def _add_version_response(self) -> None:
+        """
+        Add the response for a successful login.
+        """
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/version",
+            body='{"apiVersion":"20.1.76","buildTime":"2026-08-14T13:17:47Z","buildNumber":"a8a0997",'
+            + '"sw360Version":"20.1.0","gitBranch":"main"}',
+            status=200,
+            content_type="application/json",
+        )
+
     @responses.activate
     def test_get_health_status(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/health/",
+            url=self.MYURL + "resource/api/health",
             body='{"status": "UP"}',
             status=200,
             content_type="application/json",
@@ -68,13 +82,6 @@ class Sw360TestHealth(unittest.TestCase):
         self._add_login_response()
         actual = lib.login_api()
         self.assertTrue(actual)
-
-        responses.add(
-            method=responses.GET,
-            url=self.MYURL + "resource/api/health/",
-            body='{"status":404,"error":"Not Found","path":"/resource/api/health/"}',
-            status=404,
-        )
 
         responses.add(
             method=responses.GET,

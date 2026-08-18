@@ -42,6 +42,14 @@ class Sw360TestProjects(unittest.TestCase):
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/version",
+            body='{"apiVersion":"20.1.76","buildTime":"2026-08-14T13:17:47Z","buildNumber":"a8a0997",'
+            + '"sw360Version":"20.1.0","gitBranch":"main"}',
+            status=200,
+            content_type="application/json",
+        )
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -190,6 +198,25 @@ class Sw360TestProjects(unittest.TestCase):
             responses.GET,
             url=self.MYURL
             + "resource/api/projects?luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            body='{"_embedded": {"sw360:projects": [{"name": "My Testproject"}]}}',
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        projects = lib.get_projects()
+        self.assertIsNotNone(projects)
+        if projects:  # only for mypy
+            self.assertEqual("My Testproject", projects[0]["name"])
+
+    @responses.activate
+    def test_get_projects_v18_style(self) -> None:
+        lib = self.get_logged_in_lib()
+        lib.api_version = (18, 0)
+
+        responses.add(
+            responses.GET,
+            url=self.MYURL + "resource/api/projects",
             body='{"_embedded": {"sw360:projects": [{"name": "My Testproject"}]}}',
             status=200,
             content_type="application/json",

@@ -3,7 +3,7 @@
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
-# Authors: helio.chissini-de-castro@bmw.de
+# Authors: helio.chissini-de-castro@bmw.de, mishra.gaurav@siemens.com
 #
 # Licensed under the MIT license.
 # SPDX-License-Identifier: MIT
@@ -40,18 +40,22 @@ class ReleasesMixin(BaseMixin):
         :raises SW360Error: if there is a negative HTTP response
         """
 
-        full_url = self._add_params(url, {"luceneSearch": "true"})
+        if self.is_above_version_18():
+            full_url = self._add_params(url, {"luceneSearch": "true"})
+        else:
+            full_url = url
+
         if page > -1 and page_size > -1:
             full_url = self._add_pagination(full_url, page, page_size, sort)
 
-        if page_size == -1:
+        if self.is_above_version_18() and page_size == -1:
             resp = self.api_get_all(full_url, sort)
         else:
             resp = self.api_get(full_url)
 
         if (resp and
             "_embedded" in resp and
-            "sw360:releases" in resp["_embedded"]):
+                "sw360:releases" in resp["_embedded"]):
             return resp["_embedded"]["sw360:releases"]
 
         return []
@@ -119,7 +123,10 @@ class ReleasesMixin(BaseMixin):
         url_with_param = self._add_params(fullbase_url, params)
 
         if sort is None:
-            sort = ReleaseSortColumn.SCORE.asc()
+            if self.is_above_version_18():
+                sort = ReleaseSortColumn.SCORE.asc()
+            else:
+                sort = ReleaseSortColumn.VERSION.desc()
 
         return self.__get_releases_filtered(url_with_param, page, page_size,
                                             sort)
@@ -420,8 +427,8 @@ class ReleasesMixin(BaseMixin):
             raise SW360Error(message="No release id provided!")
 
         attachment_content = self._upload_resource_file(upload_file, upload_type, upload_comment)
-        attachment_content['attachmentType'] = upload_type # Make sure the type is correct
-        attachment_content['createdComment'] = upload_comment # Override
+        attachment_content['attachmentType'] = upload_type  # Make sure the type is correct
+        attachment_content['createdComment'] = upload_comment  # Override
 
         current_release = self.get_release(release_id)
         attachments = self._get_attachments(current_release)

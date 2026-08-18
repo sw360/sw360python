@@ -43,6 +43,19 @@ class Sw360TestReleases(unittest.TestCase):
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
+    def _add_version_response(self) -> None:
+        """
+        Add the response for a successful login.
+        """
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/version",
+            body='{"apiVersion":"20.1.76","buildTime":"2026-08-14T13:17:47Z","buildNumber":"a8a0997",'
+            + '"sw360Version":"20.1.0","gitBranch":"main"}',
+            status=200,
+            content_type="application/json",
+        )
+
     def _my_matcher(self) -> Any:
         """
         Helper method to display the JSON parameters of a REST call.
@@ -57,6 +70,7 @@ class Sw360TestReleases(unittest.TestCase):
     def test_get_get_release(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -79,13 +93,15 @@ class Sw360TestReleases(unittest.TestCase):
     def test_get_get_release_internal_server_error(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
         responses.add(
             method=responses.GET,
             url=self.MYURL + "resource/api/releases/123",
-            body='{"timestamp": "2020-12-10T07:22:06.1685Z", "status": "500", "error": "Internal Server Error", "message": "Handler dispatch failed; nested exception is java.lang.OutOfMemoryError: Metaspace"}',  # noqa
+            body='{"timestamp": "2020-12-10T07:22:06.1685Z", "status": "500", "error": "Internal Server Error",'
+            + ' "message": "Handler dispatch failed; nested exception is java.lang.OutOfMemoryError: Metaspace"}',  # noqa
             status=500,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
@@ -109,6 +125,7 @@ class Sw360TestReleases(unittest.TestCase):
     def test_get_release_by_url(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -131,6 +148,7 @@ class Sw360TestReleases(unittest.TestCase):
     def test_get_all_releases(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -157,12 +175,15 @@ class Sw360TestReleases(unittest.TestCase):
         """
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/releases?isNewClearingWithSourceAvailable=true&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            url=self.MYURL
+            + "resource/api/releases?isNewClearingWithSourceAvailable=true&luceneSearch=true"
+            + "&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0"}]}}',
             status=200,
             content_type="application/json",
@@ -181,12 +202,36 @@ class Sw360TestReleases(unittest.TestCase):
     def test_get_all_releases_all_details(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/releases?allDetails=true&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            url=self.MYURL
+            + "resource/api/releases?allDetails=true&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0", "releaseDate": "2018-03-04"}]}}',  # noqa
+            status=200,
+            content_type="application/json",
+            adding_headers={"Authorization": "Token " + self.MYTOKEN},
+        )
+
+        releases = lib.get_all_releases("", True)
+        self.assertIsNotNone(releases)
+        self.assertTrue(len(releases) > 0)
+        self.assertEqual("Tethys.Logging", releases[0]["name"])
+        self.assertEqual("1.3.0", releases[0]["version"])
+
+    @responses.activate
+    def test_get_all_releases_all_details_v18_style(self) -> None:
+        lib = SW360(self.MYURL, self.MYTOKEN, False)
+        self._add_login_response()
+        actual = lib.login_api()
+        self.assertTrue(actual)
+
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/releases?allDetails=true",
             body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0", "releaseDate": "2018-03-04"}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -203,12 +248,14 @@ class Sw360TestReleases(unittest.TestCase):
     def test_get_all_releases_with_fields(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/releases?fields=releaseDate&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            url=self.MYURL
+            + "resource/api/releases?fields=releaseDate&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0", "releaseDate": "2018-03-04"}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -225,12 +272,15 @@ class Sw360TestReleases(unittest.TestCase):
     def test_get_all_releases_with_fields_and_all_details(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/releases?allDetails=true&fields=releaseDate&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            url=self.MYURL
+            + "resource/api/releases?allDetails=true&fields=releaseDate&luceneSearch=true"
+            + "&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0", "releaseDate": "2018-03-04"}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -247,6 +297,7 @@ class Sw360TestReleases(unittest.TestCase):
     def test_get_all_releases_with_paging_and_sorting(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -269,6 +320,7 @@ class Sw360TestReleases(unittest.TestCase):
     def test_get_releases_by_external_id(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -291,6 +343,7 @@ class Sw360TestReleases(unittest.TestCase):
     def test_get_releases_by_external_id_invalid_reply(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -311,6 +364,7 @@ class Sw360TestReleases(unittest.TestCase):
     def test_get_releases_by_name(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -333,6 +387,7 @@ class Sw360TestReleases(unittest.TestCase):
     def test_get_releases_by_name_invalid_answer(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -354,6 +409,7 @@ class Sw360TestReleases(unittest.TestCase):
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -387,6 +443,7 @@ class Sw360TestReleases(unittest.TestCase):
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -429,6 +486,7 @@ class Sw360TestReleases(unittest.TestCase):
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -450,6 +508,7 @@ class Sw360TestReleases(unittest.TestCase):
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -473,6 +532,7 @@ class Sw360TestReleases(unittest.TestCase):
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -501,6 +561,7 @@ class Sw360TestReleases(unittest.TestCase):
     def test_update_release_external_id_add_fresh_id(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -533,6 +594,7 @@ class Sw360TestReleases(unittest.TestCase):
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -549,6 +611,7 @@ class Sw360TestReleases(unittest.TestCase):
     def test_delete_release_no_id(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -561,6 +624,7 @@ class Sw360TestReleases(unittest.TestCase):
     def test_delete_release_failed(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -586,6 +650,7 @@ class Sw360TestReleases(unittest.TestCase):
     def test_get_users_of_release(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -605,6 +670,7 @@ class Sw360TestReleases(unittest.TestCase):
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -631,6 +697,7 @@ class Sw360TestReleases(unittest.TestCase):
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         lib.force_no_session = True
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -656,6 +723,7 @@ class Sw360TestReleases(unittest.TestCase):
     def test_get_recent_releases(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 

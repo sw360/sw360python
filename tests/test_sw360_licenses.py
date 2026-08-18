@@ -41,10 +41,24 @@ class Sw360TestLicenses(unittest.TestCase):
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
+    def _add_version_response(self) -> None:
+        """
+        Add the response for a successful login.
+        """
+        responses.add(
+            method=responses.GET,
+            url=self.MYURL + "resource/api/version",
+            body='{"apiVersion":"20.1.76","buildTime":"2026-08-14T13:17:47Z","buildNumber":"a8a0997",'
+            + '"sw360Version":"20.1.0","gitBranch":"main"}',
+            status=200,
+            content_type="application/json",
+        )
+
     @responses.activate
     def test_get_all_licenses(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -80,6 +94,7 @@ class Sw360TestLicenses(unittest.TestCase):
     def test_get_all_licenses_none(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -99,6 +114,7 @@ class Sw360TestLicenses(unittest.TestCase):
     def test_get_license(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -128,6 +144,7 @@ class Sw360TestLicenses(unittest.TestCase):
     def test_create_new_license(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -163,6 +180,7 @@ class Sw360TestLicenses(unittest.TestCase):
     def test_create_new_license_fail(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 
@@ -208,6 +226,7 @@ class Sw360TestLicenses(unittest.TestCase):
     def test_delete_license(self) -> None:
         lib = SW360(self.MYURL, self.MYTOKEN, False)
         self._add_login_response()
+        self._add_version_response()
         actual = lib.login_api()
         self.assertTrue(actual)
 

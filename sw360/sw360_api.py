@@ -10,7 +10,7 @@
 
 """Python interface to the Siemens SW360 platform"""
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -73,6 +73,7 @@ class SW360(
     :type oauth2: boolean
     :ivar default_batch_size: Default size of batch to use while fetching all items from API
     :type default_batch_size: int
+    :ivar api_version: SW360 API Version, defaults to 18.0
     """
 
     def __init__(
@@ -98,8 +99,9 @@ class SW360(
 
         self.force_no_session = False
         self.default_batch_size = default_batch_size
+        self.api_version = self.parse_version("18.0")
 
-    def login_api(self, token: str = "") -> bool:
+    def login_api(self, token: str = "") -> bool:  # noqa
         """Login to SW360 REST API. This used to have a `token` parameter
         due to historic reasons which is ignored.
 
@@ -120,6 +122,24 @@ class SW360(
 
         except Exception as ex:
             raise SW360Error(None, url, message="Unable to login: " + repr(ex))
+
+        version_url = self.url + "resource/api/version"
+        try:
+            if self.force_no_session:
+                versp = requests.get(version_url,
+                                     headers={"Accept": "application/json"})
+            else:
+                if self.session:
+                    versp = self.session.get(
+                        version_url,
+                        headers={"Accept": "application/json"})
+            version_response = versp.json()
+            if "apiVersion" not in version_response:
+                raise SW360Error(versp, version_url,
+                                 "Unable to get API version")
+            self.api_version = self.parse_version(version_response["apiVersion"])
+        except Exception:
+            self.api_version = self.parse_version("18.0")
 
         if resp.ok:
             return True
@@ -169,9 +189,13 @@ class SW360(
         :rtype: JSON health status object
         :raises SW360Error: if there is a negative HTTP response
         """
-        try:
-            # SW360 >= 19.0 has changed the endpoint path
-            return self.api_get(self.url + "resource/api/health/")
-        except SW360Error:
-            # try to fallback to old endpoint for SW360 <= 18.x
+        if self.is_above_version_18():
+            return self.api_get(self.url + "resource/api/health")
+        else:
             return self.api_get(self.url + "resource/health/")
+
+    @staticmethod
+    def parse_version(version_string: str) -> Tuple[int, int]:
+        """Extract major.minor as comparable tuple"""
+        parts = version_string.split('.')
+        return (int(parts[0]), int(parts[1]))

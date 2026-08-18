@@ -9,9 +9,9 @@
 
 __version__ = (1, 11, 2)
 
+from .base import SW360Response
 from .sorting import (BaseSortMixin, ProjectSortColumn, ReleaseSortColumn,
                       SortParam)
-from .base import SW360Response
 from .sw360_api import SW360
 from .sw360error import SW360Error
 from .sw360keycloak import SW360Keycloak

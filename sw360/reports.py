@@ -7,8 +7,6 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional
-
 import requests
 
 from .base import BaseMixin
@@ -37,6 +35,9 @@ class ReportsMixin(BaseMixin):
         :rtype: int
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not self.is_above_version_18():
+            raise SW360Error(message="SW360 version < 19 is not supported")
+
         if not project_id:
             raise SW360Error(message="No project id provided!")
 
@@ -97,6 +98,9 @@ class ReportsMixin(BaseMixin):
         :rtype: int
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not self.is_above_version_18():
+            raise SW360Error(message="SW360 version < 19 is not supported")
+
         if not project_id:
             raise SW360Error(message="No project id provided!")
 
@@ -148,6 +152,9 @@ class ReportsMixin(BaseMixin):
         :type with_subprojects: bool
         :raises SW360Error: if there is a negative HTTP response
         """
+        if not self.is_above_version_18():
+            raise SW360Error(message="SW360 version < 19 is not supported")
+
         if not project_id:
             raise SW360Error(message="No project id provided!")
 

@@ -44,7 +44,7 @@ class VendorMixin(BaseMixin):
         if page > -1 and page_size > -1:
             full_url = self._add_pagination(full_url, page, page_size, sort)
 
-        if page_size == -1:
+        if self.is_above_version_18() and page_size == -1:
             resp = self.api_get_all(full_url, sort)
         else:
             resp = self.api_get(full_url)
@@ -81,13 +81,16 @@ class VendorMixin(BaseMixin):
         params = {"searchText": search_text}
 
         if sort is None:
-            sort = VendorSortColumn.SCORE.asc()
+            if self.is_above_version_18():
+                sort = VendorSortColumn.SCORE.asc()
+            else:
+                sort = VendorSortColumn.SHORT_NAME.asc()
 
         full_url = self._add_params(fullbase_url, params)
         if page > -1 and page_size > -1:
             full_url = self._add_pagination(full_url, page, page_size, sort)
 
-        if page_size == -1:
+        if self.is_above_version_18() and page_size == -1:
             resp = self.api_get_all(full_url, sort)
         else:
             resp = self.api_get(full_url)

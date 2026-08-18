@@ -5,6 +5,16 @@
 
 # SW360 Base Library for Python
 
+## NEXT
+
+* new helper functions `get_linked_id()` and `get_embedded()` to help parsing the
+  `obj["_links"]` and `obj["_embedded"]` sections of HAL responses.
+* All `get_*()` and `update_*()` methods now return a `SW360Response` which is a dict
+  subclass. So you can still use the result as a normal dict, existing code should work
+  unchanged. The new class however also provides the convenience methods `linked_id()`,
+  `linked_ids()`, `embedded_list()`, and `embedded_lists()` to easily access the HAL
+  sections of the response.
+
 ## V1.12.0.dev1
 
 * Support Keycloak (OpenID) token generation.

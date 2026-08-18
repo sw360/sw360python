@@ -45,6 +45,7 @@ class ReleaseSortColumn(BaseSortMixin, Enum):
     MAINLINE_STATE = "mainlineState"
     SCORE = "score"
 
+
 class ComponentSortColumn(BaseSortMixin, Enum):
     SCORE = "score"
     CREATED_ON = "createdOn"
@@ -53,10 +54,12 @@ class ComponentSortColumn(BaseSortMixin, Enum):
     MAIN_LICENSE_IDS = "mainLicenseIds"
     TYPE = "type"
 
+
 class LicenseSortColumn(BaseSortMixin, Enum):
     SCORE = "score"
     FULL_NAME = "fullName"
     SHORT_NAME = "shortName"
+
 
 class ModerationSortColumn(BaseSortMixin, Enum):
     SCORE = "score"

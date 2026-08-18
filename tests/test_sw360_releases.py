@@ -50,7 +50,8 @@ class Sw360TestReleases(unittest.TestCase):
         responses.add(
             method=responses.GET,
             url=self.MYURL + "resource/api/version",
-            body='{"apiVersion":"20.1.76","buildTime":"2026-08-14T13:17:47Z","buildNumber":"a8a0997","sw360Version":"20.1.0","gitBranch":"main"}',
+            body='{"apiVersion":"20.1.76","buildTime":"2026-08-14T13:17:47Z","buildNumber":"a8a0997",'
+            + '"sw360Version":"20.1.0","gitBranch":"main"}',
             status=200,
             content_type="application/json",
         )
@@ -99,7 +100,8 @@ class Sw360TestReleases(unittest.TestCase):
         responses.add(
             method=responses.GET,
             url=self.MYURL + "resource/api/releases/123",
-            body='{"timestamp": "2020-12-10T07:22:06.1685Z", "status": "500", "error": "Internal Server Error", "message": "Handler dispatch failed; nested exception is java.lang.OutOfMemoryError: Metaspace"}',  # noqa
+            body='{"timestamp": "2020-12-10T07:22:06.1685Z", "status": "500", "error": "Internal Server Error",'
+            + ' "message": "Handler dispatch failed; nested exception is java.lang.OutOfMemoryError: Metaspace"}',  # noqa
             status=500,
             content_type="application/json",
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
@@ -179,7 +181,9 @@ class Sw360TestReleases(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/releases?isNewClearingWithSourceAvailable=true&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            url=self.MYURL
+            + "resource/api/releases?isNewClearingWithSourceAvailable=true&luceneSearch=true"
+            + "&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0"}]}}',
             status=200,
             content_type="application/json",
@@ -204,7 +208,8 @@ class Sw360TestReleases(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/releases?allDetails=true&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            url=self.MYURL
+            + "resource/api/releases?allDetails=true&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0", "releaseDate": "2018-03-04"}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -249,7 +254,8 @@ class Sw360TestReleases(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/releases?fields=releaseDate&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            url=self.MYURL
+            + "resource/api/releases?fields=releaseDate&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0", "releaseDate": "2018-03-04"}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -272,7 +278,9 @@ class Sw360TestReleases(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/releases?allDetails=true&fields=releaseDate&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            url=self.MYURL
+            + "resource/api/releases?allDetails=true&fields=releaseDate&luceneSearch=true"
+            + "&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"sw360:releases": [{"name": "Tethys.Logging", "version": "1.3.0", "releaseDate": "2018-03-04"}]}}',  # noqa
             status=200,
             content_type="application/json",

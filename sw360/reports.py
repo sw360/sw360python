@@ -7,8 +7,6 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional
-
 import requests
 
 from .base import BaseMixin

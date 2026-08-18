@@ -79,10 +79,12 @@ class PackageSortColumn(BaseSortMixin, Enum):
     VERSION = "version"
     PACKAGE_MANAGER = "packageManager"
 
+
 class VendorSortColumn(BaseSortMixin, Enum):
     SCORE = "score"
     FULL_NAME = "fullName"
     SHORT_NAME = "shortName"
+
 
 class VulnerabilitySortColumn(BaseSortMixin, Enum):
     LAST_UPDATE_DATE = "lastUpdateDate"

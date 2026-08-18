@@ -45,7 +45,8 @@ class Sw360TestProjects(unittest.TestCase):
         responses.add(
             method=responses.GET,
             url=self.MYURL + "resource/api/version",
-            body='{"apiVersion":"20.1.76","buildTime":"2026-08-14T13:17:47Z","buildNumber":"a8a0997","sw360Version":"20.1.0","gitBranch":"main"}',
+            body='{"apiVersion":"20.1.76","buildTime":"2026-08-14T13:17:47Z","buildNumber":"a8a0997",'
+            + '"sw360Version":"20.1.0","gitBranch":"main"}',
             status=200,
             content_type="application/json",
         )

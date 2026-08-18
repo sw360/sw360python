@@ -517,6 +517,7 @@ class BaseMixin():
         """Check if API version is above version 19.
          Used to check version >= 20 features."""
         return self.api_version >= (20, 0)
+
     @classmethod
     def get_linked_id(cls, data: Dict[str, Any], link_key: str = "self") -> Optional[str]:
         """Extract the resource ID from a HAL ``_links`` entry.

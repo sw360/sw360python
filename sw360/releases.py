@@ -3,7 +3,7 @@
 # Copyright (c) 2022 BMW CarIT GmbH
 # All Rights Reserved.
 # Authors: thomas.graf@siemens.com, gernot.hillier@siemens.com
-# Authors: helio.chissini-de-castro@bmw.de
+# Authors: helio.chissini-de-castro@bmw.de, mishra.gaurav@siemens.com
 #
 # Licensed under the MIT license.
 # SPDX-License-Identifier: MIT
@@ -55,7 +55,7 @@ class ReleasesMixin(BaseMixin):
 
         if (resp and
             "_embedded" in resp and
-            "sw360:releases" in resp["_embedded"]):
+                "sw360:releases" in resp["_embedded"]):
             return resp["_embedded"]["sw360:releases"]
 
         return []
@@ -427,8 +427,8 @@ class ReleasesMixin(BaseMixin):
             raise SW360Error(message="No release id provided!")
 
         attachment_content = self._upload_resource_file(upload_file, upload_type, upload_comment)
-        attachment_content['attachmentType'] = upload_type # Make sure the type is correct
-        attachment_content['createdComment'] = upload_comment # Override
+        attachment_content['attachmentType'] = upload_type  # Make sure the type is correct
+        attachment_content['createdComment'] = upload_comment  # Override
 
         current_release = self.get_release(release_id)
         attachments = self._get_attachments(current_release)

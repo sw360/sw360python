@@ -101,7 +101,7 @@ class SW360(
         self.default_batch_size = default_batch_size
         self.api_version = self.parse_version("18.0")
 
-    def login_api(self, token: str = "") -> bool:
+    def login_api(self, token: str = "") -> bool:  # noqa
         """Login to SW360 REST API. This used to have a `token` parameter
         due to historic reasons which is ignored.
 

@@ -1,7 +1,7 @@
 # -------------------------------------------------------------------------------
-# Copyright (c) 2023-2025 Siemens
+# Copyright (c) 2023-2026 Siemens
 # All Rights Reserved.
-# Authors: thomas.graf@siemens.com
+# Authors: thomas.graf@siemens.com, mishra.gaurav@siemens.com
 #
 # Licensed under the MIT license.
 # SPDX-License-Identifier: MIT
@@ -173,7 +173,7 @@ class BaseMixin():
                 response = self.session.post(url, files=files)
 
         if response.ok:
-            if response.status_code == HTTPStatus.NO_CONTENT:
+            if response.status_code == HTTPStatus.NO_CONTENT:  # 204 No Content
                 return None
             return response
 
@@ -207,7 +207,7 @@ class BaseMixin():
                 response = self.session.post(url, json=json)
 
         if response.ok:
-            if response.status_code == HTTPStatus.NO_CONTENT:
+            if response.status_code == HTTPStatus.NO_CONTENT:  # 204 No Content
                 return None
             return response
 
@@ -235,7 +235,7 @@ class BaseMixin():
                 response = self.session.patch(url, json=json)
 
         if response.ok:
-            if response.status_code == HTTPStatus.NO_CONTENT:
+            if response.status_code == HTTPStatus.NO_CONTENT:  # 204 No Content
                 return None
             if response.content:
                 return response.json()

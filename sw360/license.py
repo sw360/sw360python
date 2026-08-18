@@ -14,6 +14,7 @@ from typing import Any, Dict, List, Optional
 import requests
 
 from .base import BaseMixin
+from .sorting import LicenseSortColumn
 from .sw360error import SW360Error
 
 
@@ -24,7 +25,6 @@ class LicenseMixin(BaseMixin):
         fullName: str,
         text: str,
         checked: bool = False,
-        license_details: Dict[str, Any] = {},
     ) -> Any:
         """Create a new license
 
@@ -34,8 +34,8 @@ class LicenseMixin(BaseMixin):
         :param fullName: descriptive license name
         :param text: license text
         :param checked: if license is checked
-        :type shortname: string
-        :type fullname: string
+        :type shortName: string
+        :type fullName: string
         :type text: string
         :type checked: bool
         :return: SW360 result
@@ -53,10 +53,12 @@ class LicenseMixin(BaseMixin):
 
         url = self.url + "resource/api/licenses"
 
-        license_details["shortName"] = shortName
-        license_details["fullName"] = fullName
-        license_details["text"] = text
-        license_details["checked"] = checked
+        license_details = {
+            "shortName": shortName,
+            "fullName": fullName,
+            "text": text,
+            "checked": checked,
+        }
 
         response = self.api_post(url, json=license_details)
         if response is not None:
@@ -67,7 +69,7 @@ class LicenseMixin(BaseMixin):
     def delete_license(self, license_shortname: str) -> Optional[bool]:
         """Delete an existing license
 
-        API endpoint: PATCH /licenses
+        API endpoint: DELETE /licenses
 
         :param license_shortname: license shortname as the id
         :type license_shortname: string
@@ -75,8 +77,6 @@ class LicenseMixin(BaseMixin):
         :rtype: JSON SW360 result object
         :raises SW360Error: if there is a negative HTTP response
         """
-
-        # 2025-01-23: returns 500 - internal server error
 
         if not license_shortname:
             raise SW360Error(message="No license shortname provided!")
@@ -132,7 +132,9 @@ class LicenseMixin(BaseMixin):
         :raises SW360Error: if there is a negative HTTP response
         """
 
-        resp = self.api_get(self.url + "resource/api/licenses")
+        fullbase_url = self.url + "resource/api/licenses"
+        resp = self.api_get_all(fullbase_url)
+
         if resp and "_embedded" in resp and "sw360:licenses" in resp["_embedded"]:
             return resp["_embedded"]["sw360:licenses"]
 
@@ -153,4 +155,27 @@ class LicenseMixin(BaseMixin):
             raise SW360Error(message="No license id provided!")
 
         resp = self.api_get(self.url + "resource/api/licenses/" + license_id)
+        return resp
+
+    def search_license(self, search_text: str) -> Optional[Dict[str, Any]]:
+        """Get search a license by fullName, shortName or text
+
+        API endpoint: GET /licenses?searchText=
+
+        :param search_text: the search string
+        :type search_text: string
+        :return: list of licenses
+        :rtype: list of JSON license objects
+        :raises SW360Error: if there is a negative HTTP response
+        """
+        if not search_text:
+            raise SW360Error(message="Search Text provided!")
+
+        fullbase_url = self.url + "resource/api/licenses"
+        params = {"searchText": search_text}
+        full_url = self._add_params(fullbase_url, params)
+
+        sort = LicenseSortColumn.SCORE.asc()
+
+        resp = self.api_get_all(full_url, sort)
         return resp

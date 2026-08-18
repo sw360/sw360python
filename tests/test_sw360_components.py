@@ -1,7 +1,7 @@
 ﻿# -------------------------------------------------------------------------------
 # Copyright (c) 2020-2026 Siemens
 # All Rights Reserved.
-# Author: thomas.graf@siemens.com
+# Author: thomas.graf@siemens.com, mishra.gaurav@siemens.com
 #
 # Licensed under the MIT license.
 # SPDX-License-Identifier: MIT
@@ -366,7 +366,8 @@ class Sw360TestComponents(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/components?name=MyComponent&luceneSearch=true&page=0&page_entries=50&sort=score,asc",
+            url=self.MYURL
+            + "resource/api/components?name=MyComponent&luceneSearch=true&page=0&page_entries=50&sort=score,asc",
             body='{"name": "MyComponent"}',
             status=200,
             content_type="application/json",

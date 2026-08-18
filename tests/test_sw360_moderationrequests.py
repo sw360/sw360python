@@ -51,7 +51,8 @@ class Sw360TestModerationRequests(unittest.TestCase):
 
         responses.add(
             method=responses.GET,
-            url=self.MYURL + "resource/api/moderationrequest?luceneSearch=true&page=2&page_entries=8&sort=requestDate%2Cdesc",
+            url=self.MYURL
+            + "resource/api/moderationrequest?luceneSearch=true&page=2&page_entries=8&sort=requestDate%2Cdesc",
             body='''{
                 "_embedded": {
                     "sw360:moderationRequests": [
@@ -175,7 +176,8 @@ class Sw360TestModerationRequests(unittest.TestCase):
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        mrs = lib.get_moderation_requests_by_state("open", True, page=2, page_size=8, sort=ModerationSortColumn.REQUEST_DATE.desc())
+        mrs = lib.get_moderation_requests_by_state("open", True, page=2, page_size=8,
+                                                   sort=ModerationSortColumn.REQUEST_DATE.desc())
         self.assertIsNotNone(mrs)
         if mrs:
             self.assertTrue(len(mrs) > 0)

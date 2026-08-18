@@ -141,7 +141,8 @@ class Sw360TestProjects(unittest.TestCase):
         lib = self.get_logged_in_lib()
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects/123/releases?transitive=false&page=0&page_entries=50&sort=createdOn,desc",
+            url=self.MYURL
+            + "resource/api/projects/123/releases?transitive=false&page=0&page_entries=50&sort=createdOn,desc",
             body='{"name": "My Testproject"}',
             status=200,
             content_type="application/json",
@@ -153,7 +154,8 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects/123/releases?transitive=true&page=0&page_entries=50&sort=createdOn,desc",
+            url=self.MYURL
+            + "resource/api/projects/123/releases?transitive=true&page=0&page_entries=50&sort=createdOn,desc",
             body='{"name": "My Testproject"}',
             status=200,
             content_type="application/json",
@@ -186,7 +188,8 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects?luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            url=self.MYURL
+            + "resource/api/projects?luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"sw360:projects": [{"name": "My Testproject"}]}}',
             status=200,
             content_type="application/json",
@@ -204,7 +207,8 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects?allDetails=true&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            url=self.MYURL
+            + "resource/api/projects?allDetails=true&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"sw360:projects": [{"name": "My Testproject"}]}}',
             status=200,
             content_type="application/json",
@@ -222,7 +226,8 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects?luceneSearch=true&page=1&page_entries=2&sort=name,asc",
+            url=self.MYURL
+            + "resource/api/projects?luceneSearch=true&page=1&page_entries=2&sort=name,asc",
             body='{"_embedded": {"sw360:projects": [{"name": "My Testproject"}]}}',
             status=200,
             content_type="application/json",
@@ -240,7 +245,8 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects?allDetails=true&luceneSearch=true&page=3&page_entries=4&sort=name%2Cdesc",  # noqa
+            url=self.MYURL
+            + "resource/api/projects?allDetails=true&luceneSearch=true&page=3&page_entries=4&sort=name%2Cdesc",  # noqa
             body='{"_embedded": {"sw360:projects": [{"name": "My Testproject"}]}}',
             status=200,
             content_type="application/json",
@@ -258,7 +264,8 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects?type=SERVICE&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            url=self.MYURL
+            + "resource/api/projects?type=SERVICE&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"sw360:projects": [{"name": "My Testproject", "projectType": "SERVICE"}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -277,7 +284,8 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects?type=SERVICE&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            url=self.MYURL
+            + "resource/api/projects?type=SERVICE&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{}',
             status=200,
             content_type="application/json",
@@ -294,7 +302,8 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects?type=SERVICE&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            url=self.MYURL
+            + "resource/api/projects?type=SERVICE&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{"_xxembedded": {"sw360:projects": [{"name": "My Testproject", "projectType": "SERVICE"}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -311,7 +320,8 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects?type=SERVICE&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            url=self.MYURL
+            + "resource/api/projects?type=SERVICE&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
             body='{"_embedded": {"xxsw360:projects": [{"name": "My Testproject", "projectType": "SERVICE"}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -1004,7 +1014,8 @@ class Sw360TestProjects(unittest.TestCase):
         lib = self.get_logged_in_lib()
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects/123/releases?transitive=false&page=0&page_entries=50&sort=createdOn,desc",
+            url=self.MYURL
+            + "resource/api/projects/123/releases?transitive=false&page=0&page_entries=50&sort=createdOn,desc",
             json={},
         )
         responses.add(
@@ -1016,7 +1027,8 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects/124/releases?transitive=false&page=0&page_entries=50&sort=createdOn,desc",
+            url=self.MYURL
+            + "resource/api/projects/124/releases?transitive=false&page=0&page_entries=50&sort=createdOn,desc",
             json={'_embedded': {'sw360:projects': []}},
         )
         responses.add(
@@ -1032,7 +1044,8 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects/123/releases?transitive=false&page=0&page_entries=50&sort=createdOn,desc",
+            url=self.MYURL
+            + "resource/api/projects/123/releases?transitive=false&page=0&page_entries=50&sort=createdOn,desc",
             body='{"_embedded": {"sw360:releases": [{"name": "ngx-device-detector ", "version": "1.3.20","_links": {"self": {"href": "https://sw360.siemens.com/resource/api/releases/3a4865e453873ee00d924469ff40f391" }}}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -1111,7 +1124,8 @@ class Sw360TestProjects(unittest.TestCase):
 
         responses.add(
             responses.GET,
-            url=self.MYURL + "resource/api/projects/123/releases?transitive=false&page=0&page_entries=50&sort=createdOn,desc",
+            url=self.MYURL
+            + "resource/api/projects/123/releases?transitive=false&page=0&page_entries=50&sort=createdOn,desc",
             body='{"_embedded": {"sw360:releases": [{"name": "ngx-device-detector ", "version": "1.3.20","_links": {"self": {"href": "https://sw360.siemens.com/resource/api/releases/3a4865e453873ee00d924469ff40f391" }}}]}}',  # noqa
             status=200,
             content_type="application/json",

@@ -408,7 +408,7 @@ class ComponentsMixin(BaseMixin):
 
         attachment_content = self._upload_resource_file(upload_file, upload_type, upload_comment)
         attachment_content['attachmentType'] = upload_type  # Make sure the type is correct
-        attachment_content['createdComment'] = upload_comment   # Override
+        attachment_content['createdComment'] = upload_comment  # Override
 
         current_component = self.get_component(component_id)
         attachments = self._get_attachments(current_component)

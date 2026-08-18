@@ -1,7 +1,7 @@
 # -------------------------------------------------------------------------------
 # Copyright (c) 2019-2026 Siemens
 # All Rights Reserved.
-# Author: thomas.graf@siemens.com
+# Author: thomas.graf@siemens.com, mishra.gaurav@siemens.com
 #
 # Licensed under the MIT license.
 # SPDX-License-Identifier: MIT
@@ -11,6 +11,7 @@ __version__ = (1, 11, 2)
 
 from .sorting import (BaseSortMixin, ProjectSortColumn, ReleaseSortColumn,
                       SortParam)
+from .base import SW360Response
 from .sw360_api import SW360
 from .sw360error import SW360Error
 from .sw360keycloak import SW360Keycloak
@@ -25,4 +26,5 @@ __all__ = [
     "ReleaseSortColumn",
     "SortParam",
     "BaseSortMixin",
+    "SW360Response",
 ]

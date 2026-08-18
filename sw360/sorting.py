@@ -78,3 +78,8 @@ class PackageSortColumn(BaseSortMixin, Enum):
     NAME = "name"
     VERSION = "version"
     PACKAGE_MANAGER = "packageManager"
+
+class VendorSortColumn(BaseSortMixin, Enum):
+    SCORE = "score"
+    FULL_NAME = "fullName"
+    SHORT_NAME = "shortName"

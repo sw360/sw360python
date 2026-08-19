@@ -5,7 +5,7 @@
 
 # SW360 Base Library for Python
 
-## NEXT
+## V1.12.0.dev2
 
 * new helper functions `get_linked_id()` and `get_embedded()` to help parsing the
   `obj["_links"]` and `obj["_embedded"]` sections of HAL responses.
@@ -14,6 +14,14 @@
   unchanged. The new class however also provides the convenience methods `linked_id()`,
   `linked_ids()`, `embedded_list()`, and `embedded_lists()` to easily access the HAL
   sections of the response.
+* New methods `is_above_version_18()` and `is_above_version_19()` to check which SW360
+  version we are talking to.
+* Major updates of all search methods due to to changes in the SW360 REST API.
+  * New parameters to specify search criteria.
+  * New methods to support pagination (`api_get_all()`, etc.).
+  * `get_projects()` now returns `List[Dict[str, Any]]` instead of `Optional[Dict[str, Any]]`.
+* New methods for report generation: `generate_project_license_info()`,
+  `generate_project_clearing_report()`, `generate_project_source_code_bundle()`.
 
 ## V1.12.0.dev1
 

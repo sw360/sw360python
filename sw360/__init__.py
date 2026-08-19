@@ -7,7 +7,7 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
-__version__ = (1, 11, 2)
+__version__ = (1, 12, 0, "dev2")
 
 from .base import SW360Response
 from .sorting import (BaseSortMixin, ProjectSortColumn, ReleaseSortColumn,

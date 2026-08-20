@@ -7,9 +7,10 @@
 
 ## V1.12.0.dev3
 
-* Reverted some of the chnages done for V1.12.0.dev2.
-  `get_projects()`, `get_all_components()`, `get_component_by_name()`, `get_all_releases()`, `get_all_packages()`,
-  and `get_packages_by_packagemanager()` now return in all cases the same type of data as in version V1.11.2.
+* Reverted some of the changes done for V1.12.0.dev2.  
+  `get_projects()`, `get_all_components()`, `get_component_by_name()`, `get_all_releases()`,
+  `get_all_packages()`, and `get_packages_by_packagemanager()` now return in all cases the same
+  type of data as in version V1.11.2.
 
 ## V1.12.0.dev2
 

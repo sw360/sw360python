@@ -159,8 +159,9 @@ class Sw360TestPackages(unittest.TestCase):
         packages = lib.get_all_packages(name="cli-support", version="2.0.0", all_details=True, page=2, page_size=6, sort=PackageSortColumn.NAME.desc())  # noqa
         self.assertIsNotNone(packages)
         self.assertTrue(len(packages) > 0)
-        self.assertEqual("Tethys.Logging", packages[0]["name"])
-        self.assertEqual("1.3.0", packages[0]["version"])
+        pkgs = packages["_embedded"]["sw360:packages"]
+        self.assertEqual("Tethys.Logging", pkgs[0]["name"])
+        self.assertEqual("1.3.0", pkgs[0]["version"])
 
     @responses.activate
     def test_get_packages_by_name(self) -> None:
@@ -231,8 +232,9 @@ class Sw360TestPackages(unittest.TestCase):
         packages = lib.get_packages_by_packagemanager("nuget", page=1, page_size=5, sort=PackageSortColumn.NAME.desc())
         self.assertIsNotNone(packages)
         self.assertTrue(len(packages) > 0)
-        self.assertEqual("john", packages[0]["name"])
-        self.assertEqual("2.2.2", packages[0]["version"])
+        pkgs = packages["_embedded"]["sw360:packages"]
+        self.assertEqual("john", pkgs[0]["name"])
+        self.assertEqual("2.2.2", pkgs[0]["version"])
 
     @responses.activate
     def test_create_new_package(self) -> None:

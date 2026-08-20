@@ -152,7 +152,8 @@ class Sw360TestComponents(unittest.TestCase):
             adding_headers={"Authorization": "Token " + self.MYTOKEN},
         )
 
-        components = lib.get_all_components("ownerCountry", 1, 2)
+        data = lib.get_all_components("ownerCountry", 1, 2)
+        components = data["_embedded"]["sw360:components"]
         self.assertIsNotNone(components)
         self.assertTrue(len(components) > 0)
         self.assertEqual("Tethys.Logging", components[0]["name"])

@@ -98,7 +98,7 @@ class ComponentsMixin(BaseMixin):
                                               sort)
         if (resp and
             "_embedded" in resp and
-            "sw360:components" in resp["_embedded"]):
+                "sw360:components" in resp["_embedded"]):
             if page == -1:
                 return resp["_embedded"]["sw360:components"]
             return resp

@@ -127,7 +127,7 @@ class ProjectMixin(BaseMixin):
     def get_projects(
         self, all_details: bool = False, page: int = -1, page_size: int = -1,
         sort: Optional[SortParam] = None
-    ) -> List[Dict[str, Any]]:
+    ) -> Optional[Dict[str, Any]]:
         """Get all projects
 
         API endpoint: GET /projects
@@ -150,13 +150,25 @@ class ProjectMixin(BaseMixin):
 
         if all_details:
             params["allDetails"] = "true"
-        url_with_param = self._add_params(fullbase_url, params)
 
         if sort is None:
             sort = ProjectSortColumn.NAME.asc()
 
-        return self.__get_projects_filtered(url_with_param, page, page_size,
-                                            sort)
+        if self.is_above_version_18():
+            params["luceneSearch"] = "true"
+
+        url_with_param = self._add_params(fullbase_url, params)
+
+        if page > -1 and page_size > -1:
+            url_with_param = self._add_pagination(url_with_param, page,
+                                                  page_size, sort)
+
+        if self.is_above_version_18() and page_size == -1:
+            resp = self.api_get_all(url_with_param, sort)
+        else:
+            resp = self.api_get(url_with_param)
+
+        return resp
 
     def get_projects_by_type(
         self, project_type: str, page: int = -1, page_size: int = -1,
@@ -206,7 +218,14 @@ class ProjectMixin(BaseMixin):
         if not all_projects:
             return resp
 
-        projects: List[Dict[str, Any]] = all_projects
+        if "_embedded" not in all_projects:
+            return resp
+
+        if "sw360:projects" not in all_projects["_embedded"]:
+            return resp
+
+        projects: List[Dict[str, Any]] = all_projects["_embedded"]["sw360:projects"]
+
         if not projects:
             return resp
 

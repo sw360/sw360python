@@ -207,7 +207,9 @@ class Sw360TestProjects(unittest.TestCase):
         projects = lib.get_projects()
         self.assertIsNotNone(projects)
         if projects:  # only for mypy
-            self.assertEqual("My Testproject", projects[0]["name"])
+            self.assertTrue("_embedded" in projects)
+            self.assertTrue("sw360:projects" in projects["_embedded"])
+            self.assertEqual("My Testproject", projects["_embedded"]["sw360:projects"][0]["name"])
 
     @responses.activate
     def test_get_projects_v18_style(self) -> None:
@@ -226,7 +228,9 @@ class Sw360TestProjects(unittest.TestCase):
         projects = lib.get_projects()
         self.assertIsNotNone(projects)
         if projects:  # only for mypy
-            self.assertEqual("My Testproject", projects[0]["name"])
+            self.assertTrue("_embedded" in projects)
+            self.assertTrue("sw360:projects" in projects["_embedded"])
+            self.assertEqual("My Testproject", projects["_embedded"]["sw360:projects"][0]["name"])
 
     @responses.activate
     def test_get_projects_with_details(self) -> None:
@@ -245,7 +249,9 @@ class Sw360TestProjects(unittest.TestCase):
         projects = lib.get_projects(all_details=True)
         self.assertIsNotNone(projects)
         if projects:  # only for mypy
-            self.assertEqual("My Testproject", projects[0]["name"])
+            self.assertTrue("_embedded" in projects)
+            self.assertTrue("sw360:projects" in projects["_embedded"])
+            self.assertEqual("My Testproject", projects["_embedded"]["sw360:projects"][0]["name"])
 
     @responses.activate
     def test_get_projects_with_paging(self) -> None:
@@ -264,7 +270,9 @@ class Sw360TestProjects(unittest.TestCase):
         projects = lib.get_projects(page=1, page_size=2)
         self.assertIsNotNone(projects)
         if projects:  # only for mypy
-            self.assertEqual("My Testproject", projects[0]["name"])
+            self.assertTrue("_embedded" in projects)
+            self.assertTrue("sw360:projects" in projects["_embedded"])
+            self.assertEqual("My Testproject", projects["_embedded"]["sw360:projects"][0]["name"])
 
     @responses.activate
     def test_get_projects_with_paging_and_details(self) -> None:
@@ -283,7 +291,9 @@ class Sw360TestProjects(unittest.TestCase):
         projects = lib.get_projects(all_details=True, page=3, page_size=4, sort=ProjectSortColumn.NAME.desc())
         self.assertIsNotNone(projects)
         if projects:  # only for mypy
-            self.assertEqual("My Testproject", projects[0]["name"])
+            self.assertTrue("_embedded" in projects)
+            self.assertTrue("sw360:projects" in projects["_embedded"])
+            self.assertEqual("My Testproject", projects["_embedded"]["sw360:projects"][0]["name"])
 
     @responses.activate
     def test_get_projects_by_type(self) -> None:

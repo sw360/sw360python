@@ -33,7 +33,7 @@ class PackagesMixin(BaseMixin):
         :type page_size: int
         :param sort: sort order for the package
         :type sort: SortParam
-        :return: list of packages
+        :return: response from API
         :rtype: list of JSON package objects
         :raises SW360Error: if there is a negative HTTP response
         """
@@ -51,12 +51,7 @@ class PackagesMixin(BaseMixin):
         else:
             resp = self.api_get(full_url)
 
-        if (resp and
-            "_embedded" in resp and
-                "sw360:packages" in resp["_embedded"]):
-            return resp["_embedded"]["sw360:packages"]
-
-        return []
+        return resp
 
     def get_package(self, package_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about a package
@@ -109,7 +104,13 @@ class PackagesMixin(BaseMixin):
             else:
                 sort = PackageSortColumn.NAME.asc()
 
-        return self.__get_packages_filtered(url_with_param, page, page_size, sort)
+        resp = self.__get_packages_filtered(url_with_param, page, page_size,
+                                            sort)
+
+        if resp and ("_embedded" in resp) and ("sw360:packages" in resp["_embedded"]):
+            return resp["_embedded"]["sw360:packages"]
+
+        return []
 
     def get_all_packages(
         self, name: str = "", version: str = "", purl: str = "",
@@ -167,8 +168,13 @@ class PackagesMixin(BaseMixin):
                 else:
                     sort = PackageSortColumn.NAME.asc()
 
-        return self.__get_packages_filtered(url_with_param, page, page_size,
+        resp = self.__get_packages_filtered(url_with_param, page, page_size,
                                             sort)
+
+        if page == -1 and resp and ("_embedded" in resp) and ("sw360:packages" in resp["_embedded"]):
+            return resp["_embedded"]["sw360:packages"]
+
+        return resp
 
     def get_packages_by_packagemanager(
         self, manager: str, page: int = -1, page_size: int = -1,
@@ -204,8 +210,13 @@ class PackagesMixin(BaseMixin):
             else:
                 sort = PackageSortColumn.NAME.asc()
 
-        return self.__get_packages_filtered(url_with_param, page, page_size,
+        resp = self.__get_packages_filtered(url_with_param, page, page_size,
                                             sort)
+
+        if page == -1 and resp and ("_embedded" in resp) and ("sw360:packages" in resp["_embedded"]):
+            return resp["_embedded"]["sw360:packages"]
+
+        return resp
 
     def create_new_package(self, name: str, version: str, purl: str,
                            package_type: str, package_details: Dict[str, Any] = {}) -> Optional[Dict[str, Any]]:

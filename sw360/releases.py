@@ -35,7 +35,7 @@ class ReleasesMixin(BaseMixin):
         :type page_size: int
         :param sort: sort order for the releases
         :type sort: SortParam
-        :return: list of releases
+        :return: response from API
         :rtype: list of JSON release objects
         :raises SW360Error: if there is a negative HTTP response
         """
@@ -53,12 +53,7 @@ class ReleasesMixin(BaseMixin):
         else:
             resp = self.api_get(full_url)
 
-        if (resp and
-            "_embedded" in resp and
-                "sw360:releases" in resp["_embedded"]):
-            return resp["_embedded"]["sw360:releases"]
-
-        return []
+        return resp
 
     def get_release(self, release_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about a release
@@ -128,8 +123,13 @@ class ReleasesMixin(BaseMixin):
             else:
                 sort = ReleaseSortColumn.VERSION.desc()
 
-        return self.__get_releases_filtered(url_with_param, page, page_size,
+        resp = self.__get_releases_filtered(url_with_param, page, page_size,
                                             sort)
+
+        if resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
+            return resp["_embedded"]["sw360:releases"]
+
+        return []
 
     # return type List[Dict[str, Any]] | Optional[Dict[str, Any]] for Python 3.11 is good,
     # Union[List[Dict[str, Any]], Optional[Dict[str, Any]]] for lower Python versions is not good
@@ -175,8 +175,13 @@ class ReleasesMixin(BaseMixin):
         if sort is None:
             sort = ReleaseSortColumn.NAME.asc()
 
-        return self.__get_releases_filtered(url_with_param, page, page_size,
+        resp = self.__get_releases_filtered(url_with_param, page, page_size,
                                             sort)
+
+        if page == -1 and resp and ("_embedded" in resp) and ("sw360:releases" in resp["_embedded"]):
+            return resp["_embedded"]["sw360:releases"]
+
+        return resp
 
     def get_releases_by_external_id(self, ext_id_name: str, ext_id_value: str = "") -> List[Dict[str, Any]]:
         """Get releases by external id. `ext_id_value` can be left blank to

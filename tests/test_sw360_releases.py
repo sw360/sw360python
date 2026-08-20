@@ -313,8 +313,9 @@ class Sw360TestReleases(unittest.TestCase):
         releases = lib.get_all_releases(page=2, page_size=5, sort=ReleaseSortColumn.NAME.asc())
         self.assertIsNotNone(releases)
         self.assertTrue(len(releases) > 0)
-        self.assertEqual("Tethys.Logging", releases[0]["name"])
-        self.assertEqual("1.3.0", releases[0]["version"])
+        rel = releases["_embedded"]["sw360:releases"]
+        self.assertEqual("Tethys.Logging", rel[0]["name"])
+        self.assertEqual("1.3.0", rel[0]["version"])
 
     @responses.activate
     def test_get_releases_by_external_id(self) -> None:

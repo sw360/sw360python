@@ -37,7 +37,7 @@ class ComponentsMixin(BaseMixin):
         :type page_size: int
         :param sort: sort order for the components (Sort by name if `None`)
         :type sort: SortParam
-        :return: list of components
+        :return: response from API
         :rtype: list of JSON component objects
         :raises SW360Error: if there is a negative HTTP response
         """
@@ -55,12 +55,7 @@ class ComponentsMixin(BaseMixin):
         else:
             resp = self.api_get(full_url)
 
-        if (resp and
-            "_embedded" in resp and
-                "sw360:components" in resp["_embedded"]):
-            return resp["_embedded"]["sw360:components"]
-
-        return []
+        return resp
 
     def get_all_components(
         self, fields: str = "", page: int = -1, page_size: int = -1,
@@ -99,8 +94,16 @@ class ComponentsMixin(BaseMixin):
         if sort is None:
             sort = ComponentSortColumn.NAME.asc()
 
-        return self.__get_components_filtered(url_with_param, page, page_size,
+        resp = self.__get_components_filtered(url_with_param, page, page_size,
                                               sort)
+        if (resp and
+            "_embedded" in resp and
+                "sw360:components" in resp["_embedded"]):
+            if page == -1:
+                return resp["_embedded"]["sw360:components"]
+            return resp
+
+        return []
 
     def get_components_by_type(
         self, component_type: str, page: int = -1, page_size: int = -1,
@@ -135,8 +138,13 @@ class ComponentsMixin(BaseMixin):
         if sort is None:
             sort = ComponentSortColumn.NAME.asc()
 
-        return self.__get_components_filtered(url_with_param, page, page_size,
+        resp = self.__get_components_filtered(url_with_param, page, page_size,
                                               sort)
+
+        if resp and ("_embedded" in resp) and ("sw360:components" in resp["_embedded"]):
+            return resp["_embedded"]["sw360:components"]
+
+        return []
 
     def get_component(self, component_id: str) -> Optional[Dict[str, Any]]:
         """Get information of about a component
@@ -175,7 +183,7 @@ class ComponentsMixin(BaseMixin):
     def get_component_by_name(
         self, component_name: str, page: int = -1, page_size: int = -1,
         sort: Optional[SortParam] = None
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """Get information of about a component
 
         API endpoint: GET /components?name=
@@ -206,8 +214,10 @@ class ComponentsMixin(BaseMixin):
             else:
                 sort = ComponentSortColumn.NAME.asc()
 
-        return self.__get_components_filtered(url_with_param, page, page_size,
+        resp = self.__get_components_filtered(url_with_param, page, page_size,
                                               sort)
+
+        return resp
 
     def get_components_by_external_id(self, ext_id_name: str, ext_id_value: str = "") -> List[Dict[str, Any]]:
         """Get components by external id. `ext_id_value` can be left blank to

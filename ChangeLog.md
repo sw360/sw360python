@@ -5,6 +5,10 @@
 
 # SW360 Base Library for Python
 
+## V1.12.0
+
+* Dependency updates.
+
 ## V1.12.0.dev3
 
 * Reverted some of the changes done for V1.12.0.dev2.  

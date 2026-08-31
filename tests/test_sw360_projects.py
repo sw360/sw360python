@@ -302,7 +302,7 @@ class Sw360TestProjects(unittest.TestCase):
         responses.add(
             responses.GET,
             url=self.MYURL
-            + "resource/api/projects?type=SERVICE&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            + "resource/api/projects?type=SERVICE&luceneSearch=true&page=0&page_entries=50&sort=name%2Casc",
             body='{"_embedded": {"sw360:projects": [{"name": "My Testproject", "projectType": "SERVICE"}]}}',  # noqa
             status=200,
             content_type="application/json",
@@ -322,7 +322,7 @@ class Sw360TestProjects(unittest.TestCase):
         responses.add(
             responses.GET,
             url=self.MYURL
-            + "resource/api/projects?type=SERVICE&luceneSearch=true&page=0&page_entries=50&sort=name,asc",
+            + "resource/api/projects?type=SERVICE&luceneSearch=true&page=0&page_entries=50&sort=name%2Casc",
             body='{}',
             status=200,
             content_type="application/json",
@@ -1495,4 +1495,4 @@ class Sw360TestProjects(unittest.TestCase):
 
 if __name__ == "__main__":
     APP = Sw360TestProjects()
-    APP.test_update_project_releases_no_releases()
+    APP.test_get_projects_by_type_no_reply()

@@ -84,7 +84,6 @@ class SW360(
         session: Optional[requests.Session] = session_default,
         default_batch_size: int = 50
     ) -> None:
-        super().__init__(url, token, oauth2)
         """Constructor"""
         super().__init__(url, token, oauth2, default_batch_size)
         if url[-1] != "/":

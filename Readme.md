@@ -33,18 +33,26 @@ Install sw360 and required dependencies:
 
 ### Using the API
 
-* Get a REST API token from your SW360 server
-* Export required environment variables (optionally but recommended):
+* Get a REST API token from your SW360 server. In default configuration, tokens can be
+  generated in your Preferences.
+* Starting with SW360 v20, tokens can also be generated using a Keycloak client_id and
+  client_secret which you can request from your SW360 admin team. There's a special helper
+  class to generate the access tokens:
 
-  ```shell
-  export SW360ProductionToken=<your_api_token>
+  ```python
+  from sw360 import SW360Keycloak
+  kc = SW360Keycloak(sw360_url)
+  sw360_api_token = kc.get_keycloak_token(client_id, client_secret, write_access=False)
   ```
 
 * Start using the API:
 
   ```python
   import sw360
-  client = sw360.SW360(sw360_url, sw360_api_token)
+  # oauth2=True is required for tokens created using client_id and client_secret.
+  client = sw360.SW360(sw360_url, sw360_api_token, oauth2=True)
+  client.login_api():
+  r = client.get_release(release_id)
   ```
 
 ### Contribute

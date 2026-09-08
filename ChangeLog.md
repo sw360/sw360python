@@ -27,10 +27,14 @@
   sections of the response.
 * New methods `is_above_version_18()` and `is_above_version_19()` to check which SW360
   version we are talking to.
-* Major updates of all search methods due to to changes in the SW360 REST API.
-  * New parameters to specify search criteria.
-  * New methods to support pagination (`api_get_all()`, etc.).
-  * `get_projects()` now returns `List[Dict[str, Any]]` instead of `Optional[Dict[str, Any]]`.
+* Major updates of methods returning multiple results to reflect SW360 v20 REST API changes:
+  * new parameters `page`, `page_size`, and `sort`, defaulting to `page_size=-1` to get all
+    results (as before).
+  * the `sort` parameter is now an `Optional[SortParam]` (see new `sw360.sorting` module)
+    instead of a plain string.
+  * new internal methods to support pagination (`api_get_all()`, etc.).
+  * (temporary change, rolled back in dev3: `get_projects()` now returns `List[Dict[str, Any]]`
+     instead of `Optional[Dict[str, Any]]`.)
 * New methods for report generation: `generate_project_license_info()`,
   `generate_project_clearing_report()`, `generate_project_source_code_bundle()`.
 

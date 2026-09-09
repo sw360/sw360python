@@ -5,6 +5,11 @@
 
 # SW360 Base Library for Python
 
+## NEXT
+
+* Fix unintentional parallel changes in `api_get_all()` which broke the `SW360Response` feature
+  in V1.12.0.dev2. See Readme.md for details how the `SW360Response` class can now be used.
+
 ## V1.12.0
 
 * Dependency updates.
@@ -18,13 +23,12 @@
 
 ## V1.12.0.dev2
 
-* new helper functions `get_linked_id()` and `get_embedded()` to help parsing the
+* New helper functions `get_linked_id()` and `get_embedded()` to help parsing the
   `obj["_links"]` and `obj["_embedded"]` sections of HAL responses.
-* All `get_*()` and `update_*()` methods now return a `SW360Response` which is a dict
+* Most `get_*()` and `update_*()` methods now return a `SW360Response` which is a dict
   subclass. So you can still use the result as a normal dict, existing code should work
-  unchanged. The new class however also provides the convenience methods `linked_id()`,
-  `linked_ids()`, `embedded_list()`, and `embedded_lists()` to easily access the HAL
-  sections of the response.
+  unchanged. The new class provides convenience methods to easily access the HAL
+  sections of the response (`_links` and `_embedded`), see Readme.md.
 * New methods `is_above_version_18()` and `is_above_version_19()` to check which SW360
   version we are talking to.
 * Major updates of methods returning multiple results to reflect SW360 v20 REST API changes:

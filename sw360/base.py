@@ -164,7 +164,7 @@ class BaseMixin():
 
     def api_get_all(self, url: str, sort: Optional[SortParam] = None,
                     batch: int = -1, page: int = 0,
-                    _data: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+                    _data: Optional[SW360Response] = None) -> Optional[SW360Response]:
         """
         Retrieve all pages of data from the specified URL.
 
@@ -175,10 +175,10 @@ class BaseMixin():
                       `default_batch_size` if -1
         :param _data: Internal param for aggregating data.
         :return: The combined JSON data from all pages.
-        :rtype: Optional[Dict[str, Any]]
+        :rtype: Optional[SW360Response]
         """
         if _data is None:
-            _data = {}
+            _data = SW360Response()
         if batch == -1:
             batch = self.default_batch_size
 
@@ -186,29 +186,31 @@ class BaseMixin():
         resp = self.api_get(paginated_url)
         if resp is not None and 'page' in resp:
             total_pages = resp['page']['totalPages']
-            # Clean up meta info
+            # Clean up meta info. It only has "curies", "first"/"next"/"last",
+            # becoming meaningless once we merge multiple pages.
             if '_links' in resp:
                 del resp['_links']
             del resp['page']
-            # Update data and get next page
-            _data = self.__merge_responses(_data, resp)
+            # Merge in place into _data and get next page.
+            self.__merge_responses(_data, resp)
             if page + 1 < total_pages:
                 return self.api_get_all(url, sort, batch, page + 1, _data)
         else:
-            # Clean up meta info
+            # Clean up meta info, see comment above.
             if resp is not None and '_links' in resp:
                 del resp['_links']
-            _data = self.__merge_responses(_data, resp)
+            # Merge in place into _data.
+            self.__merge_responses(_data, resp)
         return _data
 
     def __merge_responses(self, previous: Dict[str, Any],
                           next: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         """
         Function to merge previous and next response of the same API
-        recursively.
+        into ``previous``, which is also returned.
         :param previous: The previous response data.
         :param next: The next response data.
-        :return: The merged response data.
+        :return: The merged response data (same dict as ``previous``).
         """
         if next is None:
             return previous

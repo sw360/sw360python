@@ -55,6 +55,28 @@ Install sw360 and required dependencies:
   r = client.get_release(release_id)
   ```
 
+* Starting with v1.12, most responses are wrapped in `SW360Response`, a `dict` subclass,
+  so existing code keeps working unchanged, but you get new convenience methods for the
+  `_links` and `_embedded` sections of the SW360 HAL responses:
+
+  ```python
+  release = client.get_release(release_id)
+
+  # get the component id from the release, instead of
+  #   client.get_id_from_href(release["_links"]["sw360:component"]["href"])
+  component_id = release.linked_id("component")
+  component = client.get_component(component_id)
+
+  # get the first attachment for the release, instead of
+  #   client.get_id_from_href(release["_embedded"]["sw360:attachments"][0]["_links"]["self"]["href"])
+  attachment_id = release.embedded_list("attachments")[0].linked_id()
+  attachment = client.get_attachment(attachment_id)
+  ```
+
+  For now, the `get_all_*` and `get_*_by_*` methods (e.g. `get_all_components` or
+  `get_releases_by_external_id`) still return a list of dicts, this is planned to
+  be changed in a future release to also return a list of `SW360Response` objects.
+
 ### Contribute
 
 * All contributions in form of bug reports, feature requests or merge requests!

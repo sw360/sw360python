@@ -33,19 +33,49 @@ Install sw360 and required dependencies:
 
 ### Using the API
 
-* Get a REST API token from your SW360 server
-* Export required environment variables (optionally but recommended):
+* Get a REST API token from your SW360 server. In default configuration, tokens can be
+  generated in your Preferences.
+* Starting with SW360 v20, tokens can also be generated using a Keycloak client_id and
+  client_secret which you can request from your SW360 admin team. There's a special helper
+  class to generate the access tokens:
 
-  ```shell
-  export SW360ProductionToken=<your_api_token>
+  ```python
+  from sw360 import SW360Keycloak
+  kc = SW360Keycloak(sw360_url)
+  sw360_api_token = kc.get_keycloak_token(client_id, client_secret, write_access=False)
   ```
 
 * Start using the API:
 
   ```python
   import sw360
-  client = sw360.SW360(sw360_url, sw360_api_token)
+  # oauth2=True is required for tokens created using client_id and client_secret.
+  client = sw360.SW360(sw360_url, sw360_api_token, oauth2=True)
+  client.login_api():
+  r = client.get_release(release_id)
   ```
+
+* Starting with v1.12, most responses are wrapped in `SW360Response`, a `dict` subclass,
+  so existing code keeps working unchanged, but you get new convenience methods for the
+  `_links` and `_embedded` sections of the SW360 HAL responses:
+
+  ```python
+  release = client.get_release(release_id)
+
+  # get the component id from the release, instead of
+  #   client.get_id_from_href(release["_links"]["sw360:component"]["href"])
+  component_id = release.linked_id("component")
+  component = client.get_component(component_id)
+
+  # get the first attachment for the release, instead of
+  #   client.get_id_from_href(release["_embedded"]["sw360:attachments"][0]["_links"]["self"]["href"])
+  attachment_id = release.embedded_list("attachments")[0].linked_id()
+  attachment = client.get_attachment(attachment_id)
+  ```
+
+  For now, the `get_all_*` and `get_*_by_*` methods (e.g. `get_all_components` or
+  `get_releases_by_external_id`) still return a list of dicts, this is planned to
+  be changed in a future release to also return a list of `SW360Response` objects.
 
 ### Contribute
 

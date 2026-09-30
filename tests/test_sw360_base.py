@@ -10,16 +10,21 @@
 import json
 import os
 import sys
+import time
 import unittest
+from unittest.mock import patch
 
+import jwt
+import requests
 import responses
 
 from sw360.base import BaseMixin
+from sw360.sw360_api import session_default
 
 sys.path.insert(1, "..")
 
 
-from sw360 import SW360, SW360Error  # noqa: E402
+from sw360 import SW360, SW360Error, SW360KeycloakClient  # noqa: E402
 
 
 class Sw360Test(unittest.TestCase):
@@ -43,6 +48,170 @@ class Sw360Test(unittest.TestCase):
         # check for trailing slash
         lib = SW360("https://my.server.com", self.MYTOKEN, False)
         self.assertEqual(self.MYURL, lib.url)
+
+    def _make_token(self, valid_for_seconds: int, scope: str = "READ profile email") -> str:
+        signing_key = "test-signing-key-that-is-at-least-32-bytes"
+        return jwt.encode(
+            {"exp": int(time.time()) + valid_for_seconds, "scope": scope},
+            signing_key, algorithm="HS256")
+
+    def test_keycloak_client_uses_credentials_instead_of_token(self) -> None:
+        token = self._make_token(600)
+
+        with patch("sw360.sw360_api.SW360Keycloak") as keycloak_class:
+            keycloak = keycloak_class.return_value
+            keycloak.get_keycloak_token.return_value = token
+            lib = SW360KeycloakClient(self.MYURL, "client-id", "client-secret")
+
+        self.assertIsInstance(lib, SW360)
+        self.assertEqual(self.MYURL, lib.url)
+        self.assertEqual("Bearer " + token, lib.api_headers["Authorization"])
+        keycloak.get_keycloak_token.assert_called_once_with(
+            "client-id", "client-secret", write_access=False)
+
+    def test_keycloak_client_renews_token_before_expiry(self) -> None:
+        initial_token = self._make_token(600)
+        expiring_token = self._make_token(30)
+        fresh_token = self._make_token(600)
+
+        with patch("sw360.sw360_api.SW360Keycloak") as keycloak_class:
+            keycloak = keycloak_class.return_value
+            keycloak.get_keycloak_token.side_effect = [initial_token, fresh_token]
+
+            lib = SW360KeycloakClient(self.MYURL, "client-id", "client-secret")
+            self.assertEqual("Bearer " + initial_token, lib.api_headers["Authorization"])
+
+            # simulate that the cached token is now close to expiry
+            lib._keycloak_token_provider._token = expiring_token
+            self.assertEqual("Bearer " + fresh_token, lib.api_headers["Authorization"])
+            self.assertEqual(2, keycloak.get_keycloak_token.call_count)
+
+    def test_keycloak_client_keeps_token_that_is_still_valid(self) -> None:
+        token = self._make_token(600)
+
+        with patch("sw360.sw360_api.SW360Keycloak") as keycloak_class:
+            keycloak = keycloak_class.return_value
+            keycloak.get_keycloak_token.return_value = token
+
+            lib = SW360KeycloakClient(self.MYURL, "client-id", "client-secret")
+            for _ in range(3):
+                self.assertEqual("Bearer " + token, lib.api_headers["Authorization"])
+
+            self.assertEqual(1, keycloak.get_keycloak_token.call_count)
+
+    def test_keycloak_client_honours_refresh_buffer(self) -> None:
+        initial_token = self._make_token(600)
+        fresh_token = self._make_token(1200)
+
+        with patch("sw360.sw360_api.SW360Keycloak") as keycloak_class:
+            keycloak = keycloak_class.return_value
+            keycloak.get_keycloak_token.side_effect = [initial_token, fresh_token]
+
+            # a token valid for 600s is renewed when the buffer is larger
+            lib = SW360KeycloakClient(
+                self.MYURL, "client-id", "client-secret", refresh_before_seconds=900)
+            self.assertEqual("Bearer " + fresh_token, lib.api_headers["Authorization"])
+
+    def test_keycloak_client_requests_write_access(self) -> None:
+        token = self._make_token(600, scope="READ WRITE profile email")
+
+        with patch("sw360.sw360_api.SW360Keycloak") as keycloak_class:
+            keycloak = keycloak_class.return_value
+            keycloak.get_keycloak_token.return_value = token
+            SW360KeycloakClient(self.MYURL, "client-id", "client-secret", write_access=True)
+
+        keycloak.get_keycloak_token.assert_called_once_with(
+            "client-id", "client-secret", write_access=True)
+
+    def test_keycloak_client_reports_missing_token(self) -> None:
+        with patch("sw360.sw360_api.SW360Keycloak") as keycloak_class:
+            keycloak_class.return_value.get_keycloak_token.return_value = None
+            with self.assertRaises(SW360Error) as context:
+                SW360KeycloakClient(self.MYURL, "client-id", "client-secret")
+
+        self.assertEqual("Unable to obtain token from Keycloak", context.exception.message)
+
+    def test_keycloak_client_reports_token_that_cannot_be_analyzed(self) -> None:
+        with patch("sw360.sw360_api.SW360Keycloak") as keycloak_class:
+            keycloak = keycloak_class.return_value
+            keycloak.get_keycloak_token.side_effect = [self._make_token(600), "not-a-jwt"]
+
+            lib = SW360KeycloakClient(self.MYURL, "client-id", "client-secret")
+            lib._keycloak_token_provider._token = "not-a-jwt"
+            with self.assertRaises(SW360Error) as context:
+                lib.current_token
+
+        self.assertTrue(context.exception.message.startswith("Unable to analyze token:"))
+
+    def test_keycloak_client_uses_own_session(self) -> None:
+        token = self._make_token(600)
+
+        with patch("sw360.sw360_api.SW360Keycloak") as keycloak_class:
+            keycloak_class.return_value.get_keycloak_token.return_value = token
+            lib = SW360KeycloakClient(self.MYURL, "client-id", "client-secret")
+
+        self.assertIsNot(lib.session, session_default)
+        assert lib.session is not None
+        prepared = lib.session.prepare_request(requests.Request("GET", self.MYURL))
+        self.assertEqual("Bearer " + token, prepared.headers["Authorization"])
+
+    def test_keycloak_client_current_token(self) -> None:
+        initial_token = self._make_token(600)
+        expiring_token = self._make_token(30)
+        fresh_token = self._make_token(600)
+
+        with patch("sw360.sw360_api.SW360Keycloak") as keycloak_class:
+            keycloak = keycloak_class.return_value
+            keycloak.get_keycloak_token.side_effect = [initial_token, fresh_token]
+
+            lib = SW360KeycloakClient(self.MYURL, "client-id", "client-secret")
+            self.assertEqual(initial_token, lib.current_token)
+
+            lib._keycloak_token_provider._token = expiring_token
+            self.assertEqual(fresh_token, lib.current_token)
+
+    @responses.activate
+    def test_keycloak_client_sends_renewed_token(self) -> None:
+        initial_token = self._make_token(600)
+        expiring_token = self._make_token(30)
+        fresh_token = self._make_token(600)
+        url = self.MYURL + "resource/api/releases/123"
+
+        responses.add(responses.GET, url, body="{}", status=200,
+                      content_type="application/json")
+
+        with patch("sw360.sw360_api.SW360Keycloak") as keycloak_class:
+            keycloak = keycloak_class.return_value
+            keycloak.get_keycloak_token.side_effect = [initial_token, fresh_token]
+
+            lib = SW360KeycloakClient(self.MYURL, "client-id", "client-secret")
+            lib._keycloak_token_provider._token = expiring_token
+            lib.api_get(url)
+
+        self.assertEqual("Bearer " + fresh_token,
+                         responses.calls[0].request.headers["Authorization"])
+
+    @responses.activate
+    def test_keycloak_client_sends_renewed_token_without_session(self) -> None:
+        initial_token = self._make_token(600)
+        expiring_token = self._make_token(30)
+        fresh_token = self._make_token(600)
+        url = self.MYURL + "resource/api/releases/123"
+
+        responses.add(responses.GET, url, body="{}", status=200,
+                      content_type="application/json")
+
+        with patch("sw360.sw360_api.SW360Keycloak") as keycloak_class:
+            keycloak = keycloak_class.return_value
+            keycloak.get_keycloak_token.side_effect = [initial_token, fresh_token]
+
+            lib = SW360KeycloakClient(self.MYURL, "client-id", "client-secret")
+            lib.force_no_session = True
+            lib._keycloak_token_provider._token = expiring_token
+            lib.api_get(url)
+
+        self.assertEqual("Bearer " + fresh_token,
+                         responses.calls[0].request.headers["Authorization"])
 
     def test_BaseMixin_constructor(self) -> None:
         lib = BaseMixin(self.MYURL, self.MYTOKEN, False)

@@ -9,6 +9,7 @@
 
 * Fix unintentional parallel changes in `api_get_all()` which broke the `SW360Response` feature
   in V1.12.0.dev2. See Readme.md for details how the `SW360Response` class can now be used.
+* Dependency updates, especially because PyJWT (CVE-2026-102272, CVE-2026-102273).
 
 ## V1.12.0
 

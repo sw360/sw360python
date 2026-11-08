@@ -5,7 +5,7 @@
 
 # SW360 Base Library for Python
 
-## NEXT
+## V1.13.0
 
 * New optional client `SW360KeycloakClient` which takes a Keycloak `client_id` and
   `client_secret` instead of a static token and renews the token shortly before it

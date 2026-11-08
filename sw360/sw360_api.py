@@ -10,10 +10,12 @@
 
 """Python interface to the Siemens SW360 platform"""
 
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
 
 import requests
 from requests.adapters import HTTPAdapter
+from requests.auth import AuthBase
+from requests.models import PreparedRequest
 from urllib3.util.retry import Retry
 
 from .attachments import AttachmentsMixin
@@ -26,6 +28,7 @@ from .project import ProjectMixin
 from .releases import ReleasesMixin
 from .reports import ReportsMixin
 from .sw360error import SW360Error
+from .sw360keycloak import KeycloakTokenProvider, SW360Keycloak
 from .vendor import VendorMixin
 from .vulnerabilities import VulnerabilitiesMixin
 
@@ -40,6 +43,18 @@ adapter = HTTPAdapter(max_retries=Retry(
 session_default = requests.Session()
 session_default.mount("http://", adapter)
 session_default.mount("https://", adapter)
+
+
+class _TokenProviderAuth(AuthBase):
+    """Sets the authorization header of each request from a token provider."""
+
+    def __init__(self, token_provider: Callable[[], str], scheme: str) -> None:
+        self.token_provider = token_provider
+        self.scheme = scheme
+
+    def __call__(self, request: PreparedRequest) -> PreparedRequest:
+        request.headers["Authorization"] = f"{self.scheme} {self.token_provider()}"
+        return request
 
 
 class SW360(
@@ -79,10 +94,10 @@ class SW360(
     def __init__(
         self,
         url: str,
-        token: str,
+        token: str = "",
         oauth2: bool = False,
         session: Optional[requests.Session] = session_default,
-        default_batch_size: int = 50
+        default_batch_size: int = 50,
     ) -> None:
         """Constructor"""
         super().__init__(url, token, oauth2, default_batch_size)
@@ -198,3 +213,92 @@ class SW360(
         """Extract major.minor as comparable tuple"""
         parts = version_string.split('.')
         return (int(parts[0]), int(parts[1]))
+
+
+class SW360KeycloakClient(SW360):
+    """Python interface to the Siemens SW360 platform, authenticating via Keycloak.
+
+    In contrast to `SW360`, this client is given the Keycloak credentials instead
+    of a token. It obtains the token itself and renews it shortly before it
+    expires, so that operations running longer than the token lifetime do not
+    fail. `SW360` and its static token usage are not affected by this class.
+
+    Unless a session is passed in, the client creates its own session, so that
+    the session shared by `SW360` instances is left unchanged. A session passed
+    in by the caller will have its authentication configured by this client.
+
+    :param url: URL of the SW360 instance
+    :param client_id: the SW360 client_id to be used for token generation
+    :param client_secret: the SW360 client_secret to be used for token generation
+    :param write_access: whether the token should have write access
+    :param session: the session to use, a new one is created if not given
+    :param refresh_before_seconds: how long before expiry a token gets renewed
+    :type url: string
+    :type client_id: string
+    :type client_secret: string
+    :type write_access: boolean
+    :type session: requests.Session
+    :type refresh_before_seconds: int
+    :raises SW360Error: if no token could be obtained from Keycloak
+    """
+
+    def __init__(
+        self,
+        url: str,
+        client_id: str,
+        client_secret: str,
+        write_access: bool = False,
+        session: Optional[requests.Session] = None,
+        default_batch_size: int = 50,
+        refresh_before_seconds: int = 300,
+    ) -> None:
+        """Constructor"""
+        self._keycloak_token_provider = KeycloakTokenProvider(
+            SW360Keycloak(url),
+            client_id,
+            client_secret,
+            write_access=write_access,
+            refresh_before_seconds=refresh_before_seconds,
+        )
+        initial_token = self._keycloak_token_provider()
+
+        if session is None:
+            session = requests.Session()
+            session.mount("http://", adapter)
+            session.mount("https://", adapter)
+
+        super().__init__(
+            url=url,
+            token=initial_token,
+            oauth2=True,
+            session=session,
+            default_batch_size=default_batch_size,
+        )
+        if self.session is not None:
+            self.session.auth = _TokenProviderAuth(self._keycloak_token_provider, "Bearer")
+
+    @property
+    def current_token(self) -> str:
+        """The access token currently in use, renewed first if it is about to
+        expire. Use this if you need to pass the token on, for example to
+        another component creating its own client.
+
+        :return: a currently valid access token
+        :rtype: str
+        :raises SW360Error: if no token could be obtained from Keycloak
+        """
+        return self._keycloak_token_provider()
+
+    @property
+    def api_headers(self) -> Dict[str, str]:
+        """The HTTP headers to use for requests that do not go through the
+        session, with a token that is valid now."""
+        headers = self._api_headers.copy()
+        headers["Authorization"] = "Bearer " + self._keycloak_token_provider()
+        return headers
+
+    @api_headers.setter
+    def api_headers(self, headers: Dict[str, str]) -> None:
+        # the base constructor sets the initial static header, the getter
+        # replaces its token on every read
+        self._api_headers = headers

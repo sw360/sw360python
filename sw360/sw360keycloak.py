@@ -7,7 +7,7 @@
 # SPDX-License-Identifier: MIT
 # -------------------------------------------------------------------------------
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
 
 import jwt
@@ -136,3 +136,84 @@ class SW360Keycloak:
             return scope.lower().find("write") >= 0
         else:
             raise SW360Error(message="Unable to analyze token: scope field missing!")
+
+
+class KeycloakTokenProvider:
+    """Provides a valid Keycloak access token to an SW360 client.
+
+    The token is obtained using the client credentials grant and renewed shortly
+    before it expires, so that long running operations do not fail with an
+    expired token. A provider belongs to a single client; it must not be shared
+    between clients using different credentials or scopes.
+
+    :param keycloak: the Keycloak helper used to request tokens
+    :param client_id: the SW360 client_id to be used for token generation
+    :param client_secret: the SW360 client_secret to be used for token generation
+    :param write_access: whether the token should have write access
+    :param refresh_before_seconds: how long before expiry a token gets renewed
+    :type keycloak: SW360Keycloak
+    :type client_id: str
+    :type client_secret: str
+    :type write_access: bool
+    :type refresh_before_seconds: int
+    """
+
+    def __init__(
+        self,
+        keycloak: SW360Keycloak,
+        client_id: str,
+        client_secret: str,
+        write_access: bool = False,
+        refresh_before_seconds: int = 300,
+    ) -> None:
+        self.keycloak = keycloak
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.write_access = write_access
+        self.refresh_before = timedelta(seconds=refresh_before_seconds)
+        self._token = ""
+
+    def __call__(self) -> str:
+        """
+        Returns a token that is valid now, renewing the cached one if it is
+        about to expire.
+
+        :return: a currently valid access token
+        :rtype: str
+        :raises SW360Error: if no token could be obtained from Keycloak
+        """
+
+        if not self._token or self._expires_soon(self._token):
+            token = self.keycloak.get_keycloak_token(
+                self.client_id,
+                self.client_secret,
+                write_access=self.write_access,
+            )
+            if not token:
+                raise SW360Error(message="Unable to obtain token from Keycloak")
+            self._token = token
+
+        return self._token
+
+    def _expires_soon(self, token: str) -> bool:
+        """
+        Checks if the given JWT token expires within the renewal buffer.
+
+        :param token: the JWT token to check
+        :type token: str
+        :return: True if the token should be renewed, False otherwise
+        :rtype: bool
+        :raises SW360Error: if the token cannot be analyzed
+        """
+
+        try:
+            # alg = RS256
+            decoded = jwt.decode(token, algorithms=["HS256"], options={"verify_signature": False})
+        except Exception as ex:
+            raise SW360Error(message="Unable to analyze token: " + repr(ex))
+
+        if "exp" not in decoded:
+            raise SW360Error(message="Unable to analyze token: exp field missing!")
+
+        expiry = datetime.fromtimestamp(int(decoded["exp"]))
+        return expiry <= datetime.now() + self.refresh_before

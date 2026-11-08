@@ -7,6 +7,10 @@
 
 ## NEXT
 
+* New optional client `SW360KeycloakClient` which takes a Keycloak `client_id` and
+  `client_secret` instead of a static token and renews the token shortly before it
+  expires. This is meant for long running operations where the token may expire
+  mid-run. `SW360` and its static token usage are unchanged. See Readme.md.
 * Fix unintentional parallel changes in `api_get_all()` which broke the `SW360Response` feature
   in V1.12.0.dev2. See Readme.md for details how the `SW360Response` class can now be used.
 * Dependency updates, especially because of PyJWT (CVE-2026-102272, CVE-2026-102273).

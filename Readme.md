@@ -55,6 +55,22 @@ Install sw360 and required dependencies:
   r = client.get_release(release_id)
   ```
 
+* For long running operations the token may expire while the operation is still
+  running. In that case you can use `SW360KeycloakClient`, which takes the Keycloak
+  credentials instead of a token and renews the token shortly before it expires
+  (five minutes by default, see `refresh_before_seconds`):
+
+  ```python
+  from sw360 import SW360KeycloakClient
+  client = SW360KeycloakClient(sw360_url, client_id, client_secret, write_access=False)
+  client.login_api()
+  r = client.get_release(release_id)
+  ```
+
+  The client uses its own session, so it does not affect clients created with a
+  static token. If you need to hand the token to another component which creates
+  its own client, use `client.current_token` to get a token that is valid now.
+
 * Starting with v1.12, most responses are wrapped in `SW360Response`, a `dict` subclass,
   so existing code keeps working unchanged, but you get new convenience methods for the
   `_links` and `_embedded` sections of the SW360 HAL responses:
